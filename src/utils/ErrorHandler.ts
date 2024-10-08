@@ -9,7 +9,7 @@ export class RoutesHandler {
     res.status(code);
     res.json({ success: error, message: message, data: values });
   }
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public static sendSuccess(req: express.Request, res: express.Response, error: boolean, message: string, code: number, data: any) {
     this.respond(req, res, true, message, code, data);
   }
