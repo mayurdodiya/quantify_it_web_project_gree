@@ -24,7 +24,7 @@ export class Portfolio {
   description: string;
 
   @CreateDateColumn({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP" })
-  creadtedAt: Date;
+  createdAt: Date;
 
   @UpdateDateColumn({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP", onUpdate: "CURRENT_TIMESTAMP" })
   updatedAt: Date;

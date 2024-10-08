@@ -1,8 +1,16 @@
-export const paginateData = async (
-  userdata: any[],
-  input: any
-): Promise<any> => {
-  return new Promise(async (resolve, reject) => {
+interface PaginateInput {
+  nextpage?: number;
+}
+
+interface PaginateResponse<T> {
+  nextpage: number | null;
+  pageSize: number;
+  totalPages: number;
+  data: T[];
+}
+
+export const paginateData = async <T>(userdata: T[], input: PaginateInput): Promise<PaginateResponse<T>> => {
+  return new Promise((resolve) => {
     if (!userdata?.length) {
       return resolve({
         nextpage: null,
@@ -13,8 +21,8 @@ export const paginateData = async (
     }
 
     const pageSize = 10;
-    let nextpage = input["nextpage"] || 1;
-    const totalCount = userdata?.length;
+    let nextpage = input.nextpage || 1;
+    const totalCount = userdata.length;
     const totalPages = Math.ceil(totalCount / pageSize);
 
     if (nextpage > totalPages) {
@@ -23,7 +31,8 @@ export const paginateData = async (
 
     const startIndex = (nextpage - 1) * pageSize;
     const endIndex = startIndex + pageSize;
-    const paginatedData = userdata?.slice(startIndex, endIndex);
+    const paginatedData = userdata.slice(startIndex, endIndex);
+
     resolve({
       nextpage: nextpage === totalPages ? null : nextpage + 1,
       pageSize: pageSize,

@@ -22,7 +22,9 @@ export class AdminController {
   public async loginAdmin(req: Request, res: Response) {
     try {
       const { password, email } = req.body;
-      const getAdmin = await this.userRepo.findOne({ where: { email: email, status: Status.ACTIVE } });
+      const getAdmin = await this.userRepo.findOne({
+        where: { email: email, status: Status.ACTIVE },
+      });
       if (!getAdmin) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This email"), ResponseCodes.loginError);
       }
@@ -40,7 +42,6 @@ export class AdminController {
 
       return RoutesHandler.sendSuccess(req, res, true, message.LOGIN_SUCCESS(""), ResponseCodes.success, token);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -59,7 +60,6 @@ export class AdminController {
       req.file;
       return RoutesHandler.sendSuccess(req, res, true, message.UPLOAD_SUCCESS("Image"), ResponseCodes.success, pathJoin);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }

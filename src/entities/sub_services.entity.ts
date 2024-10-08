@@ -10,7 +10,7 @@ export class SubServices {
   id: number;
 
   @Column({ nullable: false })
-  core_service_id: number;
+  core_service_id: string;
 
   @Column({ nullable: false })
   sub_service_name: string;
@@ -18,16 +18,20 @@ export class SubServices {
   @Column({ nullable: true })
   description_title: string;
 
-  @Column({ type: "jsonb", nullable:true })
+  @Column({ type: "jsonb", nullable: true })
   description: string;
 
   @Column({ default: null })
   img_logo_url: string;
 
   @CreateDateColumn({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP" })
-  creadtedAt: Date;
+  createdAt: Date;
 
-  @UpdateDateColumn({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP", onUpdate: "CURRENT_TIMESTAMP" })
+  @UpdateDateColumn({
+    type: "timestamptz",
+    default: () => "CURRENT_TIMESTAMP",
+    onUpdate: "CURRENT_TIMESTAMP",
+  })
   updatedAt: Date;
 
   @DeleteDateColumn({ default: null, type: "timestamptz" })
@@ -35,6 +39,6 @@ export class SubServices {
 
   // relation
   @ManyToOne((type) => CoreServices, (core_service) => core_service.all_sub_servise)
-  @JoinColumn({ name: "core_service_id" }) 
+  @JoinColumn({ name: "core_service_id" })
   core_service: CoreServices;
 }

@@ -1,4 +1,4 @@
-import { FindOneOptions, ILike, Like, Not, Or, Repository } from "typeorm";
+import { FindOneOptions, FindOperator, ILike, Like, Not, Or, Repository } from "typeorm";
 import { AppDataSource } from "../../config/database.config";
 import { RoutesHandler } from "../../utils/ErrorHandler";
 import { ResponseCodes } from "../../utils/response-codes";
@@ -13,8 +13,8 @@ export class BlogController {
 
   constructor() {
     this.blogRepo = AppDataSource.getRepository(Blog);
-  } 
-  
+  }
+
   // add data
   public addData = async (req: Request, res: Response) => {
     try {
@@ -29,7 +29,6 @@ export class BlogController {
 
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Blog"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   };
@@ -45,7 +44,9 @@ export class BlogController {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This blog"), ResponseCodes.searchError);
       }
 
-      const isExist = await this.blogRepo.findOne({ where: { blog_title: blog_title, id: Not(dataId) } });
+      const isExist = await this.blogRepo.findOne({
+        where: { blog_title: blog_title, id: Not(dataId) },
+      });
       if (isExist) {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This blog"), ResponseCodes.searchError);
       }
@@ -56,7 +57,6 @@ export class BlogController {
       this.blogRepo.save(getData);
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Blog"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -65,13 +65,15 @@ export class BlogController {
   public async getData(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
-      const data = await this.blogRepo.findOne({ where: { id: dataId, status: Status.ACTIVE }, select: ["id", "blog_title", "description", "img_url", "creadtedAt"] });
+      const data = await this.blogRepo.findOne({
+        where: { id: dataId, status: Status.ACTIVE },
+        select: ["id", "blog_title", "description", "img_url", "createdAt"],
+      });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This blog"), ResponseCodes.searchError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Blog"), ResponseCodes.success, data);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -84,7 +86,7 @@ export class BlogController {
       var sizeData: number = parseInt(size as string, 10);
 
       const skipData: number = pageData * sizeData;
-      var Dataobj: any = { status: Status.ACTIVE };
+      var Dataobj: { status: Status; blog_title?: FindOperator<string> } = { status: Status.ACTIVE };
       if (s) {
         Dataobj = {
           ...Dataobj,
@@ -92,7 +94,12 @@ export class BlogController {
         };
       }
 
-      const [data, totalItems] = await this.blogRepo.findAndCount({ where: Dataobj, select: ["id", "blog_title", "description", "img_url", "creadtedAt", "updatedAt"], skip: skipData, take: sizeData });
+      const [data, totalItems] = await this.blogRepo.findAndCount({
+        where: Dataobj,
+        select: ["id", "blog_title", "description", "img_url", "createdAt", "updatedAt"],
+        skip: skipData,
+        take: sizeData,
+      });
       const response = {
         totalItems: totalItems,
         totalPages: Math.ceil(totalItems / sizeData),
@@ -102,12 +109,11 @@ export class BlogController {
 
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Blog"), ResponseCodes.success, response);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
 
-  // delete data  
+  // delete data
   public async removeData(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
@@ -121,7 +127,6 @@ export class BlogController {
       }
       return RoutesHandler.sendSuccess(req, res, true, message.DELETE_SUCCESS("Blog"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }

@@ -17,12 +17,12 @@ export class HowWeWork {
 
   @Column({ nullable: false })
   logo_img_url: string;
-  
+
   @Column({ default: Status.ACTIVE })
   status: Status;
 
   @CreateDateColumn({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP" })
-  creadtedAt: Date;
+  createdAt: Date;
 
   @UpdateDateColumn({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP", onUpdate: "CURRENT_TIMESTAMP" })
   updatedAt: Date;

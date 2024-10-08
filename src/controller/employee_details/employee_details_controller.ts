@@ -17,7 +17,9 @@ export class EmployeeDetailsController {
   public addData = async (req: Request, res: Response) => {
     try {
       const { name, img_url, rating, description } = req.body;
-      const getData = await this.employeeDetailsRepo.findOne({ where: { name: name } });
+      const getData = await this.employeeDetailsRepo.findOne({
+        where: { name: name },
+      });
       if (getData) {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This employee data"), ResponseCodes.insertError);
       }
@@ -32,7 +34,6 @@ export class EmployeeDetailsController {
 
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Employee data"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   };
@@ -43,11 +44,15 @@ export class EmployeeDetailsController {
       const { name, img_url, rating, description } = req.body;
 
       const dataId = parseInt(req.params.id);
-      const getData = await this.employeeDetailsRepo.findOne({ where: { id: dataId } });
+      const getData = await this.employeeDetailsRepo.findOne({
+        where: { id: dataId },
+      });
       if (!getData) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This employee data"), ResponseCodes.searchError);
       }
-      const isExist = await this.employeeDetailsRepo.findOne({ where: { name: name, id: Not(dataId) } });
+      const isExist = await this.employeeDetailsRepo.findOne({
+        where: { name: name, id: Not(dataId) },
+      });
       if (isExist) {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This employee data"), ResponseCodes.searchError);
       }
@@ -58,7 +63,6 @@ export class EmployeeDetailsController {
       this.employeeDetailsRepo.save(getData);
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Employee data"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -67,13 +71,15 @@ export class EmployeeDetailsController {
   public async getData(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
-      const data = await this.employeeDetailsRepo.findOne({ where: { id: dataId }, select: ["id", "name", "img_url", "rating", "description", "creadtedAt"] });
+      const data = await this.employeeDetailsRepo.findOne({
+        where: { id: dataId },
+        select: ["id", "name", "img_url", "rating", "description", "createdAt"],
+      });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This employee data"), ResponseCodes.searchError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Employee data"), ResponseCodes.success, data);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -81,13 +87,14 @@ export class EmployeeDetailsController {
   // get all data
   public async getAllData(req: Request, res: Response) {
     try {
-      const data = await this.employeeDetailsRepo.find({ select: ["id", "name", "img_url", "rating", "description", "creadtedAt","updatedAt"] });
+      const data = await this.employeeDetailsRepo.find({
+        select: ["id", "name", "img_url", "rating", "description", "createdAt", "updatedAt"],
+      });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This employee data"), ResponseCodes.searchError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Employee data"), ResponseCodes.success, data);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -96,7 +103,9 @@ export class EmployeeDetailsController {
   public async removeData(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
-      const getData = await this.employeeDetailsRepo.findOne({ where: { id: dataId } });
+      const getData = await this.employeeDetailsRepo.findOne({
+        where: { id: dataId },
+      });
       if (!getData) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This employee data"), ResponseCodes.searchError);
       }
@@ -106,7 +115,6 @@ export class EmployeeDetailsController {
       }
       return RoutesHandler.sendSuccess(req, res, true, message.DELETE_SUCCESS("Employee data"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }

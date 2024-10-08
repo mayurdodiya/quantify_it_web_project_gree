@@ -10,7 +10,7 @@ export class ChatBoat {
 
   @Column({ nullable: false })
   chat_id: string;
-  
+
   @Column({ nullable: false })
   sender_id: string;
 
@@ -20,8 +20,8 @@ export class ChatBoat {
   @Column({ type: "jsonb", default: null })
   message: string;
 
-  @CreateDateColumn({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP" })  // timestamp
-  creadtedAt: Date;
+  @CreateDateColumn({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP" }) // timestamp
+  createdAt: Date;
 
   @UpdateDateColumn({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP", onUpdate: "CURRENT_TIMESTAMP" })
   updatedAt: Date;

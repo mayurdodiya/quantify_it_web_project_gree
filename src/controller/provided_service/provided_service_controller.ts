@@ -19,7 +19,9 @@ export class ProvidedServiceController {
     try {
       const { card_img_url, service_type, service_name, service_name_title, description, service_benifits, work_planning_title, work_planning_description, work_planning_img_url, business_solutions_title, business_solutions_description, business_solutions_img_url, completed_works, client_ratings, bussiness_reports_percentage } = req.body;
 
-      const serviceNameExist = await this.providedServiceRepo.findOne({ where: { service_type: service_type, service_name: service_name } });
+      const serviceNameExist = await this.providedServiceRepo.findOne({
+        where: { service_type: service_type, service_name: service_name },
+      });
       if (serviceNameExist) {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This service name"), ResponseCodes.insertError);
       }
@@ -45,7 +47,6 @@ export class ProvidedServiceController {
 
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Service provide data"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   };
@@ -56,12 +57,20 @@ export class ProvidedServiceController {
       const { card_img_url, service_type, service_name, service_name_title, description, service_benifits, work_planning_title, work_planning_description, work_planning_img_url, business_solutions_title, business_solutions_description, business_solutions_img_url, completed_works, client_ratings, bussiness_reports_percentage } = req.body;
 
       const dataId = parseInt(req.params.id);
-      const getData = await this.providedServiceRepo.findOne({ where: { id: dataId } });
+      const getData = await this.providedServiceRepo.findOne({
+        where: { id: dataId },
+      });
       if (!getData) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This service provide data"), ResponseCodes.searchError);
       }
 
-      const isExist = await this.providedServiceRepo.findOne({ where: { service_type: service_type, service_name: service_name, id: Not(dataId) } });
+      const isExist = await this.providedServiceRepo.findOne({
+        where: {
+          service_type: service_type,
+          service_name: service_name,
+          id: Not(dataId),
+        },
+      });
       if (isExist) {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This service provide data"), ResponseCodes.searchError);
       }
@@ -84,7 +93,6 @@ export class ProvidedServiceController {
       this.providedServiceRepo.save(getData);
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Service provide data"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -93,13 +101,15 @@ export class ProvidedServiceController {
   public async getData(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
-      const data = await this.providedServiceRepo.findOne({ where: { id: dataId, status: Status.ACTIVE }, select: ["id", "card_img_url", "service_type", "service_name", "service_name_title", "description", "service_benifits", "work_planning_title", "work_planning_description", "work_planning_img_url", "business_solutions_title", "business_solutions_description", "business_solutions_img_url", "completed_works", "client_ratings", "bussiness_reports_percentage", "creadtedAt"] });
+      const data = await this.providedServiceRepo.findOne({
+        where: { id: dataId, status: Status.ACTIVE },
+        select: ["id", "card_img_url", "service_type", "service_name", "service_name_title", "description", "service_benifits", "work_planning_title", "work_planning_description", "work_planning_img_url", "business_solutions_title", "business_solutions_description", "business_solutions_img_url", "completed_works", "client_ratings", "bussiness_reports_percentage", "createdAt"],
+      });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This service provide data"), ResponseCodes.searchError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Service provide data"), ResponseCodes.success, data);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -107,13 +117,15 @@ export class ProvidedServiceController {
   // get all data
   public async getAllData(req: Request, res: Response) {
     try {
-      const data = await this.providedServiceRepo.find({ where: { status: Status.ACTIVE }, select: ["id", "card_img_url", "service_type", "service_name", "service_name_title", "description", "service_benifits", "work_planning_title", "work_planning_description", "work_planning_img_url", "business_solutions_title", "business_solutions_description", "business_solutions_img_url", "completed_works", "client_ratings", "bussiness_reports_percentage", "creadtedAt", "updatedAt"] });
+      const data = await this.providedServiceRepo.find({
+        where: { status: Status.ACTIVE },
+        select: ["id", "card_img_url", "service_type", "service_name", "service_name_title", "description", "service_benifits", "work_planning_title", "work_planning_description", "work_planning_img_url", "business_solutions_title", "business_solutions_description", "business_solutions_img_url", "completed_works", "client_ratings", "bussiness_reports_percentage", "createdAt", "updatedAt"],
+      });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This service provide data"), ResponseCodes.searchError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Service provide data"), ResponseCodes.success, data);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -122,7 +134,9 @@ export class ProvidedServiceController {
   public async removeData(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
-      const getData = await this.providedServiceRepo.findOne({ where: { id: dataId } });
+      const getData = await this.providedServiceRepo.findOne({
+        where: { id: dataId },
+      });
       if (!getData) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This service provide data"), ResponseCodes.searchError);
       }
@@ -132,7 +146,6 @@ export class ProvidedServiceController {
       }
       return RoutesHandler.sendSuccess(req, res, true, message.DELETE_SUCCESS("Service provide data"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }

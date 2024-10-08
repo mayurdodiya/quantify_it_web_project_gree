@@ -21,7 +21,9 @@ export class CoreServicesController {
     try {
       const { img_url } = req.body;
       const service_type = req.body.service_type.toLocaleLowerCase();
-      const getData = await this.coreServicesRepo.findOne({ where: { service_type: service_type } });
+      const getData = await this.coreServicesRepo.findOne({
+        where: { service_type: service_type },
+      });
       if (getData) {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This core services"), ResponseCodes.insertError);
       }
@@ -34,7 +36,6 @@ export class CoreServicesController {
 
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Core services"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   };
@@ -46,12 +47,16 @@ export class CoreServicesController {
       const service_type = req.body.service_type.toLocaleLowerCase();
 
       const dataId = parseInt(req.params.id);
-      const getData = await this.coreServicesRepo.findOne({ where: { id: dataId } });
+      const getData = await this.coreServicesRepo.findOne({
+        where: { id: dataId },
+      });
       if (!getData) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This core services"), ResponseCodes.searchError);
       }
 
-      const isExist = await this.coreServicesRepo.findOne({ where: { service_type: service_type, id: Not(dataId) } });
+      const isExist = await this.coreServicesRepo.findOne({
+        where: { service_type: service_type, id: Not(dataId) },
+      });
       if (isExist) {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This core services"), ResponseCodes.searchError);
       }
@@ -60,7 +65,6 @@ export class CoreServicesController {
       this.coreServicesRepo.save(getData);
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Core services"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -69,13 +73,15 @@ export class CoreServicesController {
   public async getData(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
-      const data = await this.coreServicesRepo.findOne({ where: { id: dataId }, select: ["id", "service_type", "img_url", "creadtedAt", "updatedAt"] });
+      const data = await this.coreServicesRepo.findOne({
+        where: { id: dataId },
+        select: ["id", "service_type", "img_url", "createdAt", "updatedAt"],
+      });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This core services"), ResponseCodes.searchError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Core services"), ResponseCodes.success, data);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -83,13 +89,14 @@ export class CoreServicesController {
   // get all data
   public async getAllData(req: Request, res: Response) {
     try {
-      const data = await this.coreServicesRepo.find({ select: ["id", "service_type", "img_url", "creadtedAt", "updatedAt"] });
+      const data = await this.coreServicesRepo.find({
+        select: ["id", "service_type", "img_url", "createdAt", "updatedAt"],
+      });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This core services"), ResponseCodes.searchError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Core services"), ResponseCodes.success, data);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -98,7 +105,9 @@ export class CoreServicesController {
   public async removeData(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
-      const data = await this.coreServicesRepo.findOne({ where: { id: dataId } });
+      const data = await this.coreServicesRepo.findOne({
+        where: { id: dataId },
+      });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This core services"), ResponseCodes.searchError);
       }
@@ -108,16 +117,16 @@ export class CoreServicesController {
       try {
         // execute some operations on this transaction:
         await queryRunner.manager.softDelete(CoreServices, { id: dataId });
-        await queryRunner.manager.softDelete(SubServices, { core_service_id: dataId });
+        await queryRunner.manager.softDelete(SubServices, {
+          core_service_id: dataId,
+        });
 
         await queryRunner.commitTransaction();
         return RoutesHandler.sendSuccess(req, res, true, message.DELETE_SUCCESS("Core services"), ResponseCodes.success, undefined);
       } catch (error) {
-        console.log(error);
         await queryRunner.rollbackTransaction();
       }
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -128,7 +137,9 @@ export class CoreServicesController {
   public addDataOLD = async (req: Request, res: Response) => {
     try {
       const { service_type, img_url } = req.body;
-      const getData = await this.coreServicesRepo.findOne({ where: { service_type: service_type } });
+      const getData = await this.coreServicesRepo.findOne({
+        where: { service_type: service_type },
+      });
       if (getData) {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This service type"), ResponseCodes.insertError);
       }
@@ -161,7 +172,6 @@ export class CoreServicesController {
         return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("Services"), ResponseCodes.insertError);
       }
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   };
@@ -171,7 +181,9 @@ export class CoreServicesController {
     try {
       const { service_type, img_url } = req.body;
       const dataId = parseInt(req.params.id);
-      const getData = await this.coreServicesRepo.findOne({ where: { id: dataId } });
+      const getData = await this.coreServicesRepo.findOne({
+        where: { id: dataId },
+      });
       if (!getData) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This services"), ResponseCodes.searchError);
       }
@@ -191,7 +203,9 @@ export class CoreServicesController {
         for (let z = 0; z < subServiceData.length; z++) {
           // for update
           if (subServiceData[z].hasOwnProperty("id")) {
-            const getSubServ = await this.subServicesRepo.findOne({ where: { id: subServiceData[z].id } });
+            const getSubServ = await this.subServicesRepo.findOne({
+              where: { id: subServiceData[z].id },
+            });
             getSubServ.sub_service_name = subServiceData[z].sub_service_name;
             getSubServ.description_title = subServiceData[z].description_title;
             getSubServ.description = subServiceData[z].description;
@@ -213,12 +227,10 @@ export class CoreServicesController {
         await queryRunner.commitTransaction();
         return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Core & Sub services"), ResponseCodes.success, undefined);
       } catch (error) {
-        console.log(error);
         await queryRunner.rollbackTransaction();
         return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("Services"), ResponseCodes.insertError);
       }
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }

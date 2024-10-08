@@ -17,11 +17,11 @@ export class OurContactDetails {
   @Column({ default: null })
   location: string;
 
-  @Column({ default: null }) 
+  @Column({ default: null })
   address: string;
 
   @CreateDateColumn({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP" })
-  creadtedAt: Date;
+  createdAt: Date;
 
   @UpdateDateColumn({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP", onUpdate: "CURRENT_TIMESTAMP" })
   updatedAt: Date;

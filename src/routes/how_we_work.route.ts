@@ -7,9 +7,9 @@ const routes = Router();
 const howWeWorkController = new HowWeWorkController();
 
 routes.post("/add", verifyAdminToken, addHowWeWorkValidation, (req: Request, res: Response) => howWeWorkController.addData(req, res));
-routes.put("/edit/:id", verifyAdminToken, updateHowWeWorkValidation, (req: any, res: any) => howWeWorkController.updateData(req, res));
-routes.get("/get/:id", (req: any, res: any) => howWeWorkController.getData(req, res));
+routes.put("/edit/:id", verifyAdminToken, updateHowWeWorkValidation, (req: Request, res: Response) => howWeWorkController.updateData(req, res));
+routes.get("/get/:id", (req: Request, res: Response) => howWeWorkController.getData(req, res));
 routes.get("/get", (req, res) => howWeWorkController.getAllData(req, res));
-routes.delete("/remove/:id", verifyAdminToken, (req: any, res: any) => howWeWorkController.removeData(req, res));
+routes.delete("/remove/:id", verifyAdminToken, (req: Request, res: Response) => howWeWorkController.removeData(req, res));
 
 export default routes;

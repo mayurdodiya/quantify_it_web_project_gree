@@ -18,7 +18,9 @@ export class HowWeWorkController {
   public addData = async (req: Request, res: Response) => {
     try {
       const { title, description, logo_img_url } = req.body;
-      const getData = await this.howWeWorkRepo.findOne({ where: { title: title } });
+      const getData = await this.howWeWorkRepo.findOne({
+        where: { title: title },
+      });
       if (getData) {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This work data"), ResponseCodes.insertError);
       }
@@ -32,7 +34,6 @@ export class HowWeWorkController {
 
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Work data"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   };
@@ -43,12 +44,16 @@ export class HowWeWorkController {
       const { title, description, logo_img_url } = req.body;
 
       const dataId = parseInt(req.params.id);
-      const getData = await this.howWeWorkRepo.findOne({ where: { id: dataId } });
+      const getData = await this.howWeWorkRepo.findOne({
+        where: { id: dataId },
+      });
       if (!getData) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This work data"), ResponseCodes.searchError);
       }
 
-      const isExist = await this.howWeWorkRepo.findOne({ where: { title: title, id: Not(dataId) } });
+      const isExist = await this.howWeWorkRepo.findOne({
+        where: { title: title, id: Not(dataId) },
+      });
       if (isExist) {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This work data"), ResponseCodes.searchError);
       }
@@ -58,7 +63,6 @@ export class HowWeWorkController {
       this.howWeWorkRepo.save(getData);
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Work data"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -67,13 +71,15 @@ export class HowWeWorkController {
   public async getData(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
-      const data = await this.howWeWorkRepo.findOne({ where: { id: dataId, status: Status.ACTIVE }, select: ["id", "title", "description", "logo_img_url", "creadtedAt"] });
+      const data = await this.howWeWorkRepo.findOne({
+        where: { id: dataId, status: Status.ACTIVE },
+        select: ["id", "title", "description", "logo_img_url", "createdAt"],
+      });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This work data"), ResponseCodes.searchError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Work data"), ResponseCodes.success, data);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -81,13 +87,15 @@ export class HowWeWorkController {
   // get all data
   public async getAllData(req: Request, res: Response) {
     try {
-      const data = await this.howWeWorkRepo.find({ where: { status: Status.ACTIVE }, select: ["id", "title", "description", "logo_img_url", "creadtedAt", "updatedAt"] });
+      const data = await this.howWeWorkRepo.find({
+        where: { status: Status.ACTIVE },
+        select: ["id", "title", "description", "logo_img_url", "createdAt", "updatedAt"],
+      });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This work data"), ResponseCodes.searchError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Work data"), ResponseCodes.success, data);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -96,7 +104,9 @@ export class HowWeWorkController {
   public async removeData(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
-      const getData = await this.howWeWorkRepo.findOne({ where: { id: dataId } });
+      const getData = await this.howWeWorkRepo.findOne({
+        where: { id: dataId },
+      });
       if (!getData) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This work data"), ResponseCodes.searchError);
       }
@@ -106,7 +116,6 @@ export class HowWeWorkController {
       }
       return RoutesHandler.sendSuccess(req, res, true, message.DELETE_SUCCESS("Work data"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }

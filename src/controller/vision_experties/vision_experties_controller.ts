@@ -18,7 +18,9 @@ export class VisionExpertiesController {
   public addData = async (req: Request, res: Response) => {
     try {
       const { title, description, img_url } = req.body;
-      const getData = await this.visionExpertiesRepo.findOne({ where: { title: title } });
+      const getData = await this.visionExpertiesRepo.findOne({
+        where: { title: title },
+      });
       if (getData) {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This experties"), ResponseCodes.insertError);
       }
@@ -32,7 +34,6 @@ export class VisionExpertiesController {
 
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Experties"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   };
@@ -43,11 +44,15 @@ export class VisionExpertiesController {
       const { title, description, img_url } = req.body;
 
       const dataId = parseInt(req.params.id);
-      const getData = await this.visionExpertiesRepo.findOne({ where: { id: dataId } });
+      const getData = await this.visionExpertiesRepo.findOne({
+        where: { id: dataId },
+      });
       if (!getData) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This experties"), ResponseCodes.searchError);
       }
-      const isExist = await this.visionExpertiesRepo.findOne({ where: { title: title, id: Not(dataId) } });
+      const isExist = await this.visionExpertiesRepo.findOne({
+        where: { title: title, id: Not(dataId) },
+      });
       if (isExist) {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This experties"), ResponseCodes.searchError);
       }
@@ -57,7 +62,6 @@ export class VisionExpertiesController {
       this.visionExpertiesRepo.save(getData);
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Experties"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -66,13 +70,15 @@ export class VisionExpertiesController {
   public async getData(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
-      const data = await this.visionExpertiesRepo.findOne({ where: { id: dataId, status: Status.ACTIVE }, select: ["id", "title", "description", "img_url", "creadtedAt"] });
+      const data = await this.visionExpertiesRepo.findOne({
+        where: { id: dataId, status: Status.ACTIVE },
+        select: ["id", "title", "description", "img_url", "createdAt"],
+      });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This experties"), ResponseCodes.searchError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Experties"), ResponseCodes.success, data);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -80,13 +86,15 @@ export class VisionExpertiesController {
   // get all data
   public async getAllData(req: Request, res: Response) {
     try {
-      const data = await this.visionExpertiesRepo.find({ where: { status: Status.ACTIVE }, select: ["id", "title", "description", "img_url", "creadtedAt", "updatedAt"] });
+      const data = await this.visionExpertiesRepo.find({
+        where: { status: Status.ACTIVE },
+        select: ["id", "title", "description", "img_url", "createdAt", "updatedAt"],
+      });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This experties"), ResponseCodes.searchError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Experties"), ResponseCodes.success, data);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -95,7 +103,9 @@ export class VisionExpertiesController {
   public async removeData(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
-      const getData = await this.visionExpertiesRepo.findOne({ where: { id: dataId } });
+      const getData = await this.visionExpertiesRepo.findOne({
+        where: { id: dataId },
+      });
       if (!getData) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This experties"), ResponseCodes.searchError);
       }
@@ -105,7 +115,6 @@ export class VisionExpertiesController {
       }
       return RoutesHandler.sendSuccess(req, res, true, message.DELETE_SUCCESS("Experties"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }

@@ -18,7 +18,9 @@ export class CertificationDetailsController {
   public addData = async (req: Request, res: Response) => {
     try {
       const { sub_title, sub_description, logo_img_url } = req.body;
-      const getData = await this.certificationDetailsRepo.findOne({ where: { sub_title: sub_title } });
+      const getData = await this.certificationDetailsRepo.findOne({
+        where: { sub_title: sub_title },
+      });
       if (getData) {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This certification details"), ResponseCodes.insertError);
       }
@@ -32,7 +34,6 @@ export class CertificationDetailsController {
 
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Certification Details"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   };
@@ -43,12 +44,16 @@ export class CertificationDetailsController {
       const { sub_title, sub_description, logo_img_url } = req.body;
 
       const dataId = parseInt(req.params.id);
-      const getData = await this.certificationDetailsRepo.findOne({ where: { id: dataId } });
+      const getData = await this.certificationDetailsRepo.findOne({
+        where: { id: dataId },
+      });
       if (!getData) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This certification details"), ResponseCodes.searchError);
       }
 
-      const isExist = await this.certificationDetailsRepo.findOne({ where: { sub_title: sub_title, id: Not(dataId) } });
+      const isExist = await this.certificationDetailsRepo.findOne({
+        where: { sub_title: sub_title, id: Not(dataId) },
+      });
       if (isExist) {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This experties"), ResponseCodes.searchError);
       }
@@ -58,7 +63,6 @@ export class CertificationDetailsController {
       this.certificationDetailsRepo.save(getData);
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Certification Details"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -67,13 +71,15 @@ export class CertificationDetailsController {
   public async getData(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
-      const data = await this.certificationDetailsRepo.findOne({ where: { id: dataId, status: Status.ACTIVE }, select: ["id", "sub_title", "sub_description", "logo_img_url", "creadtedAt"] });
+      const data = await this.certificationDetailsRepo.findOne({
+        where: { id: dataId, status: Status.ACTIVE },
+        select: ["id", "sub_title", "sub_description", "logo_img_url", "createdAt"],
+      });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This certification details"), ResponseCodes.searchError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Certification Details"), ResponseCodes.success, data);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -81,13 +87,15 @@ export class CertificationDetailsController {
   // get all data
   public async getAllData(req: Request, res: Response) {
     try {
-      const data = await this.certificationDetailsRepo.find({ where: { status: Status.ACTIVE }, select: ["id", "sub_title", "sub_description", "logo_img_url", "creadtedAt", "updatedAt"] });
+      const data = await this.certificationDetailsRepo.find({
+        where: { status: Status.ACTIVE },
+        select: ["id", "sub_title", "sub_description", "logo_img_url", "createdAt", "updatedAt"],
+      });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This certification details"), ResponseCodes.searchError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Certification Details"), ResponseCodes.success, data);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -96,17 +104,20 @@ export class CertificationDetailsController {
   public async removeData(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
-      const getData = await this.certificationDetailsRepo.findOne({ where: { id: dataId } });
+      const getData = await this.certificationDetailsRepo.findOne({
+        where: { id: dataId },
+      });
       if (!getData) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This certification details"), ResponseCodes.searchError);
       }
-      const data = await this.certificationDetailsRepo.softDelete({ id: dataId });
+      const data = await this.certificationDetailsRepo.softDelete({
+        id: dataId,
+      });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This certification details"), ResponseCodes.searchError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.DELETE_SUCCESS("Certification Details"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }

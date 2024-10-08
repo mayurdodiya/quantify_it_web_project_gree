@@ -20,7 +20,12 @@ export class TechnologicalExpertiesController {
       const { experties_name, img_url } = req.body;
       const experties_type = req.body.experties_type.toLocaleLowerCase();
 
-      const isNameExist = await this.technologicalExpertiesRepo.findOne({ where: { experties_name: experties_name, experties_type: experties_type } });
+      const isNameExist = await this.technologicalExpertiesRepo.findOne({
+        where: {
+          experties_name: experties_name,
+          experties_type: experties_type,
+        },
+      });
       if (isNameExist) {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This experties name"), ResponseCodes.insertError);
       }
@@ -34,7 +39,6 @@ export class TechnologicalExpertiesController {
 
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Experties"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   };
@@ -46,11 +50,19 @@ export class TechnologicalExpertiesController {
       const experties_type = req.body.experties_type.toLocaleLowerCase();
 
       const dataId = parseInt(req.params.id);
-      const getData = await this.technologicalExpertiesRepo.findOne({ where: { id: dataId } });
+      const getData = await this.technologicalExpertiesRepo.findOne({
+        where: { id: dataId },
+      });
       if (!getData) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This experties"), ResponseCodes.searchError);
       }
-      const isExist = await this.technologicalExpertiesRepo.findOne({ where: { experties_type: experties_type, experties_name: experties_name, id: Not(dataId) } });
+      const isExist = await this.technologicalExpertiesRepo.findOne({
+        where: {
+          experties_type: experties_type,
+          experties_name: experties_name,
+          id: Not(dataId),
+        },
+      });
       if (isExist) {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This experties"), ResponseCodes.searchError);
       }
@@ -61,7 +73,6 @@ export class TechnologicalExpertiesController {
       this.technologicalExpertiesRepo.save(getData);
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Experties"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -70,13 +81,15 @@ export class TechnologicalExpertiesController {
   public async getData(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
-      const data = await this.technologicalExpertiesRepo.findOne({ where: { id: dataId, status: Status.ACTIVE }, select: ["id", "experties_type", "experties_name", "img_url", "creadtedAt"] });
+      const data = await this.technologicalExpertiesRepo.findOne({
+        where: { id: dataId, status: Status.ACTIVE },
+        select: ["id", "experties_type", "experties_name", "img_url", "createdAt"],
+      });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This experties"), ResponseCodes.searchError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Experties"), ResponseCodes.success, data);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -101,7 +114,6 @@ export class TechnologicalExpertiesController {
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Experties"), ResponseCodes.success, groupedData);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -110,18 +122,21 @@ export class TechnologicalExpertiesController {
   public async removeData(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
-      const isExist = await this.technologicalExpertiesRepo.findOne({ where: { id: dataId } });
+      const isExist = await this.technologicalExpertiesRepo.findOne({
+        where: { id: dataId },
+      });
       if (!isExist) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This experties"), ResponseCodes.searchError);
       }
 
-      const data = await this.technologicalExpertiesRepo.softDelete({ id: dataId });
+      const data = await this.technologicalExpertiesRepo.softDelete({
+        id: dataId,
+      });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This experties"), ResponseCodes.searchError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.DELETE_SUCCESS("Experties"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }

@@ -6,10 +6,10 @@ import { verifyAdminToken } from "../utils/auth.token";
 const routes = Router();
 const providedServiceController = new ProvidedServiceController();
 
-routes.post("/add",verifyAdminToken, addprovidedServiceValidation, (req: Request, res: Response) => providedServiceController.addData(req, res));
-routes.put("/edit/:id",verifyAdminToken, updateprovidedServiceValidation, (req: any, res: any) => providedServiceController.updateData(req, res));
-routes.get("/get/:id", (req: any, res: any) => providedServiceController.getData(req, res));
-routes.delete("/remove/:id",verifyAdminToken, (req: any, res: any) => providedServiceController.removeData(req, res));
+routes.post("/add", verifyAdminToken, addprovidedServiceValidation, (req: Request, res: Response) => providedServiceController.addData(req, res));
+routes.put("/edit/:id", verifyAdminToken, updateprovidedServiceValidation, (req: Request, res: Response) => providedServiceController.updateData(req, res));
+routes.get("/get/:id", (req: Request, res: Response) => providedServiceController.getData(req, res));
+routes.delete("/remove/:id", verifyAdminToken, (req: Request, res: Response) => providedServiceController.removeData(req, res));
 routes.get("/get", (req, res) => providedServiceController.getAllData(req, res));
 
 export default routes;

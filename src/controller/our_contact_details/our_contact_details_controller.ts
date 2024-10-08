@@ -16,9 +16,15 @@ export class OurContactDetailsController {
   // add data
   public addData = async (req: Request, res: Response) => {
     try {
-      const { email, location, address } = req.body as { email: string; location: string; address: string };
+      const { email, location, address } = req.body as {
+        email: string;
+        location: string;
+        address: string;
+      };
       const phone_no: string = req.body.phone_no;
-      const getData = await this.ourContactDetailsRepo.findOne({ where: { id: 1 } });
+      const getData = await this.ourContactDetailsRepo.findOne({
+        where: { id: 1 },
+      });
       if (getData) {
         return RoutesHandler.sendError(req, res, false, message.ADD_ONCE("Our contact details data"), ResponseCodes.insertError);
       }
@@ -33,7 +39,6 @@ export class OurContactDetailsController {
 
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Our contact details"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   };
@@ -43,11 +48,13 @@ export class OurContactDetailsController {
     try {
       const { phone_no, email, location, address } = req.body;
 
-      const getData = await this.ourContactDetailsRepo.findOne({ where: { id: 1 } });
+      const getData = await this.ourContactDetailsRepo.findOne({
+        where: { id: 1 },
+      });
       if (!getData) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This our contact details"), ResponseCodes.searchError);
       }
-      
+
       getData.phone_no = phone_no || getData.phone_no;
       getData.email = email || getData.email;
       getData.location = location || getData.location;
@@ -55,7 +62,6 @@ export class OurContactDetailsController {
       this.ourContactDetailsRepo.save(getData);
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Our contact details"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -63,7 +69,10 @@ export class OurContactDetailsController {
   // get data
   public async getData(req: Request, res: Response) {
     try {
-      var data = await this.ourContactDetailsRepo.findOne({ where: { id: 1 }, select: ["id", "phone_no", "email", "address", "creadtedAt", "updatedAt"] });
+      var data = await this.ourContactDetailsRepo.findOne({
+        where: { id: 1 },
+        select: ["id", "phone_no", "email", "address", "createdAt", "updatedAt"],
+      });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This our contact details"), ResponseCodes.searchError);
       }
@@ -71,7 +80,6 @@ export class OurContactDetailsController {
       JSON.stringify(data);
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Our contact details"), ResponseCodes.success, data);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -85,7 +93,6 @@ export class OurContactDetailsController {
       }
       return RoutesHandler.sendSuccess(req, res, true, message.DELETE_SUCCESS("Our contact details"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }

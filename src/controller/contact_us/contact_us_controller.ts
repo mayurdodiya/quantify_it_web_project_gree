@@ -29,7 +29,6 @@ export class ContactUsController {
 
       return RoutesHandler.sendSuccess(req, res, true, message.SUBMIT_FORM(), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   };
@@ -38,13 +37,15 @@ export class ContactUsController {
   public async getData(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
-      const data = await this.contactUsRepo.findOne({ where: { id: dataId }, select: ["id", "full_name", "email", "contact_purpose", "user_message", "budget", "creadtedAt", "updatedAt"] });
+      const data = await this.contactUsRepo.findOne({
+        where: { id: dataId },
+        select: ["id", "full_name", "email", "contact_purpose", "user_message", "budget", "createdAt", "updatedAt"],
+      });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This Contact us data"), ResponseCodes.searchError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Contact us forms"), ResponseCodes.success, data);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -52,13 +53,14 @@ export class ContactUsController {
   // get all data
   public async getAllData(req: Request, res: Response) {
     try {
-      const data = await this.contactUsRepo.find({ select: ["id", "full_name", "email", "contact_purpose", "user_message", "budget", "creadtedAt"] });
+      const data = await this.contactUsRepo.find({
+        select: ["id", "full_name", "email", "contact_purpose", "user_message", "budget", "createdAt"],
+      });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This Contact us data"), ResponseCodes.searchError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Contact us forms"), ResponseCodes.success, data);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }

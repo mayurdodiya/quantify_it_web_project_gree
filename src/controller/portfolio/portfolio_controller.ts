@@ -17,7 +17,9 @@ export class PortfolioController {
   public addData = async (req: Request, res: Response) => {
     try {
       const { type, title, sub_title, img_url, description } = req.body;
-      const getData = await this.portfolioRepo.findOne({ where: { title: title } });
+      const getData = await this.portfolioRepo.findOne({
+        where: { title: title },
+      });
       if (getData) {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This portfolio"), ResponseCodes.insertError);
       }
@@ -33,7 +35,6 @@ export class PortfolioController {
 
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Portfolio"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   };
@@ -45,12 +46,16 @@ export class PortfolioController {
       const type = req.body.type.toLocaleLowerCase();
 
       const dataId = parseInt(req.params.id);
-      const getData = await this.portfolioRepo.findOne({ where: { id: dataId } });
+      const getData = await this.portfolioRepo.findOne({
+        where: { id: dataId },
+      });
       if (!getData) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This portfolio"), ResponseCodes.searchError);
       }
 
-      const isExist = await this.portfolioRepo.findOne({ where: { type: type, title: title, id: Not(dataId) } });
+      const isExist = await this.portfolioRepo.findOne({
+        where: { type: type, title: title, id: Not(dataId) },
+      });
       if (isExist) {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This portfolio"), ResponseCodes.searchError);
       }
@@ -62,7 +67,6 @@ export class PortfolioController {
       this.portfolioRepo.save(getData);
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Portfolio"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -71,13 +75,15 @@ export class PortfolioController {
   public async getData(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
-      const data = await this.portfolioRepo.findOne({ where: { id: dataId }, select: ["id", "type", "title", "sub_title", "img_url", "description", "creadtedAt"] });
+      const data = await this.portfolioRepo.findOne({
+        where: { id: dataId },
+        select: ["id", "type", "title", "sub_title", "img_url", "description", "createdAt"],
+      });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This portfolio"), ResponseCodes.searchError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Portfolio"), ResponseCodes.success, data);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -124,7 +130,6 @@ export class PortfolioController {
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Portfolio"), ResponseCodes.success, response);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -133,7 +138,9 @@ export class PortfolioController {
   public async removeData(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
-      const getData = await this.portfolioRepo.findOne({ where: { id: dataId } });
+      const getData = await this.portfolioRepo.findOne({
+        where: { id: dataId },
+      });
       if (!getData) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This portfolio"), ResponseCodes.searchError);
       }
@@ -143,7 +150,6 @@ export class PortfolioController {
       }
       return RoutesHandler.sendSuccess(req, res, true, message.DELETE_SUCCESS("Portfolio"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }

@@ -39,21 +39,25 @@ export class AboutUs {
   works_about_img_url: string;
 
   @Column({ nullable: false })
-  total_experience: number;
+  total_experience: string;
 
   @Column({ nullable: false })
-  talented_it_professionals: number;
+  talented_it_professionals: string;
 
   @Column({ nullable: false })
-  successfull_projects: number;
+  successfull_projects: string;
 
   @Column({ nullable: false })
-  served_country: number;
+  served_country: string;
 
   @CreateDateColumn({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP" })
-  creadtedAt: Date;
+  createdAt: Date;
 
-  @UpdateDateColumn({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP", onUpdate: "CURRENT_TIMESTAMP" })
+  @UpdateDateColumn({
+    type: "timestamptz",
+    default: () => "CURRENT_TIMESTAMP",
+    onUpdate: "CURRENT_TIMESTAMP",
+  })
   updatedAt: Date;
 
   @DeleteDateColumn({ default: null, type: "timestamptz" })

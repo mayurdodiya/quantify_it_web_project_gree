@@ -62,15 +62,7 @@ const addCoreServiceValidation = [
 ];
 
 const addSubServiceValidation = [
-  check("core_service_id")
-    .notEmpty()
-    .withMessage("Core service type is required")
-    .custom((value) => {
-      if (typeof value === "string") {
-        throw new Error("Core service type must be a number, not a string");
-      }
-      return true;
-    }),
+  check("core_service_id").notEmpty().withMessage("Core service type is required"),
 
   check("sub_service_data").isArray().withMessage("sub service data must be provided as an array!"),
   check("description").optional().isArray().withMessage("Description must be an array!"),
@@ -173,43 +165,10 @@ const addAboutUsValidation = [
   check("works_about_title").notEmpty().withMessage("works_about_title is required"),
   check("works_about_description").notEmpty().withMessage("works_about_description is required").isArray().withMessage("Description must be an array!"),
   check("works_about_img_url").notEmpty().withMessage("works_about_img_url is required"),
-  check("total_experience")
-    .notEmpty()
-    .withMessage("total_experience is required")
-    .custom((value) => {
-      if (typeof value === "string") {
-        throw new Error("total_experience must be a number, not a string");
-      }
-      return true;
-    }),
-  check("talented_it_professionals")
-    .notEmpty()
-    .withMessage("talented_it_professionals is required")
-    .custom((value) => {
-      if (typeof value === "string") {
-        throw new Error("talented_it_professionals must be a number, not a string");
-      }
-      return true;
-    }),
-  check("successfull_projects")
-    .notEmpty()
-    .withMessage("successfull_projects is required")
-    .custom((value) => {
-      if (typeof value === "string") {
-        throw new Error("successfull_projects must be a number, not a string");
-      }
-      return true;
-    }),
-  check("served_country")
-    .notEmpty()
-    .withMessage("served_country is required")
-    .custom((value) => {
-      if (typeof value === "string") {
-        throw new Error("served_country must be a number, not a string");
-      }
-      return true;
-    }),
-
+  check("total_experience").notEmpty().withMessage("total_experience is required"),
+  check("talented_it_professionals").notEmpty().withMessage("talented_it_professionals is required"),
+  check("successfull_projects").notEmpty().withMessage("successfull_projects is required"),
+  check("served_country").notEmpty().withMessage("served_country is required"),
   (req: Request, res: Response, next: NextFunction) => {
     validationHandler(req, res, next);
   },
@@ -219,39 +178,10 @@ const updateAboutUsValidation = [
   check("our_vision").optional().isArray().withMessage("Our vision must be an array!"),
   check("our_mission").optional().isArray().withMessage("Our mission must be an array!"),
   check("works_about_description").optional().isArray().withMessage("Description must be an array!"),
-  check("total_experience")
-    .optional()
-    .custom((value) => {
-      if (typeof value === "string") {
-        throw new Error("total_experience must be a number, not a string");
-      }
-      return true;
-    }),
-  check("talented_it_professionals")
-    .optional()
-    .custom((value) => {
-      if (typeof value === "string") {
-        throw new Error("talented_it_professionals must be a number, not a string");
-      }
-      return true;
-    }),
-  check("successfull_projects")
-    .optional()
-    .custom((value) => {
-      if (typeof value === "string") {
-        throw new Error("successfull_projects must be a number, not a string");
-      }
-      return true;
-    }),
-  check("served_country")
-    .optional()
-    .custom((value) => {
-      if (typeof value === "string") {
-        throw new Error("served_country must be a number, not a string");
-      }
-      return true;
-    }),
-
+  check("total_experience").optional(),
+  check("talented_it_professionals").optional(),
+  check("successfull_projects").optional(),
+  check("served_country").optional(),
   (req: Request, res: Response, next: NextFunction) => {
     validationHandler(req, res, next);
   },
@@ -297,16 +227,7 @@ const addEmployeeDetailsValidation = [
   check("img_url").notEmpty().withMessage("Img url is required"),
   check("description").notEmpty().withMessage("Description is required").isArray().withMessage("Description must be an array!"),
 
-  check("rating")
-    .notEmpty()
-    .withMessage("Rating is required")
-    .custom((value) => {
-      if (typeof value === "string") {
-        throw new Error("Rating must be a number, not a string");
-      }
-      return true;
-    }),
-
+  check("rating").notEmpty().withMessage("Rating is required"),
   (req: Request, res: Response, next: NextFunction) => {
     validationHandler(req, res, next);
   },
@@ -314,15 +235,7 @@ const addEmployeeDetailsValidation = [
 const updateEmployeeDetailsValidation = [
   check("description").optional().isArray().withMessage("Description must be an array!"),
 
-  check("rating")
-    .optional()
-    .custom((value) => {
-      if (typeof value === "string") {
-        throw new Error("Rating must be a number, not a string");
-      }
-      return true;
-    }),
-
+  check("rating").optional(),
   (req: Request, res: Response, next: NextFunction) => {
     validationHandler(req, res, next);
   },
@@ -342,24 +255,8 @@ const addprovidedServiceValidation = [
   check("business_solutions_description").notEmpty().withMessage("business_solutions_description is required").isArray().withMessage("Description must be an array!"),
   check("business_solutions_img_url").notEmpty().withMessage("business_solutions_img_url is required"),
   check("completed_works").notEmpty().withMessage("completed_works is required"),
-  check("client_ratings")
-    .notEmpty()
-    .withMessage("client_ratings is required")
-    .custom((value) => {
-      if (typeof value === "string") {
-        throw new Error("client_ratings must be a number, not a string!");
-      }
-      return true;
-    }),
-  check("bussiness_reports_percentage")
-    .notEmpty()
-    .withMessage("bussiness_reports_percentage is required")
-    .custom((value) => {
-      if (typeof value === "string") {
-        throw new Error("bussiness_reports_percentage must be a number, not a string!");
-      }
-      return true;
-    }),
+  check("client_ratings").notEmpty().withMessage("client_ratings is required"),
+  check("bussiness_reports_percentage").notEmpty().withMessage("bussiness_reports_percentage is required"),
   (req: Request, res: Response, next: NextFunction) => {
     validationHandler(req, res, next);
   },
@@ -371,22 +268,8 @@ const updateprovidedServiceValidation = [
   check("work_planning_description").optional().isArray().withMessage("work_planning_description must be an array!"),
   check("business_solutions_description").optional().isArray().withMessage("business_solutions_description must be an array!"),
 
-  check("client_ratings")
-    .optional()
-    .custom((value) => {
-      if (typeof value === "string") {
-        throw new Error("client_ratings must be a number, not a string!");
-      }
-      return true;
-    }),
-  check("bussiness_reports_percentage")
-    .optional()
-    .custom((value) => {
-      if (typeof value === "string") {
-        throw new Error("bussiness_reports_percentage must be a number, not a string!");
-      }
-      return true;
-    }),
+  check("client_ratings").optional(),
+  check("bussiness_reports_percentage").optional(),
   (req: Request, res: Response, next: NextFunction) => {
     validationHandler(req, res, next);
   },
@@ -542,4 +425,4 @@ const imgValidation = [
   },
 ];
 
-export { addBannerValidation, addVisionExpertiesValidation, updateVisionExpertiesValidation, addCoreServiceValidation, addSubServiceValidation, updateSubServiceValidation, addTechExpertiesValidation, addPortfolioValidation, updatePortfolioValidation, addTrustedClientsValidation,updateTrustedClientsValidation, addblogValidation, updateblogValidation, addQuestionAnsValidation, addAboutUsValidation, updateAboutUsValidation, addCertificationValidation, updateHowWeWorkValidation, updateCertificationValidation, addHowWeWorkValidation, addEmployeeDetailsValidation, updateEmployeeDetailsValidation, addprovidedServiceValidation, updateprovidedServiceValidation, addfeaturedServicesValidation, updatefeaturedServicesValidation, addOurContactDetailsValidation, updateOurContactDetailsValidation, addMarketingValidation, addContactUsValidation, addPolicyAndTermsValidation, updatePolicyAndTermsValidation, policyAndTermsQueryValidation, portfolioQueryValidation, pageAndSizeQueryValidation, updateBannerValidation, loginValidation,imgValidation };
+export { addBannerValidation, addVisionExpertiesValidation, updateVisionExpertiesValidation, addCoreServiceValidation, addSubServiceValidation, updateSubServiceValidation, addTechExpertiesValidation, addPortfolioValidation, updatePortfolioValidation, addTrustedClientsValidation, updateTrustedClientsValidation, addblogValidation, updateblogValidation, addQuestionAnsValidation, addAboutUsValidation, updateAboutUsValidation, addCertificationValidation, updateHowWeWorkValidation, updateCertificationValidation, addHowWeWorkValidation, addEmployeeDetailsValidation, updateEmployeeDetailsValidation, addprovidedServiceValidation, updateprovidedServiceValidation, addfeaturedServicesValidation, updatefeaturedServicesValidation, addOurContactDetailsValidation, updateOurContactDetailsValidation, addMarketingValidation, addContactUsValidation, addPolicyAndTermsValidation, updatePolicyAndTermsValidation, policyAndTermsQueryValidation, portfolioQueryValidation, pageAndSizeQueryValidation, updateBannerValidation, loginValidation, imgValidation };

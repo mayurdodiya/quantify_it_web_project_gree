@@ -18,7 +18,9 @@ export class FeaturedServicesController {
   public addData = async (req: Request, res: Response) => {
     try {
       const { title, description, logo_img_url } = req.body;
-      const getData = await this.featuredServicesRepo.findOne({ where: { title: title } });
+      const getData = await this.featuredServicesRepo.findOne({
+        where: { title: title },
+      });
       if (getData) {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This featured service"), ResponseCodes.insertError);
       }
@@ -32,7 +34,6 @@ export class FeaturedServicesController {
 
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Featured service"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   };
@@ -43,12 +44,16 @@ export class FeaturedServicesController {
       const { title, description, logo_img_url } = req.body;
 
       const dataId = parseInt(req.params.id);
-      const getData = await this.featuredServicesRepo.findOne({ where: { id: dataId } });
+      const getData = await this.featuredServicesRepo.findOne({
+        where: { id: dataId },
+      });
       if (!getData) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This featured service"), ResponseCodes.searchError);
       }
 
-      const isExist = await this.featuredServicesRepo.findOne({ where: { title: title, id: Not(dataId) } });
+      const isExist = await this.featuredServicesRepo.findOne({
+        where: { title: title, id: Not(dataId) },
+      });
       if (isExist) {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This featured service"), ResponseCodes.searchError);
       }
@@ -59,7 +64,6 @@ export class FeaturedServicesController {
       this.featuredServicesRepo.save(getData);
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Featured service"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -68,13 +72,15 @@ export class FeaturedServicesController {
   public async getData(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
-      const data = await this.featuredServicesRepo.findOne({ where: { id: dataId, status: Status.ACTIVE }, select: ["id", "title", "description", "logo_img_url", "creadtedAt"] });
+      const data = await this.featuredServicesRepo.findOne({
+        where: { id: dataId, status: Status.ACTIVE },
+        select: ["id", "title", "description", "logo_img_url", "createdAt"],
+      });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This featured service"), ResponseCodes.searchError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Featured service"), ResponseCodes.success, data);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -82,13 +88,15 @@ export class FeaturedServicesController {
   // get all data
   public async getAllData(req: Request, res: Response) {
     try {
-      const data = await this.featuredServicesRepo.find({ where: { status: Status.ACTIVE }, select: ["id", "title", "description", "logo_img_url", "creadtedAt", "updatedAt"] });
+      const data = await this.featuredServicesRepo.find({
+        where: { status: Status.ACTIVE },
+        select: ["id", "title", "description", "logo_img_url", "createdAt", "updatedAt"],
+      });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This featured service"), ResponseCodes.searchError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Featured service"), ResponseCodes.success, data);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -97,7 +105,9 @@ export class FeaturedServicesController {
   public async removeData(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
-      const getData = await this.featuredServicesRepo.findOne({ where: { id: dataId } });
+      const getData = await this.featuredServicesRepo.findOne({
+        where: { id: dataId },
+      });
       if (!getData) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This featured service"), ResponseCodes.searchError);
       }
@@ -107,7 +117,6 @@ export class FeaturedServicesController {
       }
       return RoutesHandler.sendSuccess(req, res, true, message.DELETE_SUCCESS("Featured service"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }

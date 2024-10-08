@@ -17,7 +17,9 @@ export class BannerController {
   public async createBanner(req: Request, res: Response) {
     try {
       const { banner_name, pc_img_url, mobile_img_url, title, description } = req.body;
-      const findBanner = await this.bannerRepo.findOne({ where: { banner_name: banner_name } });
+      const findBanner = await this.bannerRepo.findOne({
+        where: { banner_name: banner_name },
+      });
 
       if (findBanner) {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("Banner name"), ResponseCodes.insertError);
@@ -33,7 +35,6 @@ export class BannerController {
       const savedBanner = await this.bannerRepo.save(banner);
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Banner"), ResponseCodes.success, savedBanner);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -57,7 +58,6 @@ export class BannerController {
       this.bannerRepo.save(banner);
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Banner"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -72,7 +72,6 @@ export class BannerController {
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Banner"), ResponseCodes.success, banner);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -87,7 +86,6 @@ export class BannerController {
       }
       return RoutesHandler.sendSuccess(req, res, true, message.DELETE_SUCCESS("Banner"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }

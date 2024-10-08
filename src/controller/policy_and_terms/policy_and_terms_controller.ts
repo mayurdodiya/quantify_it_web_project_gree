@@ -18,7 +18,9 @@ export class PolicyAndTermsController {
   public addData = async (req: Request, res: Response) => {
     try {
       const { document_type, subject, explanation } = req.body;
-      const getData = await this.policyAndTermsRepo.findOne({ where: { subject: subject, document_type: document_type } });
+      const getData = await this.policyAndTermsRepo.findOne({
+        where: { subject: subject, document_type: document_type },
+      });
       if (getData) {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This data"), ResponseCodes.insertError);
       }
@@ -32,7 +34,6 @@ export class PolicyAndTermsController {
 
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Data"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   };
@@ -44,12 +45,20 @@ export class PolicyAndTermsController {
       const document_type = req.body.document_type.toLocaleLowerCase();
 
       const dataId = parseInt(req.params.id);
-      const getData = await this.policyAndTermsRepo.findOne({ where: { id: dataId, document_type: document_type } });
+      const getData = await this.policyAndTermsRepo.findOne({
+        where: { id: dataId, document_type: document_type },
+      });
       if (!getData) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This data"), ResponseCodes.searchError);
       }
 
-      const isExist = await this.policyAndTermsRepo.findOne({ where: { document_type: document_type, subject: subject, id: Not(dataId) } });
+      const isExist = await this.policyAndTermsRepo.findOne({
+        where: {
+          document_type: document_type,
+          subject: subject,
+          id: Not(dataId),
+        },
+      });
       if (isExist) {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This data"), ResponseCodes.searchError);
       }
@@ -60,7 +69,6 @@ export class PolicyAndTermsController {
       this.policyAndTermsRepo.save(getData);
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Data"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -71,14 +79,16 @@ export class PolicyAndTermsController {
       const dataId = parseInt(req.params.id);
       const docType = req.query.document_type;
 
-      const data = await this.policyAndTermsRepo.findOne({ where: { id: dataId, status: Status.ACTIVE }, select: ["id", "document_type", "subject", "explanation", "creadtedAt"] });
+      const data = await this.policyAndTermsRepo.findOne({
+        where: { id: dataId, status: Status.ACTIVE },
+        select: ["id", "document_type", "subject", "explanation", "createdAt"],
+      });
 
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA(`This data`), ResponseCodes.searchError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("The requested"), ResponseCodes.success, data);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -89,19 +99,24 @@ export class PolicyAndTermsController {
       const docTypeString = req.query.document_type as string;
       const docType = Number(docTypeString);
 
-      var query = { document_type: DocumentType.PRIVACY_POLICY, status: Status.ACTIVE };
+      var query = {
+        document_type: DocumentType.PRIVACY_POLICY,
+        status: Status.ACTIVE,
+      };
 
       if (docType === DocumentType.TERMS_CONDITION) {
         query.document_type = DocumentType.TERMS_CONDITION;
       }
 
-      const data = await this.policyAndTermsRepo.find({ where: query, select: ["id", "document_type", "subject", "explanation", "creadtedAt", "updatedAt"] });
+      const data = await this.policyAndTermsRepo.find({
+        where: query,
+        select: ["id", "document_type", "subject", "explanation", "createdAt", "updatedAt"],
+      });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA(`This data`), ResponseCodes.searchError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("The requested"), ResponseCodes.success, data);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -111,7 +126,9 @@ export class PolicyAndTermsController {
     try {
       const dataId = parseInt(req.params.id);
 
-      const getData = await this.policyAndTermsRepo.findOne({ where: { id: dataId } });
+      const getData = await this.policyAndTermsRepo.findOne({
+        where: { id: dataId },
+      });
       if (!getData) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA(`This data`), ResponseCodes.searchError);
       }
@@ -121,7 +138,6 @@ export class PolicyAndTermsController {
       }
       return RoutesHandler.sendSuccess(req, res, true, message.DELETE_SUCCESS("Datas"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }

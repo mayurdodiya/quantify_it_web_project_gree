@@ -21,9 +21,7 @@ export class ChatBoatController {
       chatBoatMessage.receiver_id = receiverId;
       chatBoatMessage.message = message;
       const dataAdd = await this.chatBoatRepo.save(chatBoatMessage);
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   }
 
   // get all chat by user id
@@ -32,13 +30,16 @@ export class ChatBoatController {
       const userId = req.params.id; // userId
       const chatId = req.params.id; // chatId and userId are same
 
-      const getChat = await this.chatBoatRepo.find({ where: { chat_id: chatId }, order: { creadtedAt: "ASC" }, select: ["id", "chat_id", "message", "sender_id", "receiver_id", "creadtedAt"] });
+      const getChat = await this.chatBoatRepo.find({
+        where: { chat_id: chatId },
+        order: { createdAt: "ASC" },
+        select: ["id", "chat_id", "message", "sender_id", "receiver_id", "createdAt"],
+      });
       if (getChat.length == 0) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This user chat"), ResponseCodes.serverError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA(`User chat`), ResponseCodes.success, getChat);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -57,7 +58,7 @@ export class ChatBoatController {
               'sender_id', chat_boat.sender_id,
               'receiver_id', chat_boat.receiver_id,
               'message', chat_boat.message,
-              'creadtedAt', chat_boat."creadtedAt"  -- Using double quotes for case sensitivity
+              'createdAt', chat_boat."createdAt"  -- Using double quotes for case sensitivity
           )
       ) AS messages
   FROM 
@@ -65,7 +66,7 @@ export class ChatBoatController {
   GROUP BY 
       chat_boat.chat_id
   ORDER BY 
-      MIN(chat_boat."creadtedAt") ASC;  -- Using double quotes for case sensitivity
+      MIN(chat_boat."createdAt") ASC;  -- Using double quotes for case sensitivity
 `);
 
       if (getChat.length == 0) {
@@ -73,7 +74,6 @@ export class ChatBoatController {
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA(`User chat`), ResponseCodes.success, getChat);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -91,8 +91,6 @@ export class ChatBoatController {
 
       const addReplay = await this.chatBoatRepo.save(chatBoatMessage);
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS(`User chat replay`), ResponseCodes.success, undefined);
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   }
 }

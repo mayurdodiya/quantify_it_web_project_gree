@@ -49,19 +49,23 @@ export class ProvidedService {
   @Column({ nullable: false })
   completed_works: string;
 
-  @Column({ type: "float", nullable: false })
-  client_ratings: number;
+  @Column({ nullable: false })
+  client_ratings: string;
 
-  @Column({ type: "float", nullable: false })
-  bussiness_reports_percentage: number;
+  @Column({ nullable: false })
+  bussiness_reports_percentage: string;
 
   @Column({ default: Status.ACTIVE })
   status: Status;
 
   @CreateDateColumn({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP" })
-  creadtedAt: Date;
+  createdAt: Date;
 
-  @UpdateDateColumn({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP", onUpdate: "CURRENT_TIMESTAMP" })
+  @UpdateDateColumn({
+    type: "timestamptz",
+    default: () => "CURRENT_TIMESTAMP",
+    onUpdate: "CURRENT_TIMESTAMP",
+  })
   updatedAt: Date;
 
   @DeleteDateColumn({ default: null, type: "timestamptz" })

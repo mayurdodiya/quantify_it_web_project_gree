@@ -18,7 +18,9 @@ export class TrustedClientsController {
   public addData = async (req: Request, res: Response) => {
     try {
       const { client_name, his_profession, img_url, description } = req.body;
-      const getData = await this.trustedClientsRepo.findOne({ where: { client_name: client_name } });
+      const getData = await this.trustedClientsRepo.findOne({
+        where: { client_name: client_name },
+      });
       if (getData) {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This client"), ResponseCodes.insertError);
       }
@@ -33,7 +35,6 @@ export class TrustedClientsController {
 
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Client"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   };
@@ -44,11 +45,15 @@ export class TrustedClientsController {
       const { client_name, his_profession, img_url, description } = req.body;
 
       const dataId = parseInt(req.params.id);
-      const getData = await this.trustedClientsRepo.findOne({ where: { id: dataId } });
+      const getData = await this.trustedClientsRepo.findOne({
+        where: { id: dataId },
+      });
       if (!getData) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This client"), ResponseCodes.searchError);
       }
-      const isExist = await this.trustedClientsRepo.findOne({ where: { client_name: client_name, id: Not(dataId) } });
+      const isExist = await this.trustedClientsRepo.findOne({
+        where: { client_name: client_name, id: Not(dataId) },
+      });
       if (isExist) {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This client"), ResponseCodes.searchError);
       }
@@ -59,7 +64,6 @@ export class TrustedClientsController {
       this.trustedClientsRepo.save(getData);
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Client"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -68,13 +72,15 @@ export class TrustedClientsController {
   public async getData(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
-      const data = await this.trustedClientsRepo.findOne({ where: { id: dataId, status: Status.ACTIVE }, select: ["id", "client_name", "his_profession", "img_url", "description", "creadtedAt"] });
+      const data = await this.trustedClientsRepo.findOne({
+        where: { id: dataId, status: Status.ACTIVE },
+        select: ["id", "client_name", "his_profession", "img_url", "description", "createdAt"],
+      });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This client"), ResponseCodes.searchError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Client"), ResponseCodes.success, data);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -87,7 +93,12 @@ export class TrustedClientsController {
       var sizeData: number = parseInt(size as string, 10);
 
       const skipData: number = pageData * sizeData;
-      const [data, totalItems] = await this.trustedClientsRepo.findAndCount({ where: { status: Status.ACTIVE }, select: ["id", "client_name", "his_profession", "img_url", "description", "creadtedAt", "creadtedAt"], skip: skipData, take: sizeData });
+      const [data, totalItems] = await this.trustedClientsRepo.findAndCount({
+        where: { status: Status.ACTIVE },
+        select: ["id", "client_name", "his_profession", "img_url", "description", "createdAt", "createdAt"],
+        skip: skipData,
+        take: sizeData,
+      });
       const response = {
         totalItems: totalItems,
         totalPages: Math.ceil(totalItems / sizeData),
@@ -100,7 +111,6 @@ export class TrustedClientsController {
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Client"), ResponseCodes.success, response);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -109,7 +119,9 @@ export class TrustedClientsController {
   public async removeData(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
-      const getData = await this.trustedClientsRepo.findOne({ where: { id: dataId } });
+      const getData = await this.trustedClientsRepo.findOne({
+        where: { id: dataId },
+      });
       if (!getData) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This client"), ResponseCodes.searchError);
       }
@@ -119,7 +131,6 @@ export class TrustedClientsController {
       }
       return RoutesHandler.sendSuccess(req, res, true, message.DELETE_SUCCESS("Client"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }

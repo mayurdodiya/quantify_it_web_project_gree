@@ -20,12 +20,16 @@ export class SubServicesController {
   public addData = async (req: Request, res: Response) => {
     try {
       const { sub_service_name, core_service_id } = req.body;
-      const getData = await this.subServicesRepo.findOne({ where: { sub_service_name: sub_service_name } });
+      const getData = await this.subServicesRepo.findOne({
+        where: { sub_service_name: sub_service_name },
+      });
       if (getData) {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This sub services"), ResponseCodes.insertError);
       }
 
-      const coreServ = await this.coreServicesRepo.findOne({ where: { id: core_service_id } });
+      const coreServ = await this.coreServicesRepo.findOne({
+        where: { id: core_service_id },
+      });
       if (!coreServ) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This core service"), ResponseCodes.serverError);
       }
@@ -46,7 +50,6 @@ export class SubServicesController {
 
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Sub services"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   };
@@ -56,11 +59,15 @@ export class SubServicesController {
     try {
       const { sub_service_name, description_title, description, img_logo_url } = req.body;
       const dataId = parseInt(req.params.id);
-      const getData = await this.subServicesRepo.findOne({ where: { id: dataId } });
+      const getData = await this.subServicesRepo.findOne({
+        where: { id: dataId },
+      });
       if (!getData) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This sub services"), ResponseCodes.searchError);
       }
-      const isExist = await this.subServicesRepo.findOne({ where: { sub_service_name: sub_service_name, id: Not(dataId) } });
+      const isExist = await this.subServicesRepo.findOne({
+        where: { sub_service_name: sub_service_name, id: Not(dataId) },
+      });
       if (isExist) {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This sub services data"), ResponseCodes.searchError);
       }
@@ -70,7 +77,6 @@ export class SubServicesController {
       this.subServicesRepo.save(getData);
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Sub services"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -79,13 +85,15 @@ export class SubServicesController {
   public async getData(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
-      const data = await this.subServicesRepo.findOne({ where: { id: dataId }, select: ["id", "core_service_id", "sub_service_name", "description_title", "description"] });
+      const data = await this.subServicesRepo.findOne({
+        where: { id: dataId },
+        select: ["id", "core_service_id", "sub_service_name", "description_title", "description"],
+      });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This sub services"), ResponseCodes.searchError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Sub services"), ResponseCodes.success, data);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -93,13 +101,14 @@ export class SubServicesController {
   // get all data
   public async getAllData(req: Request, res: Response) {
     try {
-      const data = await this.subServicesRepo.find({ select: ["id", "core_service_id", "sub_service_name", "description_title", "description", "updatedAt"] });
+      const data = await this.subServicesRepo.find({
+        select: ["id", "core_service_id", "sub_service_name", "description_title", "description", "updatedAt"],
+      });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This sub services"), ResponseCodes.searchError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Sub services"), ResponseCodes.success, data);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
@@ -108,14 +117,15 @@ export class SubServicesController {
   public async removeData(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
-      const data = await this.subServicesRepo.findOne({ where: { id: dataId } });
+      const data = await this.subServicesRepo.findOne({
+        where: { id: dataId },
+      });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This sub services"), ResponseCodes.searchError);
       }
       const removeData = await this.subServicesRepo.softDelete({ id: dataId });
       return RoutesHandler.sendSuccess(req, res, true, message.DELETE_SUCCESS("Sub services"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
