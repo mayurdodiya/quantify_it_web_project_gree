@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import "reflect-metadata";
 import { User } from "../entities/user.entity";
-import { AboutUsControllerService, UserService } from "../utils/admin";
+import { AboutUsService, TokenService, UserService } from "../utils/admin";
 import { Banner } from "../entities/banner.entity";
 import { VisionExperties } from "../entities/vision_experties.entity";
 import { CoreServices } from "../entities/core_services.entity";
@@ -24,6 +24,8 @@ import { Marketing } from "../entities/marketing.entity";
 import { ContactUs } from "../entities/contact_us.entity";
 import { PolicyAndTerms } from "../entities/policy_and_terms.entity";
 import { ChatBoat } from "../entities/chat_boat.entity";
+import { Token } from "../entities/token.entity";
+import { DataCleanupScheduler } from "../utils/crone";
 
 const host = process.env.HOST;
 const database_port = parseInt(process.env.DATABASE_PORT);
@@ -40,7 +42,7 @@ export const AppDataSource = new DataSource({
   database: database,
   synchronize: true,
   logging: false,
-  entities: [Banner, User, VisionExperties, CoreServices, SubServices, TechnologicalExperties, Portfolio, TrustedClients, Blog, QuestionAns, AboutUs, CertificationDetails, HowWeWork, EmployeeDetails, ProvidedService, FeaturedServices, OurContactDetails, Marketing, ContactUs, PolicyAndTerms, ChatBoat],
+  entities: [Banner, User, VisionExperties, CoreServices, SubServices, TechnologicalExperties, Portfolio, TrustedClients, Blog, QuestionAns, AboutUs, CertificationDetails, HowWeWork, EmployeeDetails, ProvidedService, FeaturedServices, OurContactDetails, Marketing, ContactUs, PolicyAndTerms, ChatBoat, Token],
 });
 
 (async () => {
@@ -49,8 +51,12 @@ export const AppDataSource = new DataSource({
     console.log("Database Connected successfully!");
     const userService = new UserService(AppDataSource);
     await userService.createAdmin();
-    const addAboutUs = new AboutUsControllerService(AppDataSource);
+    const addAboutUs = new AboutUsService(AppDataSource);
     addAboutUs.createAboutsUsPage();
+    const addToken = new TokenService(AppDataSource);
+    addToken.createToken();
+    const dataCleanupScheduler = new DataCleanupScheduler();
+    dataCleanupScheduler.start();
   } catch (error) {
     console.error("Error during Data Source initialization", error);
   }

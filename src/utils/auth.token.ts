@@ -4,6 +4,8 @@ import { Role } from "./enum";
 import { RoutesHandler } from "./error_handler";
 import { message } from "./messages";
 import { ResponseCodes } from "./response-codes";
+import { Token } from "../entities/token.entity";
+import { AppDataSource } from "../config/database.config";
 
 export const generateToken = (id: string, role: number) => {
   try {
@@ -14,7 +16,6 @@ export const generateToken = (id: string, role: number) => {
     return token;
   } catch (error) {
     console.log("token not generated ", error.message);
-    return false;
   }
 };
 
@@ -22,15 +23,21 @@ export const generateToken = (id: string, role: number) => {
 export const verifyAdminToken = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = req.headers["x-access-token"] as string;
+    const token2 = req.headers["authorization"] as string;
 
-    if (!token) {
+    if (!token || !token2) {
       return RoutesHandler.sendError(req, res, false, message.NO_TOKEN, ResponseCodes.TokenError);
     }
 
     const sKey = process.env.TOKEN_SECRETE_KEY as string;
     const decoded = jwt.verify(token, sKey) as JwtPayload;
 
-    if (decoded.role !== Role.ADMIN) {
+    const token_2 = token2?.split(" ")[1];
+
+    const tokenRepo = AppDataSource.getRepository(Token);
+    const tokenData = await tokenRepo.findOne({ where: { token: token_2 } });
+
+    if (decoded.role !== Role.ADMIN || !tokenData) {
       return RoutesHandler.sendError(req, res, false, message.BAD_REQUEST, ResponseCodes.TokenError);
     }
     return next();

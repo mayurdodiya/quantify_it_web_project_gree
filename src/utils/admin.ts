@@ -5,6 +5,8 @@ import { bcryptpassword } from "./bcrypt";
 import { Role, Status } from "./enum";
 import { message } from "./messages";
 import { AboutUs } from "../entities/about_us.entity";
+import { Token } from "../entities/token.entity";
+import { generateToken } from "./auth.token";
 
 export class UserService {
   private userRepository: Repository<User>;
@@ -53,7 +55,7 @@ export class UserService {
   }
 }
 
-export class AboutUsControllerService {
+export class AboutUsService {
   private aboutUsRepo: Repository<AboutUs>;
 
   constructor(private AppDataSource: DataSource) {
@@ -106,6 +108,40 @@ export class AboutUsControllerService {
         })
         .catch((err) => {
           console.log("Error saving aboutus page:", err);
+        });
+    } catch (error) {
+      console.log("Error:", error);
+    }
+  }
+}
+
+export class TokenService {
+  private tokenRepo: Repository<Token>;
+
+  constructor(private AppDataSource: DataSource) {
+    this.tokenRepo = AppDataSource.getRepository(Token);
+  }
+
+  public async createToken(): Promise<void> {
+    try {
+      const oldData = await this.tokenRepo.find({});
+      if (oldData.length) {
+        return console.log("Token alreardy exist!");
+      }
+
+      const token = generateToken(process.env.TOKEN_SECRETE_KEY_2, Role.ADMIN);
+
+      const tokenData = await this.tokenRepo.create({
+        token: token,
+      });
+
+      await this.tokenRepo
+        .save(tokenData)
+        .then(() => {
+          console.log(message.CREATE_SUCCESS("Token"));
+        })
+        .catch((err) => {
+          console.log("Error saving token:", err);
         });
     } catch (error) {
       console.log("Error:", error);

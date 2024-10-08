@@ -20,6 +20,7 @@ import contactUsRoute from "./contact_us.route";
 import termsAndConditionRoute from "./policy_and_terms.route";
 import adminRoute from "./admin.route";
 import chatBoatRoute from "./chat_boat.route";
+import tokenRoute from "./token.route";
 
 const Routes = express.Router();
 
@@ -44,5 +45,6 @@ Routes.use("/marketing", marketingRoute);
 Routes.use("/contactus", contactUsRoute);
 Routes.use("/termscondition", termsAndConditionRoute);
 Routes.use("/chat", chatBoatRoute);
+Routes.use("/token", tokenRoute);
 
 export default Routes;
