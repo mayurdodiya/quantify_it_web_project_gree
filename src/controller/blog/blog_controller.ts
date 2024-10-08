@@ -1,11 +1,10 @@
-import { FindOneOptions, FindOperator, ILike, Like, Not, Or, Repository } from "typeorm";
+import { FindOperator, ILike, Not, Repository } from "typeorm";
 import { AppDataSource } from "../../config/database.config";
 import { RoutesHandler } from "../../utils/ErrorHandler";
 import { ResponseCodes } from "../../utils/response-codes";
 import { Request, Response } from "express";
 import { message } from "../../utils/messages";
 import { Blog } from "../../entities/blog.entity";
-import { commonService } from "../../services/common.service";
 import { Status } from "../../utils/enum";
 
 export class BlogController {

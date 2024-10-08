@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from "express";
-import { check, param, query, validationResult } from "express-validator";
-import { isOptionalChain } from "typescript";
+import { check, query, validationResult } from "express-validator";
 
 // return validation error
 const validationHandler = (req: Request, res: Response, next: NextFunction) => {
-  const errorFormatter: any = ({ location, msg, param, value, nestedErrors }) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const errorFormatter: any = ({ msg }) => {
     return `${msg}`;
   };
 

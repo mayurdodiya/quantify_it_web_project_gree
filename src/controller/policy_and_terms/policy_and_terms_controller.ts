@@ -77,7 +77,6 @@ export class PolicyAndTermsController {
   public async getData(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
-      const docType = req.query.document_type;
 
       const data = await this.policyAndTermsRepo.findOne({
         where: { id: dataId, status: Status.ACTIVE },

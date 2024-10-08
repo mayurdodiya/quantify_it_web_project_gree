@@ -7,9 +7,7 @@ import { message } from "../../utils/messages";
 import { ResponseCodes } from "../../utils/response-codes";
 import { comparepassword } from "../../utils/bcrypt";
 import { generateToken } from "../../utils/auth.token";
-import { imageUpload } from "../../services/file_upload";
-import { Role, Status } from "../../utils/enum";
-import path from "path";
+import {  Status } from "../../utils/enum";
 
 export class AdminController {
   private userRepo: Repository<User>;
@@ -21,26 +19,31 @@ export class AdminController {
   // login admin
   public async loginAdmin(req: Request, res: Response) {
     try {
-      const { password, email } = req.body;
+      const { email, password } = req.body;
+
       const getAdmin = await this.userRepo.findOne({
         where: { email: email, status: Status.ACTIVE },
       });
+
       if (!getAdmin) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This email"), ResponseCodes.loginError);
       }
 
       const hashPwd = getAdmin.password;
       const adminId = getAdmin.id;
+
       const pwdCompair = await comparepassword(password, hashPwd);
+
       if (pwdCompair === false) {
         return RoutesHandler.sendError(req, res, false, message.NOT_MATCH("Password"), ResponseCodes.loginError);
       }
-      const token = generateToken(adminId, Role.ADMIN);
+      const token = generateToken(adminId, getAdmin.role);
+
       if (!token) {
         return RoutesHandler.sendError(req, res, false, message.NOT_GENERATE("Token"), ResponseCodes.loginError);
       }
 
-      return RoutesHandler.sendSuccess(req, res, true, message.LOGIN_SUCCESS(""), ResponseCodes.success, token);
+      return RoutesHandler.sendSuccess(req, res, true, message.LOGIN_SUCCESS, ResponseCodes.success, token);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
@@ -49,15 +52,13 @@ export class AdminController {
   // upload image
   public async uploadImage(req: Request, res: Response) {
     try {
-      if(!req.file)
-      {
-        return RoutesHandler.sendError(req, res, false, message.UPLOAD_IMG("!"), ResponseCodes.insertError);
+      if (!req.file) {
+        return RoutesHandler.sendError(req, res, false, message.UPLOAD_IMG, ResponseCodes.insertError);
       }
       const filePath = req.file.path;
       const pathJoin = process.env.LOCAL_URL + filePath;
       console.log(pathJoin, "------------------------------------");
 
-      req.file;
       return RoutesHandler.sendSuccess(req, res, true, message.UPLOAD_SUCCESS("Image"), ResponseCodes.success, pathJoin);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);

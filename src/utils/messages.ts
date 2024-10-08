@@ -18,16 +18,15 @@ const message = {
   NOT_MATCH: (str: string) => `${str} not match!`,
   NOT_GENERATE: (str: string) => `${str} not generated!`,
 
-  LOGIN_SUCCESS: (str: string) => `Welcome back, You have successfully logged in!`,
+  LOGIN_SUCCESS: `Welcome back, You have successfully logged in!`,
 
-  NO_TOKEN: (str: string) => `No token provided!`,
-  BAD_REQUEST: (str: string) => `Unauthorized!`,
-  TOKEN_EXPIRED: (str: string) => `Unauthorized! Access Token was expired!`,
-  
+  NO_TOKEN: `No token provided!`,
+  BAD_REQUEST: `Unauthorized!`,
+  TOKEN_EXPIRED: `Unauthorized! Access Token was expired!`,
+
   UPLOAD_SUCCESS: (str: string) => `${str} upload successfully!`,
-  
-  UPLOAD_IMG: (str: string) => `Please upload a Image`,
-  
+
+  UPLOAD_IMG: `Please upload a Image`,
 };
 
 export { message };

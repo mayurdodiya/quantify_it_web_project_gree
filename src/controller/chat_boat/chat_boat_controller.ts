@@ -20,14 +20,15 @@ export class ChatBoatController {
       chatBoatMessage.sender_id = senderId;
       chatBoatMessage.receiver_id = receiverId;
       chatBoatMessage.message = message;
-      const dataAdd = await this.chatBoatRepo.save(chatBoatMessage);
-    } catch (error) {}
+      await this.chatBoatRepo.save(chatBoatMessage);
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   // get all chat by user id
   public async getUserChatById(req: Request, res: Response) {
     try {
-      const userId = req.params.id; // userId
       const chatId = req.params.id; // chatId and userId are same
 
       const getChat = await this.chatBoatRepo.find({
@@ -47,8 +48,8 @@ export class ChatBoatController {
   // get user chat
   public async getAllUserChat(req: Request, res: Response) {
     try {
-      const userId = req.params.id; // userId
-      const chatId = req.params.id; // chatId and userId are same
+      // const userId = req.params.id; // userId
+      // const chatId = req.params.id; // chatId and userId are same
 
       const getChat = await this.chatBoatRepo.query(`
   SELECT 
@@ -89,8 +90,10 @@ export class ChatBoatController {
       chatBoatMessage.receiver_id = user_id;
       chatBoatMessage.message = msg;
 
-      const addReplay = await this.chatBoatRepo.save(chatBoatMessage);
+      await this.chatBoatRepo.save(chatBoatMessage);
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS(`User chat replay`), ResponseCodes.success, undefined);
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   }
 }

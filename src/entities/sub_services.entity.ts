@@ -38,7 +38,7 @@ export class SubServices {
   deletedAt: Date;
 
   // relation
-  @ManyToOne((type) => CoreServices, (core_service) => core_service.all_sub_servise)
+  @ManyToOne(() => CoreServices, (core_service) => core_service.all_sub_servise)
   @JoinColumn({ name: "core_service_id" })
   core_service: CoreServices;
 }

@@ -12,9 +12,13 @@ export class UserService {
     this.userRepository = this.AppDataSource.getRepository(User);
   }
 
-  public async createAdmin(data: any): Promise<void> {
+  public async createAdmin(): Promise<void> {
     try {
-      const { first_name = process.env.ADMIN_FIRST_NAME, last_name = process.env.ADMIN_LAST_NAME, password = process.env.ADMIN_PASSWORD, email = process.env.ADMIN_EMAIL, phone_no = process.env.ADMIN_PHONE_NO } = data;
+      const first_name = process.env.ADMIN_FIRST_NAME;
+      const last_name = process.env.ADMIN_LAST_NAME;
+      const password = process.env.ADMIN_PASSWORD;
+      const email = process.env.ADMIN_EMAIL;
+      const phone_no = process.env.ADMIN_PHONE_NO;
 
       const oldAdmin = await this.userRepository.findOne({ where: { email: email, status: Status.ACTIVE, role: Role.ADMIN } });
 

@@ -7,6 +7,13 @@ import { Request, Response } from "express";
 import { message } from "../../utils/messages";
 import { SubServices } from "../../entities/sub_services.entity";
 
+interface SubServicesItem {
+  sub_service_name: string;
+  description_title: string;
+  description: string;
+}
+
+
 export class SubServicesController {
   private subServicesRepo: Repository<SubServices>;
   private coreServicesRepo: Repository<CoreServices>;
@@ -27,15 +34,12 @@ export class SubServicesController {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This sub services"), ResponseCodes.insertError);
       }
 
-      const coreServ = await this.coreServicesRepo.findOne({
-        where: { id: core_service_id },
-      });
+      const coreServ:CoreServices = await this.coreServicesRepo.findOne({ where: { id: core_service_id } });
       if (!coreServ) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This core service"), ResponseCodes.serverError);
       }
 
-      let data: any;
-      const subServiceDataPromises = req.body.sub_service_data.map((item: any) => {
+      const subServiceDataPromises = req.body.sub_service_data.map((item: SubServicesItem) => {
         const createdData = this.subServicesRepo.create({
           core_service: coreServ,
           sub_service_name: item.sub_service_name,
@@ -44,7 +48,7 @@ export class SubServicesController {
         });
         return createdData;
       });
-      data = await Promise.all(subServiceDataPromises);
+      const data: SubServicesItem[] = await Promise.all(subServiceDataPromises);
 
       await this.subServicesRepo.save(data);
 
@@ -74,6 +78,7 @@ export class SubServicesController {
       getData.sub_service_name = sub_service_name;
       getData.description_title = description_title;
       getData.description = description;
+      getData.img_logo_url = img_logo_url;
       this.subServicesRepo.save(getData);
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Sub services"), ResponseCodes.success, undefined);
     } catch (error) {
@@ -123,7 +128,7 @@ export class SubServicesController {
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This sub services"), ResponseCodes.notFound);
       }
-      const removeData = await this.subServicesRepo.softDelete({ id: dataId });
+      await this.subServicesRepo.softDelete({ id: dataId });
       return RoutesHandler.sendSuccess(req, res, true, message.DELETE_SUCCESS("Sub services"), ResponseCodes.success, undefined);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);

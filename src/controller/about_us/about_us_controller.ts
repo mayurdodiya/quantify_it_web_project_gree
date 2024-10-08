@@ -39,9 +39,16 @@ export class AboutUsController {
       aboutUsData.talented_it_professionals = talented_it_professionals;
       aboutUsData.successfull_projects = successfull_projects;
       aboutUsData.served_country = served_country;
-      await this.aboutUsRepo.save(aboutUsData);
 
-      return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("About us"), ResponseCodes.success, undefined);
+      await this.aboutUsRepo
+        .save(aboutUsData)
+        .then(() => {
+          return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Data successfully created"), ResponseCodes.success, undefined);
+        })
+        .catch((err) => {
+          console.log(err);          
+          return RoutesHandler.sendError(req, res, false, message.ADD_ONCE("Data not created."), ResponseCodes.insertError);
+        });
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
@@ -52,7 +59,6 @@ export class AboutUsController {
     try {
       const { title, description, who_we_are_img_url_1, who_we_are_img_url_2, our_vision, our_mission, vision_mission_img_url, works_about_title, works_about_description, works_about_img_url, total_experience, talented_it_professionals, successfull_projects, served_country } = req.body;
 
-      // const dataId = parseInt(req.params.id);
       const getData = await this.aboutUsRepo.findOne({ where: { id: 1 } });
       if (!getData) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("About us page"), ResponseCodes.notFound);
@@ -82,12 +88,15 @@ export class AboutUsController {
   // get data
   public async getData(req: Request, res: Response) {
     try {
-      // const dataId = parseInt(req.params.id);
+      
       const data = await this.aboutUsRepo.findOne({ where: { id: 1 }, select: ["id", "title", "description", "who_we_are_img_url_1", "who_we_are_img_url_2", "our_vision", "our_mission", "vision_mission_img_url", "works_about_title", "works_about_description", "works_about_img_url", "total_experience", "talented_it_professionals", "successfull_projects", "served_country", "createdAt", "updatedAt"] });
+      
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("About us"), ResponseCodes.notFound);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("About us"), ResponseCodes.searchError);
+      }else {
+        return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("About us"), ResponseCodes.success, data);
       }
-      return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("About us"), ResponseCodes.success, data);
+      
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }

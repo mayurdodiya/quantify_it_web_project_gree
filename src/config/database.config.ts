@@ -48,7 +48,7 @@ export const AppDataSource = new DataSource({
     await AppDataSource.initialize();
     console.log("Database Connected successfully!");
     const userService = new UserService(AppDataSource);
-    await userService.createAdmin({});
+    await userService.createAdmin();
   } catch (error) {
     console.error("Error during Data Source initialization", error);
   }

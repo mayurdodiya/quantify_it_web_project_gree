@@ -25,6 +25,6 @@ export class CoreServices {
   deletedAt: Date;
 
   // relation
-  @OneToMany((type) => SubServices, (sub_services) => sub_services.core_service)
+  @OneToMany(() => SubServices, (sub_services) => sub_services.core_service)
   all_sub_servise: SubServices[];
 }
