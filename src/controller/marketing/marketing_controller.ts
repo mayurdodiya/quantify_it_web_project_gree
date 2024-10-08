@@ -14,7 +14,7 @@ export class MarketingController {
   }
 
   // add data
-  public addData = async (req: Request, res: Response) => {
+  public addMarketing = async (req: Request, res: Response) => {
     try {
       const { marketing_type, referred_by, business_stage, full_name, email, location, company_name, user_message } = req.body;
       const marketing = new Marketing();
@@ -36,7 +36,7 @@ export class MarketingController {
   };
 
   // get data
-  public async getData(req: Request, res: Response) {
+  public async getMarketing(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
       const data = await this.marketingRepo.findOne({
@@ -53,7 +53,7 @@ export class MarketingController {
   }
 
   // get all data
-  public async getAllData(req: Request, res: Response) {
+  public async getAllMarketing(req: Request, res: Response) {
     try {
       const data = await this.marketingRepo.find({
         select: ["id", "marketing_type", "referred_by", "business_stage", "full_name", "email", "location", "company_name", "user_message", "createdAt"],

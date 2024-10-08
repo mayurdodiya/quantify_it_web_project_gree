@@ -15,7 +15,7 @@ export class ProvidedServiceController {
   }
 
   // add data
-  public addData = async (req: Request, res: Response) => {
+  public addProvidedService = async (req: Request, res: Response) => {
     try {
       const { card_img_url, service_type, service_name, service_name_title, description, service_benifits, work_planning_title, work_planning_description, work_planning_img_url, business_solutions_title, business_solutions_description, business_solutions_img_url, completed_works, client_ratings, bussiness_reports_percentage } = req.body;
 
@@ -52,7 +52,7 @@ export class ProvidedServiceController {
   };
 
   // edit data
-  public async updateData(req: Request, res: Response) {
+  public async updateProvidedService(req: Request, res: Response) {
     try {
       const { card_img_url, service_type, service_name, service_name_title, description, service_benifits, work_planning_title, work_planning_description, work_planning_img_url, business_solutions_title, business_solutions_description, business_solutions_img_url, completed_works, client_ratings, bussiness_reports_percentage } = req.body;
 
@@ -98,7 +98,7 @@ export class ProvidedServiceController {
   }
 
   // get data
-  public async getData(req: Request, res: Response) {
+  public async getProvidedService(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
       const data = await this.providedServiceRepo.findOne({
@@ -115,7 +115,7 @@ export class ProvidedServiceController {
   }
 
   // get all data
-  public async getAllData(req: Request, res: Response) {
+  public async removeProvidedService(req: Request, res: Response) {
     try {
       const data = await this.providedServiceRepo.find({
         where: { status: Status.ACTIVE },
@@ -131,7 +131,7 @@ export class ProvidedServiceController {
   }
 
   // delete data
-  public async removeData(req: Request, res: Response) {
+  public async getAllProvidedService(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
       const getData = await this.providedServiceRepo.findOne({

@@ -14,7 +14,7 @@ export class EmployeeDetailsController {
   }
 
   // add data
-  public addData = async (req: Request, res: Response) => {
+  public addEmployeeDetails = async (req: Request, res: Response) => {
     try {
       const { name, img_url, rating, description } = req.body;
       const getData = await this.employeeDetailsRepo.findOne({
@@ -39,7 +39,7 @@ export class EmployeeDetailsController {
   };
 
   // edit data
-  public async updateData(req: Request, res: Response) {
+  public async updateEmployeeDetails(req: Request, res: Response) {
     try {
       const { name, img_url, rating, description } = req.body;
 
@@ -68,7 +68,7 @@ export class EmployeeDetailsController {
   }
 
   // get data
-  public async getData(req: Request, res: Response) {
+  public async getEmployeeDetails(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
       const data = await this.employeeDetailsRepo.findOne({
@@ -85,7 +85,7 @@ export class EmployeeDetailsController {
   }
 
   // get all data
-  public async getAllData(req: Request, res: Response) {
+  public async getAllEmployeeDetails(req: Request, res: Response) {
     try {
       const data = await this.employeeDetailsRepo.find({
         select: ["id", "name", "img_url", "rating", "description", "createdAt", "updatedAt"],
@@ -100,7 +100,7 @@ export class EmployeeDetailsController {
   }
 
   // delete data
-  public async removeData(req: Request, res: Response) {
+  public async removeEmployeeDetails(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
       const getData = await this.employeeDetailsRepo.findOne({

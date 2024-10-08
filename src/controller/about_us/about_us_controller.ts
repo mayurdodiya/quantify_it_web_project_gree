@@ -14,7 +14,7 @@ export class AboutUsController {
   }
 
   // add data
-  public addData = async (req: Request, res: Response) => {
+  public addAboutUs = async (req: Request, res: Response) => {
     try {
       const { title, description, who_we_are_img_url_1, who_we_are_img_url_2, our_vision, our_mission, vision_mission_img_url, works_about_title, works_about_description, works_about_img_url, total_experience, talented_it_professionals, successfull_projects, served_country } = req.body;
 
@@ -46,7 +46,7 @@ export class AboutUsController {
           return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Data successfully created"), ResponseCodes.success, undefined);
         })
         .catch((err) => {
-          console.log(err);          
+          console.log(err);
           return RoutesHandler.sendError(req, res, false, message.ADD_ONCE("Data not created."), ResponseCodes.insertError);
         });
     } catch (error) {
@@ -55,7 +55,7 @@ export class AboutUsController {
   };
 
   // edit data
-  public async updateData(req: Request, res: Response) {
+  public async updateAboutUs(req: Request, res: Response) {
     try {
       const { title, description, who_we_are_img_url_1, who_we_are_img_url_2, our_vision, our_mission, vision_mission_img_url, works_about_title, works_about_description, works_about_img_url, total_experience, talented_it_professionals, successfull_projects, served_country } = req.body;
 
@@ -86,17 +86,17 @@ export class AboutUsController {
   }
 
   // get data
-  public async getData(req: Request, res: Response) {
+  public async getAboutUs(req: Request, res: Response) {
     try {
-      
+
       const data = await this.aboutUsRepo.findOne({ where: { id: 1 }, select: ["id", "title", "description", "who_we_are_img_url_1", "who_we_are_img_url_2", "our_vision", "our_mission", "vision_mission_img_url", "works_about_title", "works_about_description", "works_about_img_url", "total_experience", "talented_it_professionals", "successfull_projects", "served_country", "createdAt", "updatedAt"] });
-      
+
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("About us"), ResponseCodes.searchError);
       }else {
         return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("About us"), ResponseCodes.success, data);
       }
-      
+
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }

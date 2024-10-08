@@ -14,7 +14,7 @@ export class OurContactDetailsController {
   }
 
   // add data
-  public addData = async (req: Request, res: Response) => {
+  public addOurContactDetails = async (req: Request, res: Response) => {
     try {
       const { email, location, address } = req.body as {
         email: string;
@@ -44,7 +44,7 @@ export class OurContactDetailsController {
   };
 
   // edit data
-  public async updateData(req: Request, res: Response) {
+  public async updateOurContactDetails(req: Request, res: Response) {
     try {
       const { phone_no, email, location, address } = req.body;
 
@@ -67,7 +67,7 @@ export class OurContactDetailsController {
   }
 
   // get data
-  public async getData(req: Request, res: Response) {
+  public async getOurContactDetails(req: Request, res: Response) {
     try {
       const data = await this.ourContactDetailsRepo.findOne({
         where: { id: 1 },
@@ -85,7 +85,7 @@ export class OurContactDetailsController {
   }
 
   // delete data
-  public async removeData(req: Request, res: Response) {
+  public async removeContactDetails(req: Request, res: Response) {
     try {
       const data = await this.ourContactDetailsRepo.softDelete({ id: 1 });
       if (!data) {

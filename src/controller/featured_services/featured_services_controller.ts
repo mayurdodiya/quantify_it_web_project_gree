@@ -15,7 +15,7 @@ export class FeaturedServicesController {
   }
 
   // add data
-  public addData = async (req: Request, res: Response) => {
+  public addFeaturedServices = async (req: Request, res: Response) => {
     try {
       const { title, description, logo_img_url } = req.body;
       const getData = await this.featuredServicesRepo.findOne({
@@ -39,7 +39,7 @@ export class FeaturedServicesController {
   };
 
   // edit data
-  public async updateData(req: Request, res: Response) {
+  public async updateFeaturedServices(req: Request, res: Response) {
     try {
       const { title, description, logo_img_url } = req.body;
 
@@ -69,7 +69,7 @@ export class FeaturedServicesController {
   }
 
   // get data
-  public async getData(req: Request, res: Response) {
+  public async getFeaturedServices(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
       const data = await this.featuredServicesRepo.findOne({
@@ -86,7 +86,7 @@ export class FeaturedServicesController {
   }
 
   // get all data
-  public async getAllData(req: Request, res: Response) {
+  public async getAllFeaturedServices(req: Request, res: Response) {
     try {
       const data = await this.featuredServicesRepo.find({
         where: { status: Status.ACTIVE },
@@ -102,7 +102,7 @@ export class FeaturedServicesController {
   }
 
   // delete data
-  public async removeData(req: Request, res: Response) {
+  public async removeFeaturedServices(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
       const getData = await this.featuredServicesRepo.findOne({

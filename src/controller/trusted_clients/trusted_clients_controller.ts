@@ -15,7 +15,7 @@ export class TrustedClientsController {
   }
 
   // add data
-  public addData = async (req: Request, res: Response) => {
+  public addTrustedClients = async (req: Request, res: Response) => {
     try {
       const { client_name, his_profession, img_url, description } = req.body;
       const getData = await this.trustedClientsRepo.findOne({
@@ -40,7 +40,7 @@ export class TrustedClientsController {
   };
 
   // edit data
-  public async updateData(req: Request, res: Response) {
+  public async updateTrustedClients(req: Request, res: Response) {
     try {
       const { client_name, his_profession, img_url, description } = req.body;
 
@@ -69,7 +69,7 @@ export class TrustedClientsController {
   }
 
   // get data
-  public async getData(req: Request, res: Response) {
+  public async getTrustedClients(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
       const data = await this.trustedClientsRepo.findOne({
@@ -86,7 +86,7 @@ export class TrustedClientsController {
   }
 
   // get all data
-  public async getAllData(req: Request, res: Response) {
+  public async getAllTrustedClients(req: Request, res: Response) {
     try {
       const { page, size } = req.query;
       const pageData: number = parseInt(page as string, 10);
@@ -116,7 +116,7 @@ export class TrustedClientsController {
   }
 
   // delete data
-  public async removeData(req: Request, res: Response) {
+  public async removeTrustedClients(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
       const getData = await this.trustedClientsRepo.findOne({

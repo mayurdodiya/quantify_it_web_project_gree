@@ -24,7 +24,7 @@ export class SubServicesController {
   }
 
   // add data
-  public addData = async (req: Request, res: Response) => {
+  public addSubServices= async (req: Request, res: Response) => {
     try {
       const { sub_service_name, core_service_id } = req.body;
       const getData = await this.subServicesRepo.findOne({
@@ -59,7 +59,7 @@ export class SubServicesController {
   };
 
   // edit data
-  public async updateData(req: Request, res: Response) {
+  public async updateSubServices(req: Request, res: Response) {
     try {
       const { sub_service_name, description_title, description, img_logo_url } = req.body;
       const dataId = parseInt(req.params.id);
@@ -87,7 +87,7 @@ export class SubServicesController {
   }
 
   // get data
-  public async getData(req: Request, res: Response) {
+  public async getSubServices(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
       const data = await this.subServicesRepo.findOne({
@@ -104,7 +104,7 @@ export class SubServicesController {
   }
 
   // get all data
-  public async getAllData(req: Request, res: Response) {
+  public async getAllSubServices(req: Request, res: Response) {
     try {
       const data = await this.subServicesRepo.find({
         select: ["id", "core_service_id", "sub_service_name", "description_title", "description", "updatedAt"],
@@ -119,7 +119,7 @@ export class SubServicesController {
   }
 
   // delete data
-  public async removeData(req: Request, res: Response) {
+  public async removeSubServices(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
       const data = await this.subServicesRepo.findOne({

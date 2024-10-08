@@ -15,7 +15,7 @@ export class VisionExpertiesController {
   }
 
   // add data
-  public addData = async (req: Request, res: Response) => {
+  public addVisionExperties = async (req: Request, res: Response) => {
     try {
       const { title, description, img_url } = req.body;
       const getData = await this.visionExpertiesRepo.findOne({
@@ -39,7 +39,7 @@ export class VisionExpertiesController {
   };
 
   // edit data
-  public async updateData(req: Request, res: Response) {
+  public async updateVisionExperties(req: Request, res: Response) {
     try {
       const { title, description, img_url } = req.body;
 
@@ -67,7 +67,7 @@ export class VisionExpertiesController {
   }
 
   // get data
-  public async getData(req: Request, res: Response) {
+  public async getVisionExperties(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
       const data = await this.visionExpertiesRepo.findOne({
@@ -84,7 +84,7 @@ export class VisionExpertiesController {
   }
 
   // get all data
-  public async getAllData(req: Request, res: Response) {
+  public async getAllVisionExperties(req: Request, res: Response) {
     try {
       const data = await this.visionExpertiesRepo.find({
         where: { status: Status.ACTIVE },
@@ -100,7 +100,7 @@ export class VisionExpertiesController {
   }
 
   // delete data
-  public async removeData(req: Request, res: Response) {
+  public async removeVisionExperties(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
       const getData = await this.visionExpertiesRepo.findOne({

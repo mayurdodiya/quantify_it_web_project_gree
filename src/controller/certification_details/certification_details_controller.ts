@@ -15,7 +15,7 @@ export class CertificationDetailsController {
   }
 
   // add data
-  public addData = async (req: Request, res: Response) => {
+  public addCertificationDetails = async (req: Request, res: Response) => {
     try {
       const { sub_title, sub_description, logo_img_url } = req.body;
       const getData = await this.certificationDetailsRepo.findOne({
@@ -39,7 +39,7 @@ export class CertificationDetailsController {
   };
 
   // edit data
-  public async updateData(req: Request, res: Response) {
+  public async updateCertificationDetails(req: Request, res: Response) {
     try {
       const { sub_title, sub_description, logo_img_url } = req.body;
 
@@ -68,7 +68,7 @@ export class CertificationDetailsController {
   }
 
   // get data
-  public async getData(req: Request, res: Response) {
+  public async getCertificationDetails(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
       const data = await this.certificationDetailsRepo.findOne({
@@ -85,7 +85,7 @@ export class CertificationDetailsController {
   }
 
   // get all data
-  public async getAllData(req: Request, res: Response) {
+  public async getAllCertificationDetails(req: Request, res: Response) {
     try {
       const data = await this.certificationDetailsRepo.find({
         where: { status: Status.ACTIVE },
@@ -101,7 +101,7 @@ export class CertificationDetailsController {
   }
 
   // delete data
-  public async removeData(req: Request, res: Response) {
+  public async removeCertificationDetails(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
       const getData = await this.certificationDetailsRepo.findOne({

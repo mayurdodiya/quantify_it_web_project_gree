@@ -15,7 +15,7 @@ export class QuestionAnsController {
   }
 
   // add data
-  public addData = async (req: Request, res: Response) => {
+  public addQuestionAns = async (req: Request, res: Response) => {
     try {
       const { question, answer } = req.body;
       const getData = await this.questionAnsRepo.findOne({
@@ -38,7 +38,7 @@ export class QuestionAnsController {
   };
 
   // edit data
-  public async updateData(req: Request, res: Response) {
+  public async updateQuestionAns(req: Request, res: Response) {
     try {
       const { question, answer } = req.body;
 
@@ -66,7 +66,7 @@ export class QuestionAnsController {
   }
 
   // get data
-  public async getData(req: Request, res: Response) {
+  public async getQuestionAns(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
       const data = await this.questionAnsRepo.findOne({
@@ -83,7 +83,7 @@ export class QuestionAnsController {
   }
 
   // get all data
-  public async getAllData(req: Request, res: Response) {
+  public async getAllQuestionAns(req: Request, res: Response) {
     try {
       const data = await this.questionAnsRepo.find({
         where: { status: Status.ACTIVE },
@@ -99,7 +99,7 @@ export class QuestionAnsController {
   }
 
   // delete data
-  public async removeData(req: Request, res: Response) {
+  public async removeQuestionAns(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
       const getData = await this.questionAnsRepo.findOne({

@@ -15,7 +15,7 @@ export class BlogController {
   }
 
   // add data
-  public addData = async (req: Request, res: Response) => {
+  public addBlog = async (req: Request, res: Response) => {
     try {
       const { blog_title, description, img_url } = req.body;
 
@@ -33,7 +33,7 @@ export class BlogController {
   };
 
   // edit data
-  public async updateData(req: Request, res: Response) {
+  public async updateBlog(req: Request, res: Response) {
     try {
       const { blog_title, img_url, description } = req.body;
 
@@ -61,7 +61,7 @@ export class BlogController {
   }
 
   // get data
-  public async getData(req: Request, res: Response) {
+  public async getBlog(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
       const data = await this.blogRepo.findOne({
@@ -78,7 +78,7 @@ export class BlogController {
   }
 
   // get all data
-  public async getAllData(req: Request, res: Response) {
+  public async getAllBlog(req: Request, res: Response) {
     try {
       const { page, size, s } = req.query;
       const pageData: number = parseInt(page as string, 10);
@@ -113,7 +113,7 @@ export class BlogController {
   }
 
   // delete data
-  public async removeData(req: Request, res: Response) {
+  public async removeBlog(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
       const getData = await this.blogRepo.findOne({ where: { id: dataId } });

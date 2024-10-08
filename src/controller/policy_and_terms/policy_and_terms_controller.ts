@@ -15,7 +15,7 @@ export class PolicyAndTermsController {
   }
 
   // add data
-  public addData = async (req: Request, res: Response) => {
+  public addPolicyAndTerms = async (req: Request, res: Response) => {
     try {
       const { document_type, subject, explanation } = req.body;
       const getData = await this.policyAndTermsRepo.findOne({
@@ -39,7 +39,7 @@ export class PolicyAndTermsController {
   };
 
   // edit data
-  public async updateData(req: Request, res: Response) {
+  public async updatePolicyAndTerms(req: Request, res: Response) {
     try {
       const { subject, explanation } = req.body;
       const document_type = req.body.document_type.toLocaleLowerCase();
@@ -74,7 +74,7 @@ export class PolicyAndTermsController {
   }
 
   // get data
-  public async getData(req: Request, res: Response) {
+  public async getPolicyAndTerms(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
 
@@ -93,7 +93,7 @@ export class PolicyAndTermsController {
   }
 
   // get all data
-  public async getAllData(req: Request, res: Response) {
+  public async getAllPolicyAndTerms(req: Request, res: Response) {
     try {
       const docTypeString = req.query.document_type as string;
       const docType = Number(docTypeString);
@@ -121,7 +121,7 @@ export class PolicyAndTermsController {
   }
 
   // delete data
-  public async removeData(req: Request, res: Response) {
+  public async removePolicyAndTerms(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
 

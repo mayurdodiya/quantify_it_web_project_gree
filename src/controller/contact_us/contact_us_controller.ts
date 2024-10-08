@@ -14,7 +14,7 @@ export class ContactUsController {
   }
 
   // add data
-  public addData = async (req: Request, res: Response) => {
+  public addContactUs = async (req: Request, res: Response) => {
     try {
       const { full_name, email, contact_purpose, user_message, budget } = req.body;
 
@@ -34,7 +34,7 @@ export class ContactUsController {
   };
 
   // get data
-  public async getData(req: Request, res: Response) {
+  public async getContactUs(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
       const data = await this.contactUsRepo.findOne({
@@ -51,7 +51,7 @@ export class ContactUsController {
   }
 
   // get all data
-  public async getAllData(req: Request, res: Response) {
+  public async getAllContactUs(req: Request, res: Response) {
     try {
       const data = await this.contactUsRepo.find({
         select: ["id", "full_name", "email", "contact_purpose", "user_message", "budget", "createdAt"],

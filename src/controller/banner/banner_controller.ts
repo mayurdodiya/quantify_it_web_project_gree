@@ -77,7 +77,7 @@ export class BannerController {
   }
 
   // delete data
-  public async removeData(req: Request, res: Response) {
+  public async removeBanner(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
       const data = await this.bannerRepo.softDelete({ id: dataId });

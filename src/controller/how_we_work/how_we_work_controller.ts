@@ -15,7 +15,7 @@ export class HowWeWorkController {
   }
 
   // add data
-  public addData = async (req: Request, res: Response) => {
+  public addHowWeWork = async (req: Request, res: Response) => {
     try {
       const { title, description, logo_img_url } = req.body;
       const getData = await this.howWeWorkRepo.findOne({
@@ -39,7 +39,7 @@ export class HowWeWorkController {
   };
 
   // edit data
-  public async updateData(req: Request, res: Response) {
+  public async updateHowWeWork(req: Request, res: Response) {
     try {
       const { title, description, logo_img_url } = req.body;
 
@@ -68,7 +68,7 @@ export class HowWeWorkController {
   }
 
   // get data
-  public async getData(req: Request, res: Response) {
+  public async getHowWeWork(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
       const data = await this.howWeWorkRepo.findOne({
@@ -85,7 +85,7 @@ export class HowWeWorkController {
   }
 
   // get all data
-  public async getAllData(req: Request, res: Response) {
+  public async getAllHowWeWork(req: Request, res: Response) {
     try {
       const data = await this.howWeWorkRepo.find({
         where: { status: Status.ACTIVE },
@@ -101,7 +101,7 @@ export class HowWeWorkController {
   }
 
   // delete data
-  public async removeData(req: Request, res: Response) {
+  public async removeHowWeWork(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
       const getData = await this.howWeWorkRepo.findOne({

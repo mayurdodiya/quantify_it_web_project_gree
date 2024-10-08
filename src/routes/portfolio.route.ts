@@ -6,10 +6,10 @@ import { verifyAdminToken } from "../utils/auth.token";
 const routes = Router();
 const visionExpertiesController = new PortfolioController();
 
-routes.post("/add", verifyAdminToken, addPortfolioValidation, (req: Request, res: Response) => visionExpertiesController.addData(req, res));
-routes.put("/edit/:id", verifyAdminToken, updatePortfolioValidation, (req: Request, res: Response) => visionExpertiesController.updateData(req, res));
-routes.get("/get/:id", (req: Request, res: Response) => visionExpertiesController.getData(req, res));
-routes.get("/get", portfolioQueryValidation, (req: Request, res: Response) => visionExpertiesController.getAllData(req, res));
-routes.delete("/remove/:id", verifyAdminToken, (req: Request, res: Response) => visionExpertiesController.removeData(req, res));
+routes.post("/add", verifyAdminToken, addPortfolioValidation, (req: Request, res: Response) => visionExpertiesController.addPortfolio(req, res));
+routes.put("/edit/:id", verifyAdminToken, updatePortfolioValidation, (req: Request, res: Response) => visionExpertiesController.updatePortfolio(req, res));
+routes.get("/get/:id", (req: Request, res: Response) => visionExpertiesController.getPortfolio(req, res));
+routes.get("/get", portfolioQueryValidation, (req: Request, res: Response) => visionExpertiesController.getAllPortfolio(req, res));
+routes.delete("/remove/:id", verifyAdminToken, (req: Request, res: Response) => visionExpertiesController.removePortfolio(req, res));
 
 export default routes;

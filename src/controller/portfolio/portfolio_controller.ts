@@ -14,7 +14,7 @@ export class PortfolioController {
   }
 
   // add data
-  public addData = async (req: Request, res: Response) => {
+  public addPortfolio = async (req: Request, res: Response) => {
     try {
       const { type, title, sub_title, img_url, description } = req.body;
       const getData = await this.portfolioRepo.findOne({
@@ -40,7 +40,7 @@ export class PortfolioController {
   };
 
   // edit data
-  public async updateData(req: Request, res: Response) {
+  public async updatePortfolio(req: Request, res: Response) {
     try {
       const { title, sub_title, description, img_url } = req.body;
       const type = req.body.type.toLocaleLowerCase();
@@ -72,7 +72,7 @@ export class PortfolioController {
   }
 
   // get data
-  public async getData(req: Request, res: Response) {
+  public async getPortfolio(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
       const data = await this.portfolioRepo.findOne({
@@ -89,7 +89,7 @@ export class PortfolioController {
   }
 
   // get all data
-  public async getAllData(req: Request, res: Response) {
+  public async getAllPortfolio(req: Request, res: Response) {
     try {
       const { type, page, size } = req.query;
       const pageData: number = parseInt(page as string, 10);
@@ -135,7 +135,7 @@ export class PortfolioController {
   }
 
   // delete data
-  public async removeData(req: Request, res: Response) {
+  public async removePortfolio(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
       const getData = await this.portfolioRepo.findOne({

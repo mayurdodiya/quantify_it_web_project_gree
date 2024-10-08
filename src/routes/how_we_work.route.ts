@@ -6,10 +6,10 @@ import { verifyAdminToken } from "../utils/auth.token";
 const routes = Router();
 const howWeWorkController = new HowWeWorkController();
 
-routes.post("/add", verifyAdminToken, addHowWeWorkValidation, (req: Request, res: Response) => howWeWorkController.addData(req, res));
-routes.put("/edit/:id", verifyAdminToken, updateHowWeWorkValidation, (req: Request, res: Response) => howWeWorkController.updateData(req, res));
-routes.get("/get/:id", (req: Request, res: Response) => howWeWorkController.getData(req, res));
-routes.get("/get", (req, res) => howWeWorkController.getAllData(req, res));
-routes.delete("/remove/:id", verifyAdminToken, (req: Request, res: Response) => howWeWorkController.removeData(req, res));
+routes.post("/add", verifyAdminToken, addHowWeWorkValidation, (req: Request, res: Response) => howWeWorkController.addHowWeWork(req, res));
+routes.put("/edit/:id", verifyAdminToken, updateHowWeWorkValidation, (req: Request, res: Response) => howWeWorkController.updateHowWeWork(req, res));
+routes.get("/get/:id", (req: Request, res: Response) => howWeWorkController.getHowWeWork(req, res));
+routes.get("/get", (req, res) => howWeWorkController.getAllHowWeWork(req, res));
+routes.delete("/remove/:id", verifyAdminToken, (req: Request, res: Response) => howWeWorkController.removeHowWeWork(req, res));
 
 export default routes;

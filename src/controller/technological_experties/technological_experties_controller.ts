@@ -15,7 +15,7 @@ export class TechnologicalExpertiesController {
   }
 
   // add data
-  public addData = async (req: Request, res: Response) => {
+  public addTechnologicalExperties = async (req: Request, res: Response) => {
     try {
       const { experties_name, img_url } = req.body;
       const experties_type = req.body.experties_type.toLocaleLowerCase();
@@ -44,7 +44,7 @@ export class TechnologicalExpertiesController {
   };
 
   // edit data
-  public async updateData(req: Request, res: Response) {
+  public async updateTechnologicalExperties(req: Request, res: Response) {
     try {
       const { experties_name, img_url } = req.body;
       const experties_type = req.body.experties_type.toLocaleLowerCase();
@@ -78,7 +78,7 @@ export class TechnologicalExpertiesController {
   }
 
   // get data
-  public async getData(req: Request, res: Response) {
+  public async getTechnologicalExperties(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
       const data = await this.technologicalExpertiesRepo.findOne({
@@ -95,7 +95,7 @@ export class TechnologicalExpertiesController {
   }
 
   // get all data
-  public async getAllData(req: Request, res: Response) {
+  public async getAllTechnologicalExperties(req: Request, res: Response) {
     try {
       const groupedData = await AppDataSource.query(`
     SELECT
@@ -119,7 +119,7 @@ export class TechnologicalExpertiesController {
   }
 
   // delete data
-  public async removeData(req: Request, res: Response) {
+  public async removeTechnologicalExperties(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
       const isExist = await this.technologicalExpertiesRepo.findOne({

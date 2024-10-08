@@ -17,7 +17,7 @@ export class CoreServicesController {
   }
 
   // add data
-  public addData = async (req: Request, res: Response) => {
+  public addCoreServices = async (req: Request, res: Response) => {
     try {
       const { img_url } = req.body;
       const service_type = req.body.service_type.toLocaleLowerCase();
@@ -41,7 +41,7 @@ export class CoreServicesController {
   };
 
   // edit data
-  public async updateData(req: Request, res: Response) {
+  public async updateCoreServices(req: Request, res: Response) {
     try {
       const { img_url } = req.body;
       const service_type = req.body.service_type.toLocaleLowerCase();
@@ -70,7 +70,7 @@ export class CoreServicesController {
   }
 
   // get data
-  public async getData(req: Request, res: Response) {
+  public async getCoreServices(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
       const data = await this.coreServicesRepo.findOne({
@@ -87,7 +87,7 @@ export class CoreServicesController {
   }
 
   // get all data
-  public async getAllData(req: Request, res: Response) {
+  public async getAllCoreServices(req: Request, res: Response) {
     try {
       const data = await this.coreServicesRepo.find({
         select: ["id", "service_type", "img_url", "createdAt", "updatedAt"],
@@ -102,7 +102,7 @@ export class CoreServicesController {
   }
 
   // delete data
-  public async removeData(req: Request, res: Response) {
+  public async removeCoreServices(req: Request, res: Response) {
     try {
       const dataId = parseInt(req.params.id);
       const data = await this.coreServicesRepo.findOne({
