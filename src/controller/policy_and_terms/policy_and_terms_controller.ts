@@ -49,7 +49,7 @@ export class PolicyAndTermsController {
         where: { id: dataId, document_type: document_type },
       });
       if (!getData) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This data"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This data"), ResponseCodes.notFound);
       }
 
       const isExist = await this.policyAndTermsRepo.findOne({
@@ -60,7 +60,7 @@ export class PolicyAndTermsController {
         },
       });
       if (isExist) {
-        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This data"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This data"), ResponseCodes.alreadyExist);
       }
 
       getData.document_type = document_type || getData.document_type;
@@ -85,7 +85,7 @@ export class PolicyAndTermsController {
       });
 
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA(`This data`), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA(`This data`), ResponseCodes.notFound);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("The requested"), ResponseCodes.success, data);
     } catch (error) {
@@ -113,7 +113,7 @@ export class PolicyAndTermsController {
         select: ["id", "document_type", "subject", "explanation", "createdAt", "updatedAt"],
       });
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA(`This data`), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA(`This data`), ResponseCodes.notFound);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("The requested"), ResponseCodes.success, data);
     } catch (error) {
@@ -130,11 +130,11 @@ export class PolicyAndTermsController {
         where: { id: dataId },
       });
       if (!getData) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA(`This data`), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA(`This data`), ResponseCodes.notFound);
       }
       const data = await this.policyAndTermsRepo.softDelete({ id: dataId });
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA(`This data`), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA(`This data`), ResponseCodes.notFound);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.DELETE_SUCCESS("Datas"), ResponseCodes.success, undefined);
     } catch (error) {

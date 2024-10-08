@@ -13,7 +13,7 @@ export class ChatBoatController {
   }
 
   // create user chat
-  public async chatCreate(chatId: any, senderId: any, receiverId: any, message: any) {
+  public async chatCreate(chatId: string, senderId: string, receiverId: string, message: string) {
     try {
       const chatBoatMessage = new ChatBoat();
       chatBoatMessage.chat_id = chatId;

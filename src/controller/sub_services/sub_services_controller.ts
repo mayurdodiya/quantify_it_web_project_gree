@@ -63,13 +63,13 @@ export class SubServicesController {
         where: { id: dataId },
       });
       if (!getData) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This sub services"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This sub services"), ResponseCodes.notFound);
       }
       const isExist = await this.subServicesRepo.findOne({
         where: { sub_service_name: sub_service_name, id: Not(dataId) },
       });
       if (isExist) {
-        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This sub services data"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This sub services data"), ResponseCodes.alreadyExist);
       }
       getData.sub_service_name = sub_service_name;
       getData.description_title = description_title;
@@ -90,7 +90,7 @@ export class SubServicesController {
         select: ["id", "core_service_id", "sub_service_name", "description_title", "description"],
       });
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This sub services"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This sub services"), ResponseCodes.notFound);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Sub services"), ResponseCodes.success, data);
     } catch (error) {
@@ -105,7 +105,7 @@ export class SubServicesController {
         select: ["id", "core_service_id", "sub_service_name", "description_title", "description", "updatedAt"],
       });
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This sub services"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This sub services"), ResponseCodes.notFound);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Sub services"), ResponseCodes.success, data);
     } catch (error) {
@@ -121,7 +121,7 @@ export class SubServicesController {
         where: { id: dataId },
       });
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This sub services"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This sub services"), ResponseCodes.notFound);
       }
       const removeData = await this.subServicesRepo.softDelete({ id: dataId });
       return RoutesHandler.sendSuccess(req, res, true, message.DELETE_SUCCESS("Sub services"), ResponseCodes.success, undefined);

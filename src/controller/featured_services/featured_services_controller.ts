@@ -48,14 +48,14 @@ export class FeaturedServicesController {
         where: { id: dataId },
       });
       if (!getData) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This featured service"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This featured service"), ResponseCodes.notFound);
       }
 
       const isExist = await this.featuredServicesRepo.findOne({
         where: { title: title, id: Not(dataId) },
       });
       if (isExist) {
-        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This featured service"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This featured service"), ResponseCodes.alreadyExist);
       }
 
       getData.title = title || getData.title;
@@ -77,7 +77,7 @@ export class FeaturedServicesController {
         select: ["id", "title", "description", "logo_img_url", "createdAt"],
       });
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This featured service"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This featured service"), ResponseCodes.notFound);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Featured service"), ResponseCodes.success, data);
     } catch (error) {
@@ -93,7 +93,7 @@ export class FeaturedServicesController {
         select: ["id", "title", "description", "logo_img_url", "createdAt", "updatedAt"],
       });
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This featured service"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This featured service"), ResponseCodes.notFound);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Featured service"), ResponseCodes.success, data);
     } catch (error) {
@@ -109,11 +109,11 @@ export class FeaturedServicesController {
         where: { id: dataId },
       });
       if (!getData) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This featured service"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This featured service"), ResponseCodes.notFound);
       }
       const data = await this.featuredServicesRepo.softDelete({ id: dataId });
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This featured service"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This featured service"), ResponseCodes.notFound);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.DELETE_SUCCESS("Featured service"), ResponseCodes.success, undefined);
     } catch (error) {

@@ -48,14 +48,14 @@ export class HowWeWorkController {
         where: { id: dataId },
       });
       if (!getData) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This work data"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This work data"), ResponseCodes.notFound);
       }
 
       const isExist = await this.howWeWorkRepo.findOne({
         where: { title: title, id: Not(dataId) },
       });
       if (isExist) {
-        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This work data"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This work data"), ResponseCodes.alreadyExist);
       }
       getData.title = title || getData.title;
       getData.description = description || getData.description;
@@ -76,7 +76,7 @@ export class HowWeWorkController {
         select: ["id", "title", "description", "logo_img_url", "createdAt"],
       });
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This work data"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This work data"), ResponseCodes.notFound);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Work data"), ResponseCodes.success, data);
     } catch (error) {
@@ -92,7 +92,7 @@ export class HowWeWorkController {
         select: ["id", "title", "description", "logo_img_url", "createdAt", "updatedAt"],
       });
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This work data"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This work data"), ResponseCodes.notFound);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Work data"), ResponseCodes.success, data);
     } catch (error) {
@@ -108,11 +108,11 @@ export class HowWeWorkController {
         where: { id: dataId },
       });
       if (!getData) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This work data"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This work data"), ResponseCodes.notFound);
       }
       const data = await this.howWeWorkRepo.softDelete({ id: dataId });
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This work data"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This work data"), ResponseCodes.notFound);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.DELETE_SUCCESS("Work data"), ResponseCodes.success, undefined);
     } catch (error) {

@@ -49,13 +49,13 @@ export class TrustedClientsController {
         where: { id: dataId },
       });
       if (!getData) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This client"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This client"), ResponseCodes.notFound);
       }
       const isExist = await this.trustedClientsRepo.findOne({
         where: { client_name: client_name, id: Not(dataId) },
       });
       if (isExist) {
-        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This client"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This client"), ResponseCodes.alreadyExist);
       }
       getData.client_name = client_name || getData.client_name;
       getData.his_profession = his_profession || getData.his_profession;
@@ -77,7 +77,7 @@ export class TrustedClientsController {
         select: ["id", "client_name", "his_profession", "img_url", "description", "createdAt"],
       });
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This client"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This client"), ResponseCodes.notFound);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Client"), ResponseCodes.success, data);
     } catch (error) {
@@ -107,7 +107,7 @@ export class TrustedClientsController {
       };
 
       if (!data || data.length === 0) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This client"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This client"), ResponseCodes.notFound);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Client"), ResponseCodes.success, response);
     } catch (error) {
@@ -123,11 +123,11 @@ export class TrustedClientsController {
         where: { id: dataId },
       });
       if (!getData) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This client"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This client"), ResponseCodes.notFound);
       }
       const data = await this.trustedClientsRepo.softDelete({ id: dataId });
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This client"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This client"), ResponseCodes.notFound);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.DELETE_SUCCESS("Client"), ResponseCodes.success, undefined);
     } catch (error) {

@@ -27,7 +27,7 @@ export class BlogController {
       blogData.description = description || null;
       await this.blogRepo.save(blogData);
 
-      return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Blog"), ResponseCodes.success, undefined);
+      return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Blog"), ResponseCodes.createSuccess, undefined);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
@@ -41,14 +41,14 @@ export class BlogController {
       const dataId = parseInt(req.params.id);
       const getData = await this.blogRepo.findOne({ where: { id: dataId } });
       if (!getData) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This blog"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This blog"), ResponseCodes.notFound);
       }
 
       const isExist = await this.blogRepo.findOne({
         where: { blog_title: blog_title, id: Not(dataId) },
       });
       if (isExist) {
-        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This blog"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This blog"), ResponseCodes.alreadyExist);
       }
 
       getData.blog_title = blog_title || getData.blog_title;
@@ -70,7 +70,7 @@ export class BlogController {
         select: ["id", "blog_title", "description", "img_url", "createdAt"],
       });
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This blog"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This blog"), ResponseCodes.notFound);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Blog"), ResponseCodes.success, data);
     } catch (error) {
@@ -119,11 +119,11 @@ export class BlogController {
       const dataId = parseInt(req.params.id);
       const getData = await this.blogRepo.findOne({ where: { id: dataId } });
       if (!getData) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This blog"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This blog"), ResponseCodes.notFound);
       }
       const data = await this.blogRepo.softDelete({ id: dataId });
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This blog"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This blog"), ResponseCodes.notFound);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.DELETE_SUCCESS("Blog"), ResponseCodes.success, undefined);
     } catch (error) {

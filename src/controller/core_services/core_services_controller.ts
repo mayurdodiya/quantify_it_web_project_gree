@@ -51,14 +51,14 @@ export class CoreServicesController {
         where: { id: dataId },
       });
       if (!getData) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This core services"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This core services"), ResponseCodes.notFound);
       }
 
       const isExist = await this.coreServicesRepo.findOne({
         where: { service_type: service_type, id: Not(dataId) },
       });
       if (isExist) {
-        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This core services"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This core services"), ResponseCodes.alreadyExist);
       }
       getData.service_type = service_type;
       getData.img_url = img_url || null;
@@ -78,7 +78,7 @@ export class CoreServicesController {
         select: ["id", "service_type", "img_url", "createdAt", "updatedAt"],
       });
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This core services"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This core services"), ResponseCodes.notFound);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Core services"), ResponseCodes.success, data);
     } catch (error) {
@@ -93,7 +93,7 @@ export class CoreServicesController {
         select: ["id", "service_type", "img_url", "createdAt", "updatedAt"],
       });
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This core services"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This core services"), ResponseCodes.notFound);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Core services"), ResponseCodes.success, data);
     } catch (error) {
@@ -109,7 +109,7 @@ export class CoreServicesController {
         where: { id: dataId },
       });
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This core services"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This core services"), ResponseCodes.notFound);
       }
       const queryRunner = AppDataSource.createQueryRunner();
       await queryRunner.connect();
@@ -185,7 +185,7 @@ export class CoreServicesController {
         where: { id: dataId },
       });
       if (!getData) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This services"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This services"), ResponseCodes.notFound);
       }
 
       getData.service_type = service_type;

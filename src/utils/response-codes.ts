@@ -8,7 +8,9 @@ export const ResponseCodes = {
   insertError: 526,
   emailError: 532,
   success: 200,
+  createSuccess: 201,
   serverError: 500,
   TokenError: 552,
   notFound: 404,
+  alreadyExist: 409,
 };

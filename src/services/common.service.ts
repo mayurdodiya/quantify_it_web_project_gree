@@ -1,7 +1,7 @@
 import { Repository, DeepPartial, FindOneOptions, FindManyOptions } from "typeorm";
 
 class CommonService {
-  async createData<T>(repository: Repository<T>, data: DeepPartial<T>, additional?: any): Promise<T> {
+  async createData<T>(repository: Repository<T>, data: DeepPartial<T>): Promise<T> {
     const create = await repository.create(data);
     const saveData = await repository.save(create);
     if (!saveData) {
@@ -10,7 +10,7 @@ class CommonService {
     return saveData;
   }
 
-  async updateData<T>(repository: Repository<T>, data: DeepPartial<T>, additional?: any): Promise<T> {
+  async updateData<T>(repository: Repository<T>, data: DeepPartial<T>): Promise<T> {
     const saveData = await repository.save(data);
     if (!saveData) {
       return null;

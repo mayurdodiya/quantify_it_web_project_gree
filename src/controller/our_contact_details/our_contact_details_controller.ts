@@ -52,7 +52,7 @@ export class OurContactDetailsController {
         where: { id: 1 },
       });
       if (!getData) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This our contact details"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This our contact details"), ResponseCodes.notFound);
       }
 
       getData.phone_no = phone_no || getData.phone_no;
@@ -74,7 +74,7 @@ export class OurContactDetailsController {
         select: ["id", "phone_no", "email", "address", "createdAt", "updatedAt"],
       });
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This our contact details"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This our contact details"), ResponseCodes.notFound);
       }
       // JSON.parse()
       JSON.stringify(data);
@@ -89,7 +89,7 @@ export class OurContactDetailsController {
     try {
       const data = await this.ourContactDetailsRepo.softDelete({ id: 1 });
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This our contact details"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This our contact details"), ResponseCodes.notFound);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.DELETE_SUCCESS("Our contact details"), ResponseCodes.success, undefined);
     } catch (error) {

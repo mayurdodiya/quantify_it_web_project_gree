@@ -48,13 +48,13 @@ export class EmployeeDetailsController {
         where: { id: dataId },
       });
       if (!getData) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This employee data"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This employee data"), ResponseCodes.notFound);
       }
       const isExist = await this.employeeDetailsRepo.findOne({
         where: { name: name, id: Not(dataId) },
       });
       if (isExist) {
-        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This employee data"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This employee data"), ResponseCodes.alreadyExist);
       }
       getData.name = name || getData.name;
       getData.img_url = img_url || getData.img_url;
@@ -76,7 +76,7 @@ export class EmployeeDetailsController {
         select: ["id", "name", "img_url", "rating", "description", "createdAt"],
       });
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This employee data"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This employee data"), ResponseCodes.notFound);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Employee data"), ResponseCodes.success, data);
     } catch (error) {
@@ -91,7 +91,7 @@ export class EmployeeDetailsController {
         select: ["id", "name", "img_url", "rating", "description", "createdAt", "updatedAt"],
       });
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This employee data"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This employee data"), ResponseCodes.notFound);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Employee data"), ResponseCodes.success, data);
     } catch (error) {
@@ -107,11 +107,11 @@ export class EmployeeDetailsController {
         where: { id: dataId },
       });
       if (!getData) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This employee data"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This employee data"), ResponseCodes.notFound);
       }
       const data = await this.employeeDetailsRepo.softDelete({ id: dataId });
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This employee data"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This employee data"), ResponseCodes.notFound);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.DELETE_SUCCESS("Employee data"), ResponseCodes.success, undefined);
     } catch (error) {

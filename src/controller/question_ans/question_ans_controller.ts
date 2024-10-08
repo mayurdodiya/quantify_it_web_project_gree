@@ -47,14 +47,14 @@ export class QuestionAnsController {
         where: { id: dataId },
       });
       if (!getData) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This question and ans"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This question and ans"), ResponseCodes.notFound);
       }
 
       const isExist = await this.questionAnsRepo.findOne({
         where: { question: question, id: Not(dataId) },
       });
       if (isExist) {
-        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This question and ans data"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This question and ans data"), ResponseCodes.alreadyExist);
       }
       getData.question = question || getData.question;
       getData.answer = answer || getData.answer;
@@ -74,7 +74,7 @@ export class QuestionAnsController {
         select: ["id", "question", "answer", "createdAt"],
       });
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This question and ans"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This question and ans"), ResponseCodes.notFound);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Question and ans"), ResponseCodes.success, data);
     } catch (error) {
@@ -90,7 +90,7 @@ export class QuestionAnsController {
         select: ["id", "question", "answer", "createdAt", "updatedAt"],
       });
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This question and ans"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This question and ans"), ResponseCodes.notFound);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Question and ans"), ResponseCodes.success, data);
     } catch (error) {
@@ -106,11 +106,11 @@ export class QuestionAnsController {
         where: { id: dataId },
       });
       if (!getData) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This question and ans"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This question and ans"), ResponseCodes.notFound);
       }
       const data = await this.questionAnsRepo.softDelete({ id: dataId });
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This question and ans"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This question and ans"), ResponseCodes.notFound);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.DELETE_SUCCESS("Question and ans"), ResponseCodes.success, undefined);
     } catch (error) {

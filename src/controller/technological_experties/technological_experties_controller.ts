@@ -54,7 +54,7 @@ export class TechnologicalExpertiesController {
         where: { id: dataId },
       });
       if (!getData) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This experties"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This experties"), ResponseCodes.notFound);
       }
       const isExist = await this.technologicalExpertiesRepo.findOne({
         where: {
@@ -64,7 +64,7 @@ export class TechnologicalExpertiesController {
         },
       });
       if (isExist) {
-        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This experties"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This experties"), ResponseCodes.alreadyExist);
       }
 
       getData.experties_type = experties_type || getData.experties_type;
@@ -86,7 +86,7 @@ export class TechnologicalExpertiesController {
         select: ["id", "experties_type", "experties_name", "img_url", "createdAt"],
       });
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This experties"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This experties"), ResponseCodes.notFound);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Experties"), ResponseCodes.success, data);
     } catch (error) {
@@ -110,7 +110,7 @@ export class TechnologicalExpertiesController {
 `);
 
       if (!groupedData) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This experties"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This experties"), ResponseCodes.notFound);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Experties"), ResponseCodes.success, groupedData);
     } catch (error) {
@@ -126,14 +126,14 @@ export class TechnologicalExpertiesController {
         where: { id: dataId },
       });
       if (!isExist) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This experties"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This experties"), ResponseCodes.notFound);
       }
 
       const data = await this.technologicalExpertiesRepo.softDelete({
         id: dataId,
       });
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This experties"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This experties"), ResponseCodes.notFound);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.DELETE_SUCCESS("Experties"), ResponseCodes.success, undefined);
     } catch (error) {

@@ -47,7 +47,7 @@ export class BannerController {
       const bannerId = parseInt(req.params.id);
       const banner = await this.bannerRepo.findOne({ where: { id: bannerId } });
       if (!banner) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This banner"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This banner"), ResponseCodes.notFound);
       }
       banner.title = title || banner.title;
       banner.description = description || banner.description;
@@ -68,7 +68,7 @@ export class BannerController {
       const bannerId = parseInt(req.params.id);
       const banner = await this.bannerRepo.findOne({ where: { id: bannerId } });
       if (!banner) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This banner"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This banner"), ResponseCodes.notFound);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Banner"), ResponseCodes.success, banner);
     } catch (error) {
@@ -82,7 +82,7 @@ export class BannerController {
       const dataId = parseInt(req.params.id);
       const data = await this.bannerRepo.softDelete({ id: dataId });
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This banner"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This banner"), ResponseCodes.notFound);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.DELETE_SUCCESS("Banner"), ResponseCodes.success, undefined);
     } catch (error) {
