@@ -1,7 +1,7 @@
 import express, { NextFunction } from "express";
 import { imageUpload } from "../services/file_upload";
 import { AdminController } from "../controller/admin/admin_controller";
-import { loginValidation } from "../utils/express_validator";
+import { imgValidation, loginValidation } from "../utils/express_validator";
 
 const routes = express.Router();
 const adminController = new AdminController();

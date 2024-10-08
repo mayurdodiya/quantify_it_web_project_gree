@@ -25,6 +25,9 @@ const message = {
   TOKEN_EXPIRED: (str: string) => `Unauthorized! Access Token was expired!`,
   
   UPLOAD_SUCCESS: (str: string) => `${str} upload successfully!`,
+  
+  UPLOAD_IMG: (str: string) => `Please upload a Image`,
+  
 };
 
 export { message };

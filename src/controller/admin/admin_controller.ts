@@ -48,6 +48,10 @@ export class AdminController {
   // upload image
   public async uploadImage(req: Request, res: Response) {
     try {
+      if(!req.file)
+      {
+        return RoutesHandler.sendError(req, res, false, message.UPLOAD_IMG("!"), ResponseCodes.insertError);
+      }
       var filePath = req.file.path;
       var pathJoin = process.env.LOCAL_URL + filePath;
       console.log(pathJoin, "------------------------------------");

@@ -33,16 +33,6 @@ class CommonService {
     });
     return { data, totalItems };
   }
-
-  // async removeData<T>(repository: Repository<T>, id: number): Promise<boolean> {
-  //   const entity = await repository.findOne({ where: { id } });
-  //   if (!entity) {
-  //     return false; // Entity not found
-  //   }
-
-  //   await repository.softDelete(id); // Perform soft delete
-  //   return true; // Deletion was successful
-  // }
 }
 
 export const commonService = new CommonService();

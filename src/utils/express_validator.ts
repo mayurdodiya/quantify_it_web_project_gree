@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { check, param, query, validationResult } from "express-validator";
+import { isOptionalChain } from "typescript";
 
 // return validation error
 const validationHandler = (req: Request, res: Response, next: NextFunction) => {
@@ -120,6 +121,14 @@ const addTrustedClientsValidation = [
   check("client_name").notEmpty().withMessage("Client name is required"),
   check("his_profession").notEmpty().withMessage("Profession is required"),
   check("description").notEmpty().withMessage("Description is required").isArray().withMessage("Description is must in array!"),
+
+  (req: Request, res: Response, next: NextFunction) => {
+    validationHandler(req, res, next);
+  },
+];
+
+const updateTrustedClientsValidation = [
+  check("description").optional().isArray().withMessage("Description is must in array!"),
 
   (req: Request, res: Response, next: NextFunction) => {
     validationHandler(req, res, next);
@@ -524,5 +533,13 @@ const loginValidation = [
     validationHandler(req, res, next);
   },
 ];
+const imgValidation = [
+  check("image").notEmpty().withMessage("please upload image!"),
+  // check("password").notEmpty().withMessage("password is required"),
 
-export { addBannerValidation, addVisionExpertiesValidation, updateVisionExpertiesValidation, addCoreServiceValidation, addSubServiceValidation, updateSubServiceValidation, addTechExpertiesValidation, addPortfolioValidation, updatePortfolioValidation, addTrustedClientsValidation, addblogValidation, updateblogValidation, addQuestionAnsValidation, addAboutUsValidation, updateAboutUsValidation, addCertificationValidation, updateHowWeWorkValidation, updateCertificationValidation, addHowWeWorkValidation, addEmployeeDetailsValidation, updateEmployeeDetailsValidation, addprovidedServiceValidation, updateprovidedServiceValidation, addfeaturedServicesValidation, updatefeaturedServicesValidation, addOurContactDetailsValidation, updateOurContactDetailsValidation, addMarketingValidation, addContactUsValidation, addPolicyAndTermsValidation, updatePolicyAndTermsValidation, policyAndTermsQueryValidation, portfolioQueryValidation, pageAndSizeQueryValidation, updateBannerValidation, loginValidation };
+  (req: Request, res: Response, next: NextFunction) => {
+    validationHandler(req, res, next);
+  },
+];
+
+export { addBannerValidation, addVisionExpertiesValidation, updateVisionExpertiesValidation, addCoreServiceValidation, addSubServiceValidation, updateSubServiceValidation, addTechExpertiesValidation, addPortfolioValidation, updatePortfolioValidation, addTrustedClientsValidation,updateTrustedClientsValidation, addblogValidation, updateblogValidation, addQuestionAnsValidation, addAboutUsValidation, updateAboutUsValidation, addCertificationValidation, updateHowWeWorkValidation, updateCertificationValidation, addHowWeWorkValidation, addEmployeeDetailsValidation, updateEmployeeDetailsValidation, addprovidedServiceValidation, updateprovidedServiceValidation, addfeaturedServicesValidation, updatefeaturedServicesValidation, addOurContactDetailsValidation, updateOurContactDetailsValidation, addMarketingValidation, addContactUsValidation, addPolicyAndTermsValidation, updatePolicyAndTermsValidation, policyAndTermsQueryValidation, portfolioQueryValidation, pageAndSizeQueryValidation, updateBannerValidation, loginValidation,imgValidation };
