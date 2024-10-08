@@ -1,6 +1,6 @@
 import { Repository } from "typeorm";
 import { AppDataSource } from "../../config/database.config";
-import { RoutesHandler } from "../../utils/ErrorHandler";
+import { RoutesHandler } from "../../utils/error_handler";
 import { ResponseCodes } from "../../utils/response-codes";
 import { Request, Response } from "express";
 import { message } from "../../utils/messages";
@@ -22,10 +22,8 @@ export class OurContactDetailsController {
         address: string;
       };
       const phone_no: string = req.body.phone_no;
-      const getData = await this.ourContactDetailsRepo.findOne({
-        where: { id: 1 },
-      });
-      if (getData) {
+      const getData = await this.ourContactDetailsRepo.find({});
+      if (getData.length) {
         return RoutesHandler.sendError(req, res, false, message.ADD_ONCE("Our contact details data"), ResponseCodes.insertError);
       }
 
@@ -39,6 +37,7 @@ export class OurContactDetailsController {
 
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Our contact details"), ResponseCodes.success, undefined);
     } catch (error) {
+      console.log(error);      
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   };
@@ -47,9 +46,10 @@ export class OurContactDetailsController {
   public async updateOurContactDetails(req: Request, res: Response) {
     try {
       const { phone_no, email, location, address } = req.body;
+      const id = req.params.id;
 
       const getData = await this.ourContactDetailsRepo.findOne({
-        where: { id: 1 },
+        where: { id: id },
       });
       if (!getData) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This our contact details"), ResponseCodes.notFound);
@@ -69,8 +69,9 @@ export class OurContactDetailsController {
   // get data
   public async getOurContactDetails(req: Request, res: Response) {
     try {
+      const id = req.params.id;
       const data = await this.ourContactDetailsRepo.findOne({
-        where: { id: 1 },
+        where: { id: id },
         select: ["id", "phone_no", "email", "address", "createdAt", "updatedAt"],
       });
       if (!data) {
@@ -87,7 +88,8 @@ export class OurContactDetailsController {
   // delete data
   public async removeContactDetails(req: Request, res: Response) {
     try {
-      const data = await this.ourContactDetailsRepo.softDelete({ id: 1 });
+      const id = req.params.id;
+      const data = await this.ourContactDetailsRepo.softDelete({ id: id });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This our contact details"), ResponseCodes.notFound);
       }

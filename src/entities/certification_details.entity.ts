@@ -7,7 +7,7 @@ export class CertificationDetails {
     throw new Error("Method not implemented.");
   }
   @PrimaryGeneratedColumn("uuid")
-  id: number;
+  id: string;
 
   @Column({ nullable: false })
   sub_title: string;

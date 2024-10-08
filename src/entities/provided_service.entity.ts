@@ -8,7 +8,7 @@ export class ProvidedService {
   }
 
   @PrimaryGeneratedColumn("uuid")
-  id: number;
+  id: string;
 
   @Column({ nullable: false })
   card_img_url: string;

@@ -1,6 +1,6 @@
 import { Not, Repository } from "typeorm";
 import { AppDataSource } from "../../config/database.config";
-import { RoutesHandler } from "../../utils/ErrorHandler";
+import { RoutesHandler } from "../../utils/error_handler";
 import { ResponseCodes } from "../../utils/response-codes";
 import { Request, Response } from "express";
 import { message } from "../../utils/messages";
@@ -43,7 +43,7 @@ export class FeaturedServicesController {
     try {
       const { title, description, logo_img_url } = req.body;
 
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
       const getData = await this.featuredServicesRepo.findOne({
         where: { id: dataId },
       });
@@ -71,7 +71,7 @@ export class FeaturedServicesController {
   // get data
   public async getFeaturedServices(req: Request, res: Response) {
     try {
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
       const data = await this.featuredServicesRepo.findOne({
         where: { id: dataId, status: Status.ACTIVE },
         select: ["id", "title", "description", "logo_img_url", "createdAt"],
@@ -104,7 +104,7 @@ export class FeaturedServicesController {
   // delete data
   public async removeFeaturedServices(req: Request, res: Response) {
     try {
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
       const getData = await this.featuredServicesRepo.findOne({
         where: { id: dataId },
       });

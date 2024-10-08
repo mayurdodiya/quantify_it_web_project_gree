@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { Role } from "./enum";
-import { RoutesHandler } from "./ErrorHandler";
+import { RoutesHandler } from "./error_handler";
 import { message } from "./messages";
 import { ResponseCodes } from "./response-codes";
 
-export const generateToken = (id: number, role: number) => {
+export const generateToken = (id: string, role: number) => {
   try {
     const skey = process.env.TOKEN_SECRETE_KEY;
     const tokenExp = process.env.TOKEN_EXPIRE;

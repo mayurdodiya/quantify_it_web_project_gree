@@ -7,7 +7,7 @@ export class User {
     throw new Error("Method not implemented.");
   }
   @PrimaryGeneratedColumn("uuid")
-  id: number;
+  id: string;
 
   @Column({ length: 50 })
   first_name: string;

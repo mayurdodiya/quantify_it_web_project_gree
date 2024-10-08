@@ -1,6 +1,6 @@
 import { Not, Repository } from "typeorm";
 import { AppDataSource } from "../../config/database.config";
-import { RoutesHandler } from "../../utils/ErrorHandler";
+import { RoutesHandler } from "../../utils/error_handler";
 import { ResponseCodes } from "../../utils/response-codes";
 import { Request, Response } from "express";
 import { message } from "../../utils/messages";
@@ -44,7 +44,7 @@ export class PolicyAndTermsController {
       const { subject, explanation } = req.body;
       const document_type = req.body.document_type.toLocaleLowerCase();
 
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
       const getData = await this.policyAndTermsRepo.findOne({
         where: { id: dataId, document_type: document_type },
       });
@@ -76,7 +76,7 @@ export class PolicyAndTermsController {
   // get data
   public async getPolicyAndTerms(req: Request, res: Response) {
     try {
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
 
       const data = await this.policyAndTermsRepo.findOne({
         where: { id: dataId, status: Status.ACTIVE },
@@ -123,7 +123,7 @@ export class PolicyAndTermsController {
   // delete data
   public async removePolicyAndTerms(req: Request, res: Response) {
     try {
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
 
       const getData = await this.policyAndTermsRepo.findOne({
         where: { id: dataId },

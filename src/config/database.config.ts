@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import "reflect-metadata";
 import { User } from "../entities/user.entity";
-import { UserService } from "../utils/Admin";
+import { AboutUsControllerService, UserService } from "../utils/admin";
 import { Banner } from "../entities/banner.entity";
 import { VisionExperties } from "../entities/vision_experties.entity";
 import { CoreServices } from "../entities/core_services.entity";
@@ -49,6 +49,8 @@ export const AppDataSource = new DataSource({
     console.log("Database Connected successfully!");
     const userService = new UserService(AppDataSource);
     await userService.createAdmin();
+    const addAboutUs = new AboutUsControllerService(AppDataSource);
+    addAboutUs.createAboutsUsPage();
   } catch (error) {
     console.error("Error during Data Source initialization", error);
   }

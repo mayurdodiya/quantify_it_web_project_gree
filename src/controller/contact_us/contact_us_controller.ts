@@ -1,6 +1,6 @@
 import { Repository } from "typeorm";
 import { AppDataSource } from "../../config/database.config";
-import { RoutesHandler } from "../../utils/ErrorHandler";
+import { RoutesHandler } from "../../utils/error_handler";
 import { ResponseCodes } from "../../utils/response-codes";
 import { Request, Response } from "express";
 import { message } from "../../utils/messages";
@@ -29,6 +29,7 @@ export class ContactUsController {
 
       return RoutesHandler.sendSuccess(req, res, true, message.SUBMIT_FORM(), ResponseCodes.success, undefined);
     } catch (error) {
+      console.log(error);      
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   };
@@ -36,7 +37,7 @@ export class ContactUsController {
   // get data
   public async getContactUs(req: Request, res: Response) {
     try {
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
       const data = await this.contactUsRepo.findOne({
         where: { id: dataId },
         select: ["id", "full_name", "email", "contact_purpose", "user_message", "budget", "createdAt", "updatedAt"],

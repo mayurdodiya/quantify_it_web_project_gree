@@ -1,6 +1,6 @@
 import { Not, Repository } from "typeorm";
 import { AppDataSource } from "../../config/database.config";
-import { RoutesHandler } from "../../utils/ErrorHandler";
+import { RoutesHandler } from "../../utils/error_handler";
 import { ResponseCodes } from "../../utils/response-codes";
 import { Request, Response } from "express";
 import { message } from "../../utils/messages";
@@ -44,7 +44,7 @@ export class TrustedClientsController {
     try {
       const { client_name, his_profession, img_url, description } = req.body;
 
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
       const getData = await this.trustedClientsRepo.findOne({
         where: { id: dataId },
       });
@@ -71,7 +71,7 @@ export class TrustedClientsController {
   // get data
   public async getTrustedClients(req: Request, res: Response) {
     try {
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
       const data = await this.trustedClientsRepo.findOne({
         where: { id: dataId, status: Status.ACTIVE },
         select: ["id", "client_name", "his_profession", "img_url", "description", "createdAt"],
@@ -118,7 +118,7 @@ export class TrustedClientsController {
   // delete data
   public async removeTrustedClients(req: Request, res: Response) {
     try {
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
       const getData = await this.trustedClientsRepo.findOne({
         where: { id: dataId },
       });

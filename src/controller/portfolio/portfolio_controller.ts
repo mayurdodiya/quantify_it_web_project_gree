@@ -1,6 +1,6 @@
 import { Not, Repository } from "typeorm";
 import { AppDataSource } from "../../config/database.config";
-import { RoutesHandler } from "../../utils/ErrorHandler";
+import { RoutesHandler } from "../../utils/error_handler";
 import { ResponseCodes } from "../../utils/response-codes";
 import { Request, Response } from "express";
 import { message } from "../../utils/messages";
@@ -45,7 +45,7 @@ export class PortfolioController {
       const { title, sub_title, description, img_url } = req.body;
       const type = req.body.type.toLocaleLowerCase();
 
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
       const getData = await this.portfolioRepo.findOne({
         where: { id: dataId },
       });
@@ -74,7 +74,7 @@ export class PortfolioController {
   // get data
   public async getPortfolio(req: Request, res: Response) {
     try {
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
       const data = await this.portfolioRepo.findOne({
         where: { id: dataId },
         select: ["id", "type", "title", "sub_title", "img_url", "description", "createdAt"],
@@ -137,7 +137,7 @@ export class PortfolioController {
   // delete data
   public async removePortfolio(req: Request, res: Response) {
     try {
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
       const getData = await this.portfolioRepo.findOne({
         where: { id: dataId },
       });

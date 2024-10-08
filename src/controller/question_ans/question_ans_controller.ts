@@ -1,6 +1,6 @@
 import { Not, Repository } from "typeorm";
 import { AppDataSource } from "../../config/database.config";
-import { RoutesHandler } from "../../utils/ErrorHandler";
+import { RoutesHandler } from "../../utils/error_handler";
 import { ResponseCodes } from "../../utils/response-codes";
 import { Request, Response } from "express";
 import { message } from "../../utils/messages";
@@ -42,7 +42,7 @@ export class QuestionAnsController {
     try {
       const { question, answer } = req.body;
 
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
       const getData = await this.questionAnsRepo.findOne({
         where: { id: dataId },
       });
@@ -68,7 +68,7 @@ export class QuestionAnsController {
   // get data
   public async getQuestionAns(req: Request, res: Response) {
     try {
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
       const data = await this.questionAnsRepo.findOne({
         where: { id: dataId, status: Status.ACTIVE },
         select: ["id", "question", "answer", "createdAt"],
@@ -101,7 +101,7 @@ export class QuestionAnsController {
   // delete data
   public async removeQuestionAns(req: Request, res: Response) {
     try {
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
       const getData = await this.questionAnsRepo.findOne({
         where: { id: dataId },
       });

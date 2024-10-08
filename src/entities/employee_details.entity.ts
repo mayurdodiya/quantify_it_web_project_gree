@@ -6,7 +6,7 @@ export class EmployeeDetails {
     throw new Error("Method not implemented.");
   }
   @PrimaryGeneratedColumn("uuid")
-  id: number;
+  id: string;
 
   @Column({ nullable: false })
   name: string;

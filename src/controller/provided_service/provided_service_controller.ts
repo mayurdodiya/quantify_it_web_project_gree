@@ -1,6 +1,6 @@
 import { Not, Repository } from "typeorm";
 import { AppDataSource } from "../../config/database.config";
-import { RoutesHandler } from "../../utils/ErrorHandler";
+import { RoutesHandler } from "../../utils/error_handler";
 import { ResponseCodes } from "../../utils/response-codes";
 import { Request, Response } from "express";
 import { message } from "../../utils/messages";
@@ -56,7 +56,7 @@ export class ProvidedServiceController {
     try {
       const { card_img_url, service_type, service_name, service_name_title, description, service_benifits, work_planning_title, work_planning_description, work_planning_img_url, business_solutions_title, business_solutions_description, business_solutions_img_url, completed_works, client_ratings, bussiness_reports_percentage } = req.body;
 
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
       const getData = await this.providedServiceRepo.findOne({
         where: { id: dataId },
       });
@@ -100,7 +100,7 @@ export class ProvidedServiceController {
   // get data
   public async getProvidedService(req: Request, res: Response) {
     try {
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
       const data = await this.providedServiceRepo.findOne({
         where: { id: dataId, status: Status.ACTIVE },
         select: ["id", "card_img_url", "service_type", "service_name", "service_name_title", "description", "service_benifits", "work_planning_title", "work_planning_description", "work_planning_img_url", "business_solutions_title", "business_solutions_description", "business_solutions_img_url", "completed_works", "client_ratings", "bussiness_reports_percentage", "createdAt"],
@@ -115,7 +115,7 @@ export class ProvidedServiceController {
   }
 
   // get all data
-  public async removeProvidedService(req: Request, res: Response) {
+  public async getAllProvidedService(req: Request, res: Response) {
     try {
       const data = await this.providedServiceRepo.find({
         where: { status: Status.ACTIVE },
@@ -131,9 +131,9 @@ export class ProvidedServiceController {
   }
 
   // delete data
-  public async getAllProvidedService(req: Request, res: Response) {
+  public async removeProvidedService(req: Request, res: Response) {
     try {
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
       const getData = await this.providedServiceRepo.findOne({
         where: { id: dataId },
       });

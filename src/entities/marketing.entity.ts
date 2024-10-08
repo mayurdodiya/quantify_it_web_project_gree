@@ -7,7 +7,7 @@ export class Marketing {
     throw new Error("Method not implemented.");
   }
   @PrimaryGeneratedColumn("uuid")
-  id: number;
+  id: string;
 
   @Column({ nullable: false, default: MarketingType.BRAND })
   marketing_type: MarketingType;

@@ -1,7 +1,7 @@
 import { VisionExperties } from "../../entities/vision_experties.entity";
 import { Not, Repository } from "typeorm";
 import { AppDataSource } from "../../config/database.config";
-import { RoutesHandler } from "../../utils/ErrorHandler";
+import { RoutesHandler } from "../../utils/error_handler";
 import { ResponseCodes } from "../../utils/response-codes";
 import { Request, Response } from "express";
 import { message } from "../../utils/messages";
@@ -43,7 +43,7 @@ export class VisionExpertiesController {
     try {
       const { title, description, img_url } = req.body;
 
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
       const getData = await this.visionExpertiesRepo.findOne({
         where: { id: dataId },
       });
@@ -69,7 +69,7 @@ export class VisionExpertiesController {
   // get data
   public async getVisionExperties(req: Request, res: Response) {
     try {
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
       const data = await this.visionExpertiesRepo.findOne({
         where: { id: dataId, status: Status.ACTIVE },
         select: ["id", "title", "description", "img_url", "createdAt"],
@@ -102,7 +102,7 @@ export class VisionExpertiesController {
   // delete data
   public async removeVisionExperties(req: Request, res: Response) {
     try {
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
       const getData = await this.visionExpertiesRepo.findOne({
         where: { id: dataId },
       });

@@ -63,7 +63,6 @@ const addCoreServiceValidation = [
 
 const addSubServiceValidation = [
   check("core_service_id").notEmpty().withMessage("Core service type is required"),
-
   check("sub_service_data").isArray().withMessage("sub service data must be provided as an array!"),
   check("description").optional().isArray().withMessage("Description must be an array!"),
 
@@ -189,7 +188,7 @@ const updateAboutUsValidation = [
 
 const addCertificationValidation = [
   check("sub_title").notEmpty().withMessage("Sub title is required"),
-  check("description").notEmpty().withMessage("Description is required").isArray().withMessage("Description must be an array!"),
+  check("sub_description").notEmpty().withMessage("Sub description is required").isArray().withMessage("Sub description must be an array!"),
   check("logo_img_url").notEmpty().withMessage("logo img url is required"),
 
   (req: Request, res: Response, next: NextFunction) => {
@@ -356,8 +355,9 @@ const addContactUsValidation = [
     .withMessage("Budget is required")
     .custom((value) => {
       if (typeof value !== "string") {
-        throw new Error("Budget value is must be in string formate!");
+        throw new Error("Budget value must be in string format!");
       }
+      return true;
     }),
 
   (req: Request, res: Response, next: NextFunction) => {
@@ -392,7 +392,6 @@ const policyAndTermsQueryValidation = [
 ];
 
 const portfolioQueryValidation = [
-  query("type").notEmpty().withMessage("Query parameter 'type' is required!"),
   query("page").notEmpty().withMessage("Query parameter 'page' is required!"),
   query("size").notEmpty().withMessage("Query parameter 'size' is required!"),
   (req: Request, res: Response, next: NextFunction) => {

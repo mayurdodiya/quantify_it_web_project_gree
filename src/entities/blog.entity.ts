@@ -7,7 +7,7 @@ export class Blog {
     throw new Error("Method not implemented.");
   }
   @PrimaryGeneratedColumn("uuid")
-  id: number;
+  id: string;
 
   @Column({ nullable: false })
   blog_title: string;

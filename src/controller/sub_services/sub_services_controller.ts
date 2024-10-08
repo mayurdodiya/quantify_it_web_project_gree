@@ -1,7 +1,7 @@
 import { CoreServices } from "../../entities/core_services.entity";
 import { Not, Repository } from "typeorm";
 import { AppDataSource } from "../../config/database.config";
-import { RoutesHandler } from "../../utils/ErrorHandler";
+import { RoutesHandler } from "../../utils/error_handler";
 import { ResponseCodes } from "../../utils/response-codes";
 import { Request, Response } from "express";
 import { message } from "../../utils/messages";
@@ -12,7 +12,6 @@ interface SubServicesItem {
   description_title: string;
   description: string;
 }
-
 
 export class SubServicesController {
   private subServicesRepo: Repository<SubServices>;
@@ -34,7 +33,7 @@ export class SubServicesController {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This sub services"), ResponseCodes.insertError);
       }
 
-      const coreServ:CoreServices = await this.coreServicesRepo.findOne({ where: { id: core_service_id } });
+      const coreServ: CoreServices = await this.coreServicesRepo.findOne({ where: { id: core_service_id } });
       if (!coreServ) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This core service"), ResponseCodes.serverError);
       }
@@ -62,7 +61,7 @@ export class SubServicesController {
   public async updateSubServices(req: Request, res: Response) {
     try {
       const { sub_service_name, description_title, description, img_logo_url } = req.body;
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
       const getData = await this.subServicesRepo.findOne({
         where: { id: dataId },
       });
@@ -89,7 +88,7 @@ export class SubServicesController {
   // get data
   public async getSubServices(req: Request, res: Response) {
     try {
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
       const data = await this.subServicesRepo.findOne({
         where: { id: dataId },
         select: ["id", "core_service_id", "sub_service_name", "description_title", "description"],
@@ -121,7 +120,7 @@ export class SubServicesController {
   // delete data
   public async removeSubServices(req: Request, res: Response) {
     try {
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
       const data = await this.subServicesRepo.findOne({
         where: { id: dataId },
       });

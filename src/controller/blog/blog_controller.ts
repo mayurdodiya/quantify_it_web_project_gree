@@ -1,6 +1,6 @@
 import { FindOperator, ILike, Not, Repository } from "typeorm";
 import { AppDataSource } from "../../config/database.config";
-import { RoutesHandler } from "../../utils/ErrorHandler";
+import { RoutesHandler } from "../../utils/error_handler";
 import { ResponseCodes } from "../../utils/response-codes";
 import { Request, Response } from "express";
 import { message } from "../../utils/messages";
@@ -37,7 +37,7 @@ export class BlogController {
     try {
       const { blog_title, img_url, description } = req.body;
 
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
       const getData = await this.blogRepo.findOne({ where: { id: dataId } });
       if (!getData) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This blog"), ResponseCodes.notFound);
@@ -63,11 +63,8 @@ export class BlogController {
   // get data
   public async getBlog(req: Request, res: Response) {
     try {
-      const dataId = parseInt(req.params.id);
-      const data = await this.blogRepo.findOne({
-        where: { id: dataId, status: Status.ACTIVE },
-        select: ["id", "blog_title", "description", "img_url", "createdAt"],
-      });
+      const dataId = req.params.id as string;
+      const data = await this.blogRepo.findOne({ where: { id: dataId, status: Status.ACTIVE }, select: ["id", "blog_title", "description", "img_url", "createdAt"] });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This blog"), ResponseCodes.notFound);
       }
@@ -115,7 +112,7 @@ export class BlogController {
   // delete data
   public async removeBlog(req: Request, res: Response) {
     try {
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
       const getData = await this.blogRepo.findOne({ where: { id: dataId } });
       if (!getData) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This blog"), ResponseCodes.notFound);

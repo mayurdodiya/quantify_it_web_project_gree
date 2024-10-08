@@ -1,6 +1,6 @@
 import { Not, Repository } from "typeorm";
 import { AppDataSource } from "../../config/database.config";
-import { RoutesHandler } from "../../utils/ErrorHandler";
+import { RoutesHandler } from "../../utils/error_handler";
 import { ResponseCodes } from "../../utils/response-codes";
 import { Request, Response } from "express";
 import { message } from "../../utils/messages";
@@ -43,7 +43,7 @@ export class EmployeeDetailsController {
     try {
       const { name, img_url, rating, description } = req.body;
 
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
       const getData = await this.employeeDetailsRepo.findOne({
         where: { id: dataId },
       });
@@ -70,7 +70,7 @@ export class EmployeeDetailsController {
   // get data
   public async getEmployeeDetails(req: Request, res: Response) {
     try {
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
       const data = await this.employeeDetailsRepo.findOne({
         where: { id: dataId },
         select: ["id", "name", "img_url", "rating", "description", "createdAt"],
@@ -102,7 +102,7 @@ export class EmployeeDetailsController {
   // delete data
   public async removeEmployeeDetails(req: Request, res: Response) {
     try {
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
       const getData = await this.employeeDetailsRepo.findOne({
         where: { id: dataId },
       });

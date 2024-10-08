@@ -1,6 +1,6 @@
 import { Repository } from "typeorm";
 import { AppDataSource } from "../../config/database.config";
-import { RoutesHandler } from "../../utils/ErrorHandler";
+import { RoutesHandler } from "../../utils/error_handler";
 import { ResponseCodes } from "../../utils/response-codes";
 import { Request, Response } from "express";
 import { message } from "../../utils/messages";
@@ -18,8 +18,8 @@ export class AboutUsController {
     try {
       const { title, description, who_we_are_img_url_1, who_we_are_img_url_2, our_vision, our_mission, vision_mission_img_url, works_about_title, works_about_description, works_about_img_url, total_experience, talented_it_professionals, successfull_projects, served_country } = req.body;
 
-      const getData = await this.aboutUsRepo.findOne({ where: { id: 1 } });
-      if (getData) {
+      const getData = await this.aboutUsRepo.find({ order: { createdAt: "ASC" } });
+      if (getData.length) {
         return RoutesHandler.sendError(req, res, false, message.ADD_ONCE("About us page"), ResponseCodes.insertError);
       }
 
@@ -42,14 +42,15 @@ export class AboutUsController {
 
       await this.aboutUsRepo
         .save(aboutUsData)
-        .then(() => {
-          return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Data successfully created"), ResponseCodes.success, undefined);
+        .then((data) => {
+          return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Data successfully created"), ResponseCodes.success, data);
         })
         .catch((err) => {
           console.log(err);
           return RoutesHandler.sendError(req, res, false, message.ADD_ONCE("Data not created."), ResponseCodes.insertError);
         });
     } catch (error) {
+      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   };
@@ -57,9 +58,10 @@ export class AboutUsController {
   // edit data
   public async updateAboutUs(req: Request, res: Response) {
     try {
+      const id = req.params.id;
       const { title, description, who_we_are_img_url_1, who_we_are_img_url_2, our_vision, our_mission, vision_mission_img_url, works_about_title, works_about_description, works_about_img_url, total_experience, talented_it_professionals, successfull_projects, served_country } = req.body;
 
-      const getData = await this.aboutUsRepo.findOne({ where: { id: 1 } });
+      const getData = await this.aboutUsRepo.findOne({ where: { id: id } });
       if (!getData) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("About us page"), ResponseCodes.notFound);
       }
@@ -88,15 +90,13 @@ export class AboutUsController {
   // get data
   public async getAboutUs(req: Request, res: Response) {
     try {
-
-      const data = await this.aboutUsRepo.findOne({ where: { id: 1 }, select: ["id", "title", "description", "who_we_are_img_url_1", "who_we_are_img_url_2", "our_vision", "our_mission", "vision_mission_img_url", "works_about_title", "works_about_description", "works_about_img_url", "total_experience", "talented_it_professionals", "successfull_projects", "served_country", "createdAt", "updatedAt"] });
+      const data = await this.aboutUsRepo.find({ select: ["id", "title", "description", "who_we_are_img_url_1", "who_we_are_img_url_2", "our_vision", "our_mission", "vision_mission_img_url", "works_about_title", "works_about_description", "works_about_img_url", "total_experience", "talented_it_professionals", "successfull_projects", "served_country", "createdAt", "updatedAt"] });
 
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("About us"), ResponseCodes.searchError);
-      }else {
+      } else {
         return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("About us"), ResponseCodes.success, data);
       }
-
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }

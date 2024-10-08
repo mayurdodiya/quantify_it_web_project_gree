@@ -7,7 +7,7 @@ export class PolicyAndTerms {
     throw new Error("Method not implemented.");
   }
   @PrimaryGeneratedColumn("uuid")
-  id: number;
+  id: string;
 
   @Column({ nullable: false, default: DocumentType.PRIVACY_POLICY })
   document_type: DocumentType;

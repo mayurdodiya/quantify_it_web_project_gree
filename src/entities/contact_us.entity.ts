@@ -6,7 +6,7 @@ export class ContactUs {
     throw new Error("Method not implemented.");
   }
   @PrimaryGeneratedColumn("uuid")
-  id: number;
+  id: string;
 
   @Column({ nullable: false })
   full_name: string;

@@ -1,6 +1,6 @@
 import { Not, Repository } from "typeorm";
 import { AppDataSource } from "../../config/database.config";
-import { RoutesHandler } from "../../utils/ErrorHandler";
+import { RoutesHandler } from "../../utils/error_handler";
 import { ResponseCodes } from "../../utils/response-codes";
 import { Request, Response } from "express";
 import { message } from "../../utils/messages";
@@ -43,7 +43,7 @@ export class CertificationDetailsController {
     try {
       const { sub_title, sub_description, logo_img_url } = req.body;
 
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
       const getData = await this.certificationDetailsRepo.findOne({
         where: { id: dataId },
       });
@@ -70,7 +70,7 @@ export class CertificationDetailsController {
   // get data
   public async getCertificationDetails(req: Request, res: Response) {
     try {
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
       const data = await this.certificationDetailsRepo.findOne({
         where: { id: dataId, status: Status.ACTIVE },
         select: ["id", "sub_title", "sub_description", "logo_img_url", "createdAt"],
@@ -103,7 +103,7 @@ export class CertificationDetailsController {
   // delete data
   public async removeCertificationDetails(req: Request, res: Response) {
     try {
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
       const getData = await this.certificationDetailsRepo.findOne({
         where: { id: dataId },
       });

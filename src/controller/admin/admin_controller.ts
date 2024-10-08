@@ -2,12 +2,12 @@ import { Request, Response } from "express";
 import { User } from "../../entities/user.entity";
 import { Repository } from "typeorm";
 import { AppDataSource } from "../../config/database.config";
-import { RoutesHandler } from "../../utils/ErrorHandler";
+import { RoutesHandler } from "../../utils/error_handler";
 import { message } from "../../utils/messages";
 import { ResponseCodes } from "../../utils/response-codes";
 import { comparepassword } from "../../utils/bcrypt";
 import { generateToken } from "../../utils/auth.token";
-import {  Status } from "../../utils/enum";
+import { Role, Status } from "../../utils/enum";
 
 export class AdminController {
   private userRepo: Repository<User>;
@@ -19,11 +19,9 @@ export class AdminController {
   // login admin
   public async loginAdmin(req: Request, res: Response) {
     try {
-      const { email, password } = req.body;
+      const { email, password: pwd } = req.body;
 
-      const getAdmin = await this.userRepo.findOne({
-        where: { email: email, status: Status.ACTIVE },
-      });
+      const getAdmin = await this.userRepo.findOne({ where: { email: email, status: Status.ACTIVE, role: Role.ADMIN } });
 
       if (!getAdmin) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This email"), ResponseCodes.loginError);
@@ -32,7 +30,7 @@ export class AdminController {
       const hashPwd = getAdmin.password;
       const adminId = getAdmin.id;
 
-      const pwdCompair = await comparepassword(password, hashPwd);
+      const pwdCompair = await comparepassword(pwd, hashPwd);
 
       if (pwdCompair === false) {
         return RoutesHandler.sendError(req, res, false, message.NOT_MATCH("Password"), ResponseCodes.loginError);
@@ -42,8 +40,18 @@ export class AdminController {
       if (!token) {
         return RoutesHandler.sendError(req, res, false, message.NOT_GENERATE("Token"), ResponseCodes.loginError);
       }
-
-      return RoutesHandler.sendSuccess(req, res, true, message.LOGIN_SUCCESS, ResponseCodes.success, token);
+      const data = {
+        id: getAdmin.id,
+        first_name: getAdmin.first_name,
+        last_name: getAdmin.last_name,
+        email: getAdmin.email,
+        phone_no: getAdmin.phone_no,
+        status: getAdmin.status,
+        role: getAdmin.role,
+        location: getAdmin.location,
+        token: token,
+      };
+      return RoutesHandler.sendSuccess(req, res, true, message.LOGIN_SUCCESS, ResponseCodes.success, data);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
@@ -57,7 +65,6 @@ export class AdminController {
       }
       const filePath = req.file.path;
       const pathJoin = process.env.LOCAL_URL + filePath;
-      console.log(pathJoin, "------------------------------------");
 
       return RoutesHandler.sendSuccess(req, res, true, message.UPLOAD_SUCCESS("Image"), ResponseCodes.success, pathJoin);
     } catch (error) {

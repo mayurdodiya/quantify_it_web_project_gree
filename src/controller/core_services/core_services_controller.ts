@@ -1,7 +1,7 @@
 import { CoreServices } from "../../entities/core_services.entity";
 import { Not, Repository } from "typeorm";
 import { AppDataSource } from "../../config/database.config";
-import { RoutesHandler } from "../../utils/ErrorHandler";
+import { RoutesHandler } from "../../utils/error_handler";
 import { ResponseCodes } from "../../utils/response-codes";
 import { Request, Response } from "express";
 import { message } from "../../utils/messages";
@@ -46,7 +46,7 @@ export class CoreServicesController {
       const { img_url } = req.body;
       const service_type = req.body.service_type.toLocaleLowerCase();
 
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
       const getData = await this.coreServicesRepo.findOne({
         where: { id: dataId },
       });
@@ -72,7 +72,7 @@ export class CoreServicesController {
   // get data
   public async getCoreServices(req: Request, res: Response) {
     try {
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
       const data = await this.coreServicesRepo.findOne({
         where: { id: dataId },
         select: ["id", "service_type", "img_url", "createdAt", "updatedAt"],
@@ -104,7 +104,7 @@ export class CoreServicesController {
   // delete data
   public async removeCoreServices(req: Request, res: Response) {
     try {
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
       const data = await this.coreServicesRepo.findOne({
         where: { id: dataId },
       });

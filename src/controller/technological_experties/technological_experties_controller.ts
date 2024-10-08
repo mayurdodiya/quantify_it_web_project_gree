@@ -1,6 +1,6 @@
 import { Not, Repository } from "typeorm";
 import { AppDataSource } from "../../config/database.config";
-import { RoutesHandler } from "../../utils/ErrorHandler";
+import { RoutesHandler } from "../../utils/error_handler";
 import { ResponseCodes } from "../../utils/response-codes";
 import { Request, Response } from "express";
 import { message } from "../../utils/messages";
@@ -49,7 +49,7 @@ export class TechnologicalExpertiesController {
       const { experties_name, img_url } = req.body;
       const experties_type = req.body.experties_type.toLocaleLowerCase();
 
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
       const getData = await this.technologicalExpertiesRepo.findOne({
         where: { id: dataId },
       });
@@ -80,7 +80,7 @@ export class TechnologicalExpertiesController {
   // get data
   public async getTechnologicalExperties(req: Request, res: Response) {
     try {
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
       const data = await this.technologicalExpertiesRepo.findOne({
         where: { id: dataId, status: Status.ACTIVE },
         select: ["id", "experties_type", "experties_name", "img_url", "createdAt"],
@@ -121,7 +121,7 @@ export class TechnologicalExpertiesController {
   // delete data
   public async removeTechnologicalExperties(req: Request, res: Response) {
     try {
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
       const isExist = await this.technologicalExpertiesRepo.findOne({
         where: { id: dataId },
       });

@@ -2,7 +2,7 @@ import { ChatBoat } from "../../entities/chat_boat.entity";
 import { Repository } from "typeorm";
 import { AppDataSource } from "../../config/database.config";
 import { Request, Response } from "express";
-import { RoutesHandler } from "../../utils/ErrorHandler";
+import { RoutesHandler } from "../../utils/error_handler";
 import { message } from "../../utils/messages";
 import { ResponseCodes } from "../../utils/response-codes";
 

@@ -6,13 +6,13 @@ export class AboutUs {
     throw new Error("Method not implemented.");
   }
   @PrimaryGeneratedColumn("uuid")
-  id: number;
+  id: string;
 
   @Column({ nullable: false })
   title: string;
 
   @Column({ type: "jsonb", nullable: false })
-  description: string;
+  description: string[];
 
   @Column({ nullable: false })
   who_we_are_img_url_1: string;
@@ -21,10 +21,10 @@ export class AboutUs {
   who_we_are_img_url_2: string;
 
   @Column({ type: "jsonb", nullable: false })
-  our_vision: string;
+  our_vision: string[];
 
   @Column({ type: "jsonb", nullable: false })
-  our_mission: string;
+  our_mission: string[];
 
   @Column({ nullable: false })
   vision_mission_img_url: string;
@@ -33,7 +33,7 @@ export class AboutUs {
   works_about_title: string;
 
   @Column({ type: "jsonb", nullable: false })
-  works_about_description: string;
+  works_about_description: string[];
 
   @Column({ nullable: false })
   works_about_img_url: string;

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { RoutesHandler } from "../../utils/ErrorHandler";
+import { RoutesHandler } from "../../utils/error_handler";
 import { ResponseCodes } from "../../utils/response-codes";
 import { Repository } from "typeorm";
 import { AppDataSource } from "../../config/database.config";
@@ -17,10 +17,7 @@ export class BannerController {
   public async createBanner(req: Request, res: Response) {
     try {
       const { banner_name, pc_img_url, mobile_img_url, title, description } = req.body;
-      const findBanner = await this.bannerRepo.findOne({
-        where: { banner_name: banner_name },
-      });
-
+      const findBanner = await this.bannerRepo.findOne({ where: { banner_name: banner_name } });
       if (findBanner) {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("Banner name"), ResponseCodes.insertError);
       }
@@ -44,7 +41,7 @@ export class BannerController {
     try {
       const { banner_name, pc_img_url, mobile_img_url, title, description } = req.body;
 
-      const bannerId = parseInt(req.params.id);
+      const bannerId = req.params.id;
       const banner = await this.bannerRepo.findOne({ where: { id: bannerId } });
       if (!banner) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This banner"), ResponseCodes.notFound);
@@ -65,9 +62,8 @@ export class BannerController {
   // get banner
   public async getBanner(req: Request, res: Response) {
     try {
-      const bannerId = parseInt(req.params.id);
-      const banner = await this.bannerRepo.findOne({ where: { id: bannerId } });
-      if (!banner) {
+      const banner = await this.bannerRepo.find();
+      if (banner.length < 0) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This banner"), ResponseCodes.notFound);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Banner"), ResponseCodes.success, banner);
@@ -79,7 +75,7 @@ export class BannerController {
   // delete data
   public async removeBanner(req: Request, res: Response) {
     try {
-      const dataId = parseInt(req.params.id);
+      const dataId = req.params.id;
       const data = await this.bannerRepo.softDelete({ id: dataId });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This banner"), ResponseCodes.notFound);
