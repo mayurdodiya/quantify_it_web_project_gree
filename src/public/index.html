@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat APP</title>
+  </head>
+  <body>
+    <h1>Chatting</h1>
+
+    <button id="openChat" , onclick="openChat()">Open Chat</button>
+    <br />
+    <br />
+    <br />
+    <input type="text" , id="addUserInput" />
+    <button id="addUserId" , onclick="addUserId()">Send User Id</button>
+    <br />
+    <br />
+    <br />
+    <input type="text" , id="text" />
+    <button id="sendBtn" , onclick="createConnection()">Click button</button>
+    <div id="list">
+      <p>top</p>
+      <p>bottom</p>
+    </div>
+
+    <!-- for server connection ==> Socket.io client-side library -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io(); // create new socket connection
+      var sendBtn = document.getElementById("sendBtn");
+      var listDiv = document.getElementById("list");
+      var textInput = document.getElementById("text");
+
+      var myLocalId = localStorage.getItem("name");
+
+      socket.on("serMsgEvent", (data) => {
+        console.log(data);
+
+        // msg for admin browser
+
+        if (data.senderId == "id-admin-123") {
+          console.log("---------------------------------2");
+          var newPTag = document.createElement("p");
+          newPTag.innerText = data.message;
+          listDiv.appendChild(newPTag);
+        } else {
+          if (myLocalId === data.senderId) {
+            var newPTag = document.createElement("p");
+            newPTag.innerText = data.message;
+            listDiv.appendChild(newPTag);
+            console.log("---------------------------------1");
+          } else if (data.receiverId == myLocalId) {
+            var newPTag = document.createElement("p");
+            newPTag.innerText = data.message;
+            listDiv.appendChild(newPTag);
+          }
+        }
+      });
+
+      // const adminSelectedUserId = "id-9ec6118b-4577-48d1-bbed-917ae5646a2f"
+      // if(localStorage.getItem("name") == "id-admin-123")
+      // {
+      //   console.log('----------------------------------------------------admin called');
+      //   socket.on("serMsgEvent", (data)=>{
+      //     console.log('----------------------------------------------------admin innner');
+
+      //     if (myLocalId == adminSelectedUserId ) {
+      //     var newPTag = document.createElement("p");
+      //     newPTag.innerText = data.message;
+      //     listDiv.appendChild(newPTag);
+      //   }
+
+      //    // msg for admin browser
+      //    if (localStorage.getItem("name") == "id-admin-123") {
+      //       console.log('-------------------------admin browser');
+      //       var newPTag = document.createElement("p");
+      //       newPTag.innerText = data.message;
+      //       listDiv.appendChild(newPTag);
+      //     }
+
+      //   });
+      // }
+
+      // socket.on("serMsgEvent", (data) => {
+      //   var myLocalId = localStorage.getItem("name");
+      //    // msg for admin browser
+      //     if (localStorage.getItem("name") == "id-admin-123") {
+      //       console.log('-------------------------admin browser');
+      //       var newPTag = document.createElement("p");
+      //       newPTag.innerText = data.message;
+      //       listDiv.appendChild(newPTag);
+      //     }
+
+      // });
+
+      function addUserId(params) {
+        console.log("----------------------------------------------btn");
+        var userInput = document.getElementById("addUserInput");
+        var userInputId = userInput.value;
+        createConnection(params, userInputId);
+      }
+      function createConnection(params, userInputId) {
+        const message = textInput.value;
+
+        if (localStorage.getItem("name")) {
+          var myUserId = localStorage.getItem("name");
+          if (myUserId == "id-admin-123") {
+            console.log(userInputId, "---------------------------------------------------------------- userInputId");
+
+            socket.emit("htmlMyEve", { message: message, senderId: "id-admin-123", receiverId: userInputId }); // send event to server
+          } else {
+            socket.emit("htmlMyEve", { message: message, senderId: myUserId, receiverId: "id-admin-123" }); // send event to server
+          }
+        }
+
+        if (!localStorage.getItem("name")) {
+          socket.emit("genIdFlag", "please generate my id!");
+          socket.on("serGenretedId", (id) => {
+            console.log(id, "------- new id generated --------");
+            localStorage.setItem("name", id);
+            var myUserId = id;
+            socket.emit("htmlMyEve", { message: message, userId: myUserId }); // send event to server
+          });
+        }
+      }
+
+      function openChat(params) {
+        // generate new id and store in localstorage
+        if (!localStorage.getItem("name")) {
+          socket.emit("genIdFlag", "please generate my id!");
+          socket.on("serGenretedId", (id) => {
+            console.log(id, "------- new id generated --------");
+            localStorage.setItem("name", id);
+          });
+        }
+        if (localStorage.getItem("name")) {
+          console.log(`id already generated: ${localStorage.getItem("name")}`);
+          socket.emit("htmlMyIdIs", localStorage.getItem("name"));
+        }
+      }
+    </script>
+  </body>
+</html>

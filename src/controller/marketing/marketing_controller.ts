@@ -1,0 +1,67 @@
+import { Repository } from "typeorm";
+import { AppDataSource } from "../../config/database.config";
+import { RoutesHandler } from "../../utils/ErrorHandler";
+import { ResponseCodes } from "../../utils/response-codes";
+import { Request, Response } from "express";
+import { message } from "../../utils/messages";
+import { Marketing } from "../../entities/marketing.entity";
+
+export class MarketingController {
+  private marketingRepo: Repository<Marketing>;
+
+  constructor() {
+    this.marketingRepo = AppDataSource.getRepository(Marketing);
+  }
+
+  // add data
+  public addData = async (req: Request, res: Response) => {
+    try {
+      const { marketing_type, referred_by, business_stage, full_name, email, location, company_name, user_message } = req.body;
+      const marketing = new Marketing();
+
+      marketing.marketing_type = marketing_type;
+      marketing.referred_by = referred_by;
+      marketing.business_stage = business_stage;
+      marketing.full_name = full_name;
+      marketing.email = email;
+      marketing.location = location;
+      marketing.company_name = company_name;
+      marketing.user_message = user_message;
+      await this.marketingRepo.save(marketing);
+
+      return RoutesHandler.sendSuccess(req, res, true, message.SUBMIT_FORM(), ResponseCodes.success, undefined);
+    } catch (error) {
+      console.log(error);
+      return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
+    }
+  };
+
+  // get data
+  public async getData(req: Request, res: Response) {
+    try {
+      const dataId = parseInt(req.params.id);
+      const data = await this.marketingRepo.findOne({ where: { id: dataId }, select: ["id", "marketing_type", "referred_by", "business_stage", "full_name", "email", "location", "company_name", "user_message", "creadtedAt", "updatedAt"] });
+      if (!data) {
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This data"), ResponseCodes.searchError);
+      }
+      return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Marketing forms"), ResponseCodes.success, data);
+    } catch (error) {
+      console.log(error);
+      return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
+    }
+  }
+
+  // get all data
+  public async getAllData(req: Request, res: Response) {
+    try {
+      const data = await this.marketingRepo.find({ select: ["id", "marketing_type", "referred_by", "business_stage", "full_name", "email", "location", "company_name", "user_message", "creadtedAt"] });
+      if (!data) {
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This data"), ResponseCodes.searchError);
+      }
+      return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Marketing forms"), ResponseCodes.success, data);
+    } catch (error) {
+      console.log(error);
+      return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
+    }
+  }
+}

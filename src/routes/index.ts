@@ -1,0 +1,48 @@
+import * as express from "express";
+import bannerRoute from "./banner.route";
+import visionExpertiesRoute from "./vision_experties.route";
+import coreServiceRoute from "./core_services.route";
+import subServiceRoute from "./sub_services.route";
+import technologicalExpertiesRoute from "./technological_experties.route";
+import portfolioRoute from "./portfolio.route";
+import trustedClientsRoute from "./trusted_clients.route";
+import blogRoute from "./blog.route";
+import questionAnsRoute from "./question_ans.route";
+import aboutUsRoute from "./about_us.route";
+import certificationDetailsRoute from "./certification_details.route";
+import howWeWorkRoute from "./how_we_work.route";
+import employeeDetailsRoute from "./employee_details.route";
+import providedServiceRoute from "./provided_service.route";
+import featuredServicesRoute from "./featured_services.route";
+import ourContactDetailsRoute from "./our_contact_details.route";
+import marketingRoute from "./marketing.route";
+import contactUsRoute from "./contact_us.route";
+import termsAndConditionRoute from "./policy_and_terms.route";
+import adminRoute from "./admin.route";
+import chatBoatRoute from "./chat_boat.route";
+
+const Routes = express.Router();
+
+Routes.use("/admin", adminRoute);
+Routes.use("/banner", bannerRoute);
+Routes.use("/visionexperties", visionExpertiesRoute);
+Routes.use("/coreservice", coreServiceRoute);
+Routes.use("/subservice", subServiceRoute);
+Routes.use("/techexperties", technologicalExpertiesRoute);
+Routes.use("/portfolio", portfolioRoute);
+Routes.use("/trustedclients", trustedClientsRoute);
+Routes.use("/blog", blogRoute);
+Routes.use("/questionans", questionAnsRoute);
+Routes.use("/aboutus", aboutUsRoute);
+Routes.use("/certification", certificationDetailsRoute);
+Routes.use("/howwework", howWeWorkRoute);
+Routes.use("/employee", employeeDetailsRoute);
+Routes.use("/serviceprovide", providedServiceRoute);
+Routes.use("/featuredservice", featuredServicesRoute);
+Routes.use("/contactdetail", ourContactDetailsRoute);
+Routes.use("/marketing", marketingRoute);
+Routes.use("/contactus", contactUsRoute);
+Routes.use("/termscondition", termsAndConditionRoute);
+Routes.use("/chat", chatBoatRoute);
+
+export default Routes;

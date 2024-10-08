@@ -1,0 +1,45 @@
+import multer from "multer";
+import path from "path";
+import fs from "fs";
+
+if (!fs.existsSync("./uploads")) {
+  fs.mkdirSync("./uploads");
+}
+
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, "./uploads");
+//   },
+//   filename: function (req, file, cb) {
+//     const uniqueSuffix = Date.now();
+//     cb(null, file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname));
+//   },
+// });
+
+// export const uploads = multer({ storage: storage }).single("image");
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/image");
+  },
+  filename: function (req, file, cb) {
+    const imageNameModify = Date.now() + "-" + Math.round(Math.random() * 1e9);
+
+    cb(null, `${file.fieldname}-${imageNameModify}.${file.mimetype.split("/")[1]}`);
+  },
+});
+
+export const imageUpload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 5000000, // 5000000 Bytes = 5 MB
+  },
+  fileFilter(req, file, cb) {
+    if (!file.originalname.match(/\.(png|jpg|jpeg)$/)) {
+      // upload only png and jpg format
+      return cb(new Error("Please upload a Image"));
+    }
+    cb(undefined, true);
+    console.log('--------------------------------------------')
+  },
+});
