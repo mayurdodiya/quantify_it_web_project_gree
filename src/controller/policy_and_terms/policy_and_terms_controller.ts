@@ -99,7 +99,7 @@ export class PolicyAndTermsController {
       const docTypeString = req.query.document_type as string;
       const docType = Number(docTypeString);
 
-      var query = {
+      const query = {
         document_type: DocumentType.PRIVACY_POLICY,
         status: Status.ACTIVE,
       };

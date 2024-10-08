@@ -69,7 +69,7 @@ export class OurContactDetailsController {
   // get data
   public async getData(req: Request, res: Response) {
     try {
-      var data = await this.ourContactDetailsRepo.findOne({
+      const data = await this.ourContactDetailsRepo.findOne({
         where: { id: 1 },
         select: ["id", "phone_no", "email", "address", "createdAt", "updatedAt"],
       });

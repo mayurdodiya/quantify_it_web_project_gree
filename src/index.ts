@@ -72,9 +72,9 @@ app.get("/", (req: Request, res: Response) => {
 //---------------------------------------------------------------------------------------------------
 // socket.io
 io.on("connection", (socketIo) => {
-  var userId = "";
-  var adminId = process.env.ADMIN_CHATBOAT_ID; // gree admin id
-  var chatId = ""
+  let userId = "";
+  const adminId = process.env.ADMIN_CHATBOAT_ID; // gree admin id
+  let chatId = ""
   
   console.log("new user connected :", socketIo.id);
 

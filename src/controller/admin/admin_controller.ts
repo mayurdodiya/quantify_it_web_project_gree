@@ -29,9 +29,9 @@ export class AdminController {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This email"), ResponseCodes.loginError);
       }
 
-      var hashPwd = getAdmin.password;
-      var adminId = getAdmin.id;
-      var pwdCompair = await comparepassword(password, hashPwd);
+      const hashPwd = getAdmin.password;
+      const adminId = getAdmin.id;
+      const pwdCompair = await comparepassword(password, hashPwd);
       if (pwdCompair === false) {
         return RoutesHandler.sendError(req, res, false, message.NOT_MATCH("Password"), ResponseCodes.loginError);
       }
@@ -53,8 +53,8 @@ export class AdminController {
       {
         return RoutesHandler.sendError(req, res, false, message.UPLOAD_IMG("!"), ResponseCodes.insertError);
       }
-      var filePath = req.file.path;
-      var pathJoin = process.env.LOCAL_URL + filePath;
+      const filePath = req.file.path;
+      const pathJoin = process.env.LOCAL_URL + filePath;
       console.log(pathJoin, "------------------------------------");
 
       req.file;

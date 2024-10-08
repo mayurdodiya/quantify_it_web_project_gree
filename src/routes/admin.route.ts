@@ -1,4 +1,4 @@
-import express, { NextFunction } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import { imageUpload } from "../services/file_upload";
 import { AdminController } from "../controller/admin/admin_controller";
 import { imgValidation, loginValidation } from "../utils/express_validator";

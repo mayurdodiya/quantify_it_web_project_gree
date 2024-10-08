@@ -88,9 +88,9 @@ export class TrustedClientsController {
   // get all data
   public async getAllData(req: Request, res: Response) {
     try {
-      var { page, size } = req.query;
-      var pageData: number = parseInt(page as string, 10);
-      var sizeData: number = parseInt(size as string, 10);
+      const { page, size } = req.query;
+      const pageData: number = parseInt(page as string, 10);
+      const sizeData: number = parseInt(size as string, 10);
 
       const skipData: number = pageData * sizeData;
       const [data, totalItems] = await this.trustedClientsRepo.findAndCount({

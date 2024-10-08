@@ -81,12 +81,12 @@ export class BlogController {
   // get all data
   public async getAllData(req: Request, res: Response) {
     try {
-      var { page, size, s } = req.query;
-      var pageData: number = parseInt(page as string, 10);
-      var sizeData: number = parseInt(size as string, 10);
+      const { page, size, s } = req.query;
+      const pageData: number = parseInt(page as string, 10);
+      const sizeData: number = parseInt(size as string, 10);
 
       const skipData: number = pageData * sizeData;
-      var Dataobj: { status: Status; blog_title?: FindOperator<string> } = { status: Status.ACTIVE };
+      let Dataobj: { status: Status; blog_title?: FindOperator<string> } = { status: Status.ACTIVE };
       if (s) {
         Dataobj = {
           ...Dataobj,

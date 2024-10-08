@@ -91,9 +91,9 @@ export class PortfolioController {
   // get all data
   public async getAllData(req: Request, res: Response) {
     try {
-      var { type, page, size } = req.query;
-      var pageData: number = parseInt(page as string, 10);
-      var sizeData: number = parseInt(size as string, 10);
+      const { type, page, size } = req.query;
+      const pageData: number = parseInt(page as string, 10);
+      const sizeData: number = parseInt(size as string, 10);
 
       const searchType: string = type.length == 0 ? "" : `AND "type" = '${type}'`;
 
@@ -116,7 +116,7 @@ export class PortfolioController {
       GROUP BY type
   `);
 
-      let totalItems = countedData.length;
+      const totalItems = countedData.length;
 
       const response = {
         totalItems: totalItems,

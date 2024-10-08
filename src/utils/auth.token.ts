@@ -7,8 +7,8 @@ import { ResponseCodes } from "./response-codes";
 
 export const generateToken = (id: number, role: number) => {
   try {
-    var skey = process.env.TOKEN_SECRETE_KEY;
-    var tokenExp = process.env.TOKEN_EXPIRE;
+    const skey = process.env.TOKEN_SECRETE_KEY;
+    const tokenExp = process.env.TOKEN_EXPIRE;
 
     const token = jwt.sign({ id, role }, skey, { expiresIn: tokenExp });
     return token;
