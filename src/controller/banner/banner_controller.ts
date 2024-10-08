@@ -29,8 +29,11 @@ export class BannerController {
       banner.pc_img_url = pc_img_url || null;
       banner.mobile_img_url = mobile_img_url || null;
 
-      const savedBanner = await this.bannerRepo.save(banner);
-      return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Banner"), ResponseCodes.success, savedBanner);
+      const data = await this.bannerRepo.save(banner);
+      if (!data) {
+        return RoutesHandler.sendSuccess(req, res, false, message.CREATE_FAIL("Banner"), ResponseCodes.success, undefined);
+      }
+      return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Banner"), ResponseCodes.success, undefined);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
@@ -52,7 +55,10 @@ export class BannerController {
       banner.pc_img_url = pc_img_url || banner.pc_img_url;
       banner.mobile_img_url = mobile_img_url || banner.mobile_img_url;
 
-      this.bannerRepo.save(banner);
+      const data = await this.bannerRepo.save(banner);
+      if (!data) {
+        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("Banner"), ResponseCodes.success);
+      }
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Banner"), ResponseCodes.success, undefined);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);

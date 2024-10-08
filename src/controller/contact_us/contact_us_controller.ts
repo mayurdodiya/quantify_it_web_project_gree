@@ -25,11 +25,13 @@ export class ContactUsController {
         user_message: user_message,
         budget: budget,
       });
-      await this.contactUsRepo.save(contactUsData);
-
-      return RoutesHandler.sendSuccess(req, res, true, message.SUBMIT_FORM(), ResponseCodes.success, undefined);
+      const data = await this.contactUsRepo.save(contactUsData);
+      if (!data) {
+        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("contact us data"), ResponseCodes.notFound);
+      }
+      return RoutesHandler.sendSuccess(req, res, true, message.SUBMIT_FORM, ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);      
+      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   };

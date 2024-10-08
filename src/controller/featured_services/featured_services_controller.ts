@@ -30,8 +30,11 @@ export class FeaturedServicesController {
       featuredService.title = title;
       featuredService.description = description;
       featuredService.logo_img_url = logo_img_url;
-      await this.featuredServicesRepo.save(featuredService);
 
+      const data = await this.featuredServicesRepo.save(featuredService);
+      if (!data) {
+        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("featured service data"), ResponseCodes.notFound);
+      }
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Featured service"), ResponseCodes.success, undefined);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
@@ -61,7 +64,12 @@ export class FeaturedServicesController {
       getData.title = title || getData.title;
       getData.description = description || getData.description;
       getData.logo_img_url = logo_img_url || getData.logo_img_url;
-      this.featuredServicesRepo.save(getData);
+
+      const data = await this.featuredServicesRepo.save(getData);
+
+      if (!data) {
+        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("featured service data"), ResponseCodes.notFound);
+      }
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Featured service"), ResponseCodes.success, undefined);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);

@@ -32,8 +32,11 @@ export class CoreServicesController {
       coreServ.service_type = service_type;
       coreServ.img_url = img_url || null;
 
-      await this.coreServicesRepo.save(coreServ);
+      const data = await this.coreServicesRepo.save(coreServ);
 
+      if (!data) {
+        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("core services data"), ResponseCodes.notFound);
+      }
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Core services"), ResponseCodes.success, undefined);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
@@ -62,7 +65,11 @@ export class CoreServicesController {
       }
       getData.service_type = service_type;
       getData.img_url = img_url || null;
-      this.coreServicesRepo.save(getData);
+      const data = await this.coreServicesRepo.save(getData);
+
+      if (!data) {
+        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("core services data"), ResponseCodes.notFound);
+      }
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Core services"), ResponseCodes.success, undefined);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);

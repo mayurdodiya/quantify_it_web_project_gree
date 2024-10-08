@@ -27,9 +27,12 @@ export class MarketingController {
       marketing.location = location;
       marketing.company_name = company_name;
       marketing.user_message = user_message;
-      await this.marketingRepo.save(marketing);
 
-      return RoutesHandler.sendSuccess(req, res, true, message.SUBMIT_FORM(), ResponseCodes.success, undefined);
+      const data = await this.marketingRepo.save(marketing);
+      if (!data) {
+        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("form data"), ResponseCodes.notFound);
+      }
+      return RoutesHandler.sendSuccess(req, res, true, message.SUBMIT_FORM, ResponseCodes.success, undefined);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }

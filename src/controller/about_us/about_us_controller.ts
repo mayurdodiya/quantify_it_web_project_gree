@@ -43,12 +43,14 @@ export class AboutUsController {
       await this.aboutUsRepo
         .save(aboutUsData)
         .then((data) => {
-          return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Data successfully created"), ResponseCodes.success, data);
+          return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("About us page"), ResponseCodes.success, data);
         })
         .catch((err) => {
           console.log(err);
-          return RoutesHandler.sendError(req, res, false, message.ADD_ONCE("Data not created."), ResponseCodes.insertError);
+          return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("about us page"), ResponseCodes.insertError);
         });
+        
+        
     } catch (error) {
       console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
@@ -80,8 +82,13 @@ export class AboutUsController {
       getData.talented_it_professionals = talented_it_professionals || getData.talented_it_professionals;
       getData.successfull_projects = successfull_projects || getData.successfull_projects;
       getData.served_country = served_country || getData.served_country;
-      this.aboutUsRepo.save(getData);
+
+      const data = await this.aboutUsRepo.save(getData);
+      if (!data) {
+        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("about us page"), ResponseCodes.insertError);
+      }
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("About us page"), ResponseCodes.success, undefined);
+      
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }

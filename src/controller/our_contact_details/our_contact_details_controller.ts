@@ -33,11 +33,13 @@ export class OurContactDetailsController {
       visionExp.email = email;
       visionExp.location = location;
       visionExp.address = address;
-      await this.ourContactDetailsRepo.save(visionExp);
-
+      const data = await this.ourContactDetailsRepo.save(visionExp);
+      if (!data) {
+        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("our contact details"), ResponseCodes.notFound);
+      }
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Our contact details"), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);      
+      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   };
@@ -59,7 +61,11 @@ export class OurContactDetailsController {
       getData.email = email || getData.email;
       getData.location = location || getData.location;
       getData.address = address || getData.address;
-      this.ourContactDetailsRepo.save(getData);
+
+      const data = await this.ourContactDetailsRepo.save(getData);
+      if (!data) {
+        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("our contact details"), ResponseCodes.notFound);
+      }
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Our contact details"), ResponseCodes.success, undefined);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);

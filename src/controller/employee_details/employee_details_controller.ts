@@ -17,9 +17,7 @@ export class EmployeeDetailsController {
   public addEmployeeDetails = async (req: Request, res: Response) => {
     try {
       const { name, img_url, rating, description } = req.body;
-      const getData = await this.employeeDetailsRepo.findOne({
-        where: { name: name },
-      });
+      const getData = await this.employeeDetailsRepo.findOne({ where: { name: name } });
       if (getData) {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This employee data"), ResponseCodes.insertError);
       }
@@ -30,8 +28,12 @@ export class EmployeeDetailsController {
       employeeData.img_url = img_url;
       employeeData.rating = rating;
       employeeData.description = description;
-      await this.employeeDetailsRepo.save(employeeData);
 
+      const data = await this.employeeDetailsRepo.save(employeeData);
+
+      if (!data) {
+        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("employee data"), ResponseCodes.notFound);
+      }
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Employee data"), ResponseCodes.success, undefined);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
@@ -60,7 +62,12 @@ export class EmployeeDetailsController {
       getData.img_url = img_url || getData.img_url;
       getData.rating = rating || getData.rating;
       getData.description = description || getData.rating;
-      this.employeeDetailsRepo.save(getData);
+
+      const data = await this.employeeDetailsRepo.save(getData);
+
+      if (!data) {
+        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("employee data"), ResponseCodes.notFound);
+      }
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Employee data"), ResponseCodes.success, undefined);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);

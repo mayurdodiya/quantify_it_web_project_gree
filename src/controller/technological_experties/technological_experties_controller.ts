@@ -35,8 +35,11 @@ export class TechnologicalExpertiesController {
       technoExp.experties_type = experties_type;
       technoExp.experties_name = experties_name;
       technoExp.img_url = img_url;
-      await this.technologicalExpertiesRepo.save(technoExp);
 
+      const data = await this.technologicalExpertiesRepo.save(technoExp);
+      if (!data) {
+        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("experties"), ResponseCodes.notFound);
+      }
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Experties"), ResponseCodes.success, undefined);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
@@ -70,7 +73,11 @@ export class TechnologicalExpertiesController {
       getData.experties_type = experties_type || getData.experties_type;
       getData.experties_name = experties_name || getData.experties_name;
       getData.img_url = img_url || getData.img_url;
-      this.technologicalExpertiesRepo.save(getData);
+
+      const data = await this.technologicalExpertiesRepo.save(getData);
+      if (!data) {
+        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("experties"), ResponseCodes.notFound);
+      }
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Experties"), ResponseCodes.success, undefined);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);

@@ -23,7 +23,7 @@ export class SubServicesController {
   }
 
   // add data
-  public addSubServices= async (req: Request, res: Response) => {
+  public addSubServices = async (req: Request, res: Response) => {
     try {
       const { sub_service_name, core_service_id } = req.body;
       const getData = await this.subServicesRepo.findOne({
@@ -49,8 +49,10 @@ export class SubServicesController {
       });
       const data: SubServicesItem[] = await Promise.all(subServiceDataPromises);
 
-      await this.subServicesRepo.save(data);
-
+      const dataAdd = await this.subServicesRepo.save(data);
+      if (!dataAdd) {
+        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("sub services"), ResponseCodes.notFound);
+      }
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Sub services"), ResponseCodes.success, undefined);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
@@ -78,7 +80,11 @@ export class SubServicesController {
       getData.description_title = description_title;
       getData.description = description;
       getData.img_logo_url = img_logo_url;
-      this.subServicesRepo.save(getData);
+
+      const dataAdd = await this.subServicesRepo.save(getData);
+      if (!dataAdd) {
+        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("sub services"), ResponseCodes.notFound);
+      }
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Sub services"), ResponseCodes.success, undefined);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);

@@ -31,8 +31,11 @@ export class TrustedClientsController {
       trustedClients.his_profession = his_profession;
       trustedClients.img_url = img_url || null;
       trustedClients.description = description || null;
-      await this.trustedClientsRepo.save(trustedClients);
 
+      const data = await this.trustedClientsRepo.save(trustedClients);
+      if (!data) {
+        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("client"), ResponseCodes.inputError);
+      }
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Client"), ResponseCodes.success, undefined);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
@@ -61,7 +64,11 @@ export class TrustedClientsController {
       getData.his_profession = his_profession || getData.his_profession;
       getData.img_url = img_url || getData.img_url;
       getData.description = description || getData.description;
-      this.trustedClientsRepo.save(getData);
+
+      const data = await this.trustedClientsRepo.save(getData);
+      if (!data) {
+        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("client"), ResponseCodes.inputError);
+      }
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Client"), ResponseCodes.success, undefined);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);

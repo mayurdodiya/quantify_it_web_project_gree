@@ -30,8 +30,11 @@ export class VisionExpertiesController {
       visionExp.title = title;
       visionExp.description = description || null;
       visionExp.img_url = img_url || null;
-      await this.visionExpertiesRepo.save(visionExp);
 
+      const data = await this.visionExpertiesRepo.save(visionExp);
+      if (!data) {
+        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("Experties"), ResponseCodes.inputError);
+      }
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Experties"), ResponseCodes.success, undefined);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
@@ -59,7 +62,11 @@ export class VisionExpertiesController {
       getData.title = title || getData.title;
       getData.description = description || getData.description;
       getData.img_url = img_url || getData.img_url;
-      this.visionExpertiesRepo.save(getData);
+
+      const data = await this.visionExpertiesRepo.save(getData);
+      if (!data) {
+        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("Experties"), ResponseCodes.inputError);
+      }
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Experties"), ResponseCodes.success, undefined);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);

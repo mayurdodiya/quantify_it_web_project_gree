@@ -51,6 +51,7 @@ export class AdminController {
         location: getAdmin.location,
         token: token,
       };
+      
       return RoutesHandler.sendSuccess(req, res, true, message.LOGIN_SUCCESS, ResponseCodes.success, data);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);

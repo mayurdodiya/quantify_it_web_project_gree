@@ -13,7 +13,7 @@ const message = {
 
   DELETE_SUCCESS: (str: string) => `${str} data deleted successfully!`,
   ADD_ONCE: (str: string) => `${str} can only be added once. You cannot add it multiple times!`,
-  SUBMIT_FORM: () => `Your form has been successfully submitted. Thank you for your submission!`,
+  SUBMIT_FORM: `Your form has been successfully submitted. Thank you for your submission!`,
 
   NOT_MATCH: (str: string) => `${str} not match!`,
   NOT_GENERATE: (str: string) => `${str} not generated!`,

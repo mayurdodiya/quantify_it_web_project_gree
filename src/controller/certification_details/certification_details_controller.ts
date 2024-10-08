@@ -30,8 +30,11 @@ export class CertificationDetailsController {
       visionExp.sub_title = sub_title;
       visionExp.sub_description = sub_description || null;
       visionExp.logo_img_url = logo_img_url || null;
-      await this.certificationDetailsRepo.save(visionExp);
 
+      const data = await this.certificationDetailsRepo.save(visionExp);
+      if (!data) {
+        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("Certification Details"), ResponseCodes.insertError);
+      }
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Certification Details"), ResponseCodes.success, undefined);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
@@ -60,7 +63,11 @@ export class CertificationDetailsController {
       getData.sub_title = sub_title || getData.sub_title;
       getData.sub_description = sub_description || getData.sub_description;
       getData.logo_img_url = logo_img_url || getData.logo_img_url;
-      this.certificationDetailsRepo.save(getData);
+
+      const data = await this.certificationDetailsRepo.save(getData);
+      if (!data) {
+        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("certification details"), ResponseCodes.insertError);
+      }
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Certification Details"), ResponseCodes.success, undefined);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);

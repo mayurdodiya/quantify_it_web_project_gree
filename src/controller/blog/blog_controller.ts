@@ -24,8 +24,11 @@ export class BlogController {
       blogData.blog_title = blog_title;
       blogData.img_url = img_url || null;
       blogData.description = description || null;
-      await this.blogRepo.save(blogData);
 
+      const data = await this.blogRepo.save(blogData);
+      if (!data) {
+        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("blog"), ResponseCodes.insertError);
+      }
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Blog"), ResponseCodes.createSuccess, undefined);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
@@ -43,9 +46,7 @@ export class BlogController {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This blog"), ResponseCodes.notFound);
       }
 
-      const isExist = await this.blogRepo.findOne({
-        where: { blog_title: blog_title, id: Not(dataId) },
-      });
+      const isExist = await this.blogRepo.findOne({ where: { blog_title: blog_title, id: Not(dataId) } });
       if (isExist) {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This blog"), ResponseCodes.alreadyExist);
       }
@@ -53,7 +54,11 @@ export class BlogController {
       getData.blog_title = blog_title || getData.blog_title;
       getData.description = description || getData.description;
       getData.img_url = img_url || getData.img_url;
-      this.blogRepo.save(getData);
+
+      const data = await this.blogRepo.save(getData);
+      if (!data) {
+        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("blog"), ResponseCodes.insertError);
+      }
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Blog"), ResponseCodes.success, undefined);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);

@@ -43,8 +43,11 @@ export class ProvidedServiceController {
       providedServiceData.completed_works = completed_works;
       providedServiceData.client_ratings = client_ratings;
       providedServiceData.bussiness_reports_percentage = bussiness_reports_percentage;
-      await this.providedServiceRepo.save(providedServiceData);
 
+      const data = await this.providedServiceRepo.save(providedServiceData);
+      if (!data) {
+        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("service provide data"), ResponseCodes.notFound);
+      }
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Service provide data"), ResponseCodes.success, undefined);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
@@ -90,7 +93,11 @@ export class ProvidedServiceController {
       getData.completed_works = completed_works || getData.completed_works;
       getData.client_ratings = client_ratings || getData.client_ratings;
       getData.bussiness_reports_percentage = bussiness_reports_percentage || getData.bussiness_reports_percentage;
-      this.providedServiceRepo.save(getData);
+
+      const data = await this.providedServiceRepo.save(getData);
+      if (!data) {
+        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("service provide data"), ResponseCodes.notFound);
+      }
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Service provide data"), ResponseCodes.success, undefined);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);

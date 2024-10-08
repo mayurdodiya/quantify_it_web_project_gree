@@ -30,8 +30,11 @@ export class HowWeWorkController {
       questionAnsData.title = title;
       questionAnsData.description = description;
       questionAnsData.logo_img_url = logo_img_url;
-      await this.howWeWorkRepo.save(questionAnsData);
 
+      const data = await this.howWeWorkRepo.save(questionAnsData);
+      if (!data) {
+        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("work data"), ResponseCodes.notFound);
+      }
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Work data"), ResponseCodes.success, undefined);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
@@ -60,7 +63,11 @@ export class HowWeWorkController {
       getData.title = title || getData.title;
       getData.description = description || getData.description;
       getData.logo_img_url = logo_img_url || getData.logo_img_url;
-      this.howWeWorkRepo.save(getData);
+
+      const data = await this.howWeWorkRepo.save(getData);
+      if (!data) {
+        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("work data"), ResponseCodes.notFound);
+      }
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Work data"), ResponseCodes.success, undefined);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);

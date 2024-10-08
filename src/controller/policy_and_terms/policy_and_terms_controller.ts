@@ -30,8 +30,11 @@ export class PolicyAndTermsController {
       termsData.document_type = document_type === DocumentType.PRIVACY_POLICY ? DocumentType.PRIVACY_POLICY : document_type === DocumentType.TERMS_CONDITION ? DocumentType.TERMS_CONDITION : null;
       termsData.subject = subject;
       termsData.explanation = explanation;
-      await this.policyAndTermsRepo.save(termsData);
 
+      const data = await this.policyAndTermsRepo.save(termsData);
+      if (!data) {
+        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("Data"), ResponseCodes.notFound);
+      }
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Data"), ResponseCodes.success, undefined);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
@@ -66,7 +69,11 @@ export class PolicyAndTermsController {
       getData.document_type = document_type || getData.document_type;
       getData.subject = subject || getData.subject;
       getData.explanation = explanation || getData.explanation;
-      this.policyAndTermsRepo.save(getData);
+
+      const data = await this.policyAndTermsRepo.save(getData);
+      if (!data) {
+        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("Data"), ResponseCodes.notFound);
+      }
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Data"), ResponseCodes.success, undefined);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);

@@ -31,8 +31,11 @@ export class PortfolioController {
       portfolio.sub_title = sub_title;
       portfolio.img_url = img_url || null;
       portfolio.description = description || null;
-      await this.portfolioRepo.save(portfolio);
 
+      const data = await this.portfolioRepo.save(portfolio);
+      if (!data) {
+        return RoutesHandler.sendError(req, res, false, message.CREATE_SUCCESS("Portfolio"), ResponseCodes.notFound);
+      }
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Portfolio"), ResponseCodes.success, undefined);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
@@ -64,7 +67,11 @@ export class PortfolioController {
       getData.sub_title = sub_title || getData.sub_title;
       getData.description = description || getData.description;
       getData.img_url = img_url || getData.img_url;
-      this.portfolioRepo.save(getData);
+
+      const data = await this.portfolioRepo.save(getData);
+      if (!data) {
+        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("Portfolio"), ResponseCodes.notFound);
+      }
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Portfolio"), ResponseCodes.success, undefined);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);

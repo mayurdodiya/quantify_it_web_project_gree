@@ -29,8 +29,11 @@ export class QuestionAnsController {
 
       questionAnsData.question = question;
       questionAnsData.answer = answer;
-      await this.questionAnsRepo.save(questionAnsData);
 
+      const data = await this.questionAnsRepo.save(questionAnsData);
+      if (!data) {
+        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("question and ans"), ResponseCodes.notFound);
+      }
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Question and ans"), ResponseCodes.success, undefined);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
@@ -58,7 +61,11 @@ export class QuestionAnsController {
       }
       getData.question = question || getData.question;
       getData.answer = answer || getData.answer;
-      this.questionAnsRepo.save(getData);
+
+      const data = await this.questionAnsRepo.save(getData);
+      if (!data) {
+        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("question and ans"), ResponseCodes.notFound);
+      }
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Question and ans"), ResponseCodes.success, undefined);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
