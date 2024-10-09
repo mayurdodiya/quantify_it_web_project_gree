@@ -5,7 +5,6 @@ import { message } from "../../utils/messages";
 import { ResponseCodes } from "../../utils/response-codes";
 import { ProvidedServiceController } from "../../controller/provided_service/provided_service_controller";
 
-// Mock the AppDataSource repository
 jest.mock("../../config/database.config", () => ({
   AppDataSource: {
     getRepository: jest.fn().mockReturnValue({
@@ -44,7 +43,6 @@ describe("ProvidedServiceController", () => {
   });
 
   it("should return an error if service already exists", async () => {
-    // Mock findOne to return an existing service
     (AppDataSource.getRepository(ProvidedService).findOne as jest.Mock).mockResolvedValueOnce({ id: 1 });
 
     mockRequest.body = {
@@ -52,10 +50,7 @@ describe("ProvidedServiceController", () => {
       service_name: "Service1",
     };
 
-    await providedServiceController.addProvidedService(
-      mockRequest as Request,
-      mockResponse as Response
-    );
+    await providedServiceController.addProvidedService(mockRequest as Request, mockResponse as Response);
 
     expect(statusMock).toHaveBeenCalledWith(ResponseCodes.alreadyExist);
     expect(jsonMock).toHaveBeenCalledWith({
@@ -66,10 +61,8 @@ describe("ProvidedServiceController", () => {
   });
 
   it("should save new service and return success", async () => {
-    // Mock findOne to return no existing service
     (AppDataSource.getRepository(ProvidedService).findOne as jest.Mock).mockResolvedValueOnce(null);
 
-    // Mock save to return saved service
     (AppDataSource.getRepository(ProvidedService).save as jest.Mock).mockResolvedValueOnce({ id: 1 });
 
     mockRequest.body = {
@@ -78,10 +71,7 @@ describe("ProvidedServiceController", () => {
       service_name: "Service1",
     };
 
-    await providedServiceController.addProvidedService(
-      mockRequest as Request,
-      mockResponse as Response
-    );
+    await providedServiceController.addProvidedService(mockRequest as Request, mockResponse as Response);
 
     expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
     expect(jsonMock).toHaveBeenCalledWith({
@@ -94,10 +84,7 @@ describe("ProvidedServiceController", () => {
   it("should return server error on failure", async () => {
     (AppDataSource.getRepository(ProvidedService).findOne as jest.Mock).mockRejectedValueOnce(new Error("Server error"));
 
-    await providedServiceController.addProvidedService(
-      mockRequest as Request,
-      mockResponse as Response
-    );
+    await providedServiceController.addProvidedService(mockRequest as Request, mockResponse as Response);
 
     expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
     expect(jsonMock).toHaveBeenCalledWith({
@@ -112,10 +99,7 @@ describe("ProvidedServiceController", () => {
 
     mockRequest.params = { id: "1" };
 
-    await providedServiceController.updateProvidedService(
-      mockRequest as Request,
-      mockResponse as Response
-    );
+    await providedServiceController.updateProvidedService(mockRequest as Request, mockResponse as Response);
 
     expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
     expect(jsonMock).toHaveBeenCalledWith({
@@ -140,15 +124,12 @@ describe("ProvidedServiceController", () => {
       service_type: "New Type",
     };
 
-    await providedServiceController.updateProvidedService(
-      mockRequest as Request,
-      mockResponse as Response
-    );
+    await providedServiceController.updateProvidedService(mockRequest as Request, mockResponse as Response);
     console.log(jsonMock.mock.calls);
     expect(statusMock).toHaveBeenCalledWith(ResponseCodes.saveError);
     expect(jsonMock).toHaveBeenCalledWith({
       success: false,
-      message: 'Failed to update service provide data. Please try again!',
+      message: "Failed to update service provide data. Please try again!",
       data: undefined,
     });
   });
