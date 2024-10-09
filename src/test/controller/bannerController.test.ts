@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import { message } from "../../utils/messages";
+import { Banner } from "../../entities/banner.entity";
 import { ResponseCodes } from "../../utils/response-codes";
 import { AppDataSource } from "../../config/database.config";
 import { BannerController } from "../../controller/banner/banner_controller";
-import { Banner } from "../../entities/banner.entity";
 
 jest.mock("../../config/database.config", () => ({
   AppDataSource: {
