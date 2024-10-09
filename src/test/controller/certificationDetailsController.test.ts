@@ -189,9 +189,6 @@ describe("certificationDetailsController", () => {
 
   it("should return not found if certification details does not exist", async () => {
     (AppDataSource.getRepository(CertificationDetails).findOne as jest.Mock).mockResolvedValueOnce(null);
-    const certificationData = {
-      id: 1,
-    };
     mockRequest.params = { id: "1" };
 
     await certificationDetailsController.getCertificationDetails(mockRequest as Request, mockResponse as Response);
@@ -206,9 +203,6 @@ describe("certificationDetailsController", () => {
 
   it("should return server error on unexpected error", async () => {
     (AppDataSource.getRepository(CertificationDetails).findOne as jest.Mock).mockRejectedValueOnce(new Error("Unexpected error"));
-    const certificationData = {
-      id: 1,
-    };
     mockRequest.params = { id: "1" };
 
     await certificationDetailsController.getCertificationDetails(mockRequest as Request, mockResponse as Response);

@@ -189,9 +189,6 @@ describe("coreServicesController", () => {
 
   it("should return not found if core services does not exist", async () => {
     (AppDataSource.getRepository(CoreServices).findOne as jest.Mock).mockResolvedValueOnce(null);
-    const coreData = {
-      id: 1,
-    };
     mockRequest.params = { id: "1" };
 
     await coreServicesController.getCoreServices(mockRequest as Request, mockResponse as Response);
@@ -206,9 +203,6 @@ describe("coreServicesController", () => {
 
   it("should return server error on unexpected error", async () => {
     (AppDataSource.getRepository(CoreServices).findOne as jest.Mock).mockRejectedValueOnce(new Error("Unexpected error"));
-    const coreData = {
-      id: 1,
-    };
     mockRequest.params = { id: "1" };
 
     await coreServicesController.getCoreServices(mockRequest as Request, mockResponse as Response);

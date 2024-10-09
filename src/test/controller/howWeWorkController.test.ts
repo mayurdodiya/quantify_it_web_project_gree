@@ -189,9 +189,6 @@ describe("howWeWorkController", () => {
 
   it("should return not found if work data does not exist", async () => {
     (AppDataSource.getRepository(HowWeWork).findOne as jest.Mock).mockResolvedValueOnce(null);
-    const workData = {
-      id: 1,
-    };
     mockRequest.params = { id: "1" };
 
     await howWeWorkController.getHowWeWork(mockRequest as Request, mockResponse as Response);
@@ -206,9 +203,6 @@ describe("howWeWorkController", () => {
 
   it("should return server error on unexpected error", async () => {
     (AppDataSource.getRepository(HowWeWork).findOne as jest.Mock).mockRejectedValueOnce(new Error("Unexpected error"));
-    const workData = {
-      id: 1,
-    };
     mockRequest.params = { id: "1" };
 
     await howWeWorkController.getHowWeWork(mockRequest as Request, mockResponse as Response);
