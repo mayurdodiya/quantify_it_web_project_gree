@@ -125,7 +125,6 @@ io.on("connection", (socketIo) => {
     }
 
     if (data.message != method.question1 && data.message != method.question2 && data.message != method.question3 && data.message != method.question4 && data.message != method.question5) {
-      console.log("if condition called!");
       userId = data.senderId;
       chatId = data.chatId;
       io.emit("serMsgEvent", { message: data.message, senderId: data.senderId, receiverId: data.receiverId });

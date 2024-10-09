@@ -104,7 +104,6 @@ export class TechnologicalExpertiesController {
   // get all data
   public async getAllTechnologicalExperties(req: Request, res: Response) {
     try {
-      console.log("Testststsstst");
       const groupedData = await AppDataSource?.query(`
     SELECT
         experties_type AS experties_type,
@@ -116,7 +115,6 @@ export class TechnologicalExpertiesController {
     GROUP BY
         experties_type;
 `);
-      console.log(groupedData, "groupedDatagroupedDatagroupedData");
 
       if (!groupedData) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This experties"), ResponseCodes.notFound);
