@@ -197,5 +197,4 @@ describe("ProvidedServiceController", () => {
       data: undefined,
     });
   });
-
 });
