@@ -19,7 +19,7 @@ export class AboutUsController {
       const { title, description, who_we_are_img_url_1, who_we_are_img_url_2, our_vision, our_mission, vision_mission_img_url, works_about_title, works_about_description, works_about_img_url, total_experience, talented_it_professionals, successfull_projects, served_country } = req.body;
 
       const getData = await this.aboutUsRepo.find({ order: { createdAt: "ASC" } });
-      if (getData.length) {
+      if (getData?.length) {
         return RoutesHandler.sendError(req, res, false, message.ADD_ONCE("About us page"), ResponseCodes.insertError);
       }
 
@@ -40,17 +40,11 @@ export class AboutUsController {
       aboutUsData.successfull_projects = successfull_projects;
       aboutUsData.served_country = served_country;
 
-      await this.aboutUsRepo
-        .save(aboutUsData)
-        .then((data) => {
-          return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("About us page"), ResponseCodes.success, data);
-        })
-        .catch((err) => {
-          console.log(err);
-          return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("about us page"), ResponseCodes.insertError);
-        });
-        
-        
+      const data = await this.aboutUsRepo.save(aboutUsData);
+      if (!data) {
+        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("about us page"), ResponseCodes.insertError);
+      }
+      return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("About us page"), ResponseCodes.success, data);
     } catch (error) {
       console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
@@ -88,7 +82,6 @@ export class AboutUsController {
         return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("about us page"), ResponseCodes.insertError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("About us page"), ResponseCodes.success, undefined);
-      
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
@@ -100,7 +93,7 @@ export class AboutUsController {
       const data = await this.aboutUsRepo.find({ select: ["id", "title", "description", "who_we_are_img_url_1", "who_we_are_img_url_2", "our_vision", "our_mission", "vision_mission_img_url", "works_about_title", "works_about_description", "works_about_img_url", "total_experience", "talented_it_professionals", "successfull_projects", "served_country", "createdAt", "updatedAt"] });
 
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("About us"), ResponseCodes.searchError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("About us page"), ResponseCodes.searchError);
       } else {
         return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("About us"), ResponseCodes.success, data);
       }

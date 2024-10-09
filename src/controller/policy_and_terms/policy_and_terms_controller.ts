@@ -93,7 +93,7 @@ export class PolicyAndTermsController {
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA(`This data`), ResponseCodes.notFound);
       }
-      return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("The requested"), ResponseCodes.success, data);
+      return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("This requested"), ResponseCodes.success, data);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }

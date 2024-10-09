@@ -95,7 +95,7 @@ export class TrustedClientsController {
   // get all data
   public async getAllTrustedClients(req: Request, res: Response) {
     try {
-      const { page, size } = req.query;
+      const { page=0, size=10 } = req.query;
       const pageData: number = parseInt(page as string, 10);
       const sizeData: number = parseInt(size as string, 10);
 

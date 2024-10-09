@@ -31,7 +31,7 @@ export class BannerController {
 
       const data = await this.bannerRepo.save(banner);
       if (!data) {
-        return RoutesHandler.sendSuccess(req, res, false, message.CREATE_FAIL("Banner"), ResponseCodes.saveError, undefined);
+        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("Banner"), ResponseCodes.saveError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Banner"), ResponseCodes.success, undefined);
     } catch (error) {

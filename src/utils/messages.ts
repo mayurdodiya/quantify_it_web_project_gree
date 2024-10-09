@@ -6,7 +6,7 @@ const message = {
   GET_DATA: (str: string) => `${str} data get successfully!`,
 
   CREATE_SUCCESS: (str: string) => `${str} added successfully!`,
-  CREATE_FAIL: (str: string) => `Failed to add ${str}. Please try again!`,
+  CREATE_FAIL: (str: string) => `Failed to add ${str} Please try again!`,
 
   UPDATED_SUCCESSFULLY: (str: string) => `${str} has been updated successfully!`,
   UPDATE_FAILED: (str: string) => `Failed to update ${str}. Please try again!`,
