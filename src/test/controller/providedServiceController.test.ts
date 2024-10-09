@@ -125,7 +125,6 @@ describe("ProvidedServiceController", () => {
     };
 
     await providedServiceController.updateProvidedService(mockRequest as Request, mockResponse as Response);
-    console.log(jsonMock.mock.calls);
     expect(statusMock).toHaveBeenCalledWith(ResponseCodes.saveError);
     expect(jsonMock).toHaveBeenCalledWith({
       success: false,
@@ -133,4 +132,70 @@ describe("ProvidedServiceController", () => {
       data: undefined,
     });
   });
+
+  it("should return not found if service does not exist", async () => {
+    (AppDataSource.getRepository(ProvidedService).findOne as jest.Mock).mockResolvedValueOnce(null);
+
+    mockRequest.params = { id: "1" };
+
+    await providedServiceController.getProvidedService(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: message.NO_DATA("This service provide data"),
+      data: undefined,
+    });
+  });
+
+  it("should return service data if found", async () => {
+    const serviceData = {
+      id: 1,
+      card_img_url: "test_url",
+      service_type: "Type1",
+      service_name: "Service1",
+      service_name_title: "Service Title",
+      description: "Service Description",
+      service_benifits: "Benefits",
+      work_planning_title: "Work Planning",
+      work_planning_description: "Planning Description",
+      work_planning_img_url: "work_img_url",
+      business_solutions_title: "Business Solutions",
+      business_solutions_description: "Solutions Description",
+      business_solutions_img_url: "solutions_img_url",
+      completed_works: "Completed Works",
+      client_ratings: "Client Ratings",
+      bussiness_reports_percentage: 75,
+      createdAt: new Date(),
+    };
+
+    (AppDataSource.getRepository(ProvidedService).findOne as jest.Mock).mockResolvedValueOnce(serviceData);
+
+    mockRequest.params = { id: "1" };
+
+    await providedServiceController.getProvidedService(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: true,
+      message: message.GET_DATA("Service provide data"),
+      data: serviceData,
+    });
+  });
+
+  it("should return server error on unexpected error", async () => {
+    (AppDataSource.getRepository(ProvidedService).findOne as jest.Mock).mockRejectedValueOnce(new Error("Unexpected error"));
+
+    mockRequest.params = { id: "1" };
+
+    await providedServiceController.getProvidedService(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: "Unexpected error",
+      data: undefined,
+    });
+  });
+
 });
