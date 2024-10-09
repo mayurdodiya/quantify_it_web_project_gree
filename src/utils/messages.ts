@@ -27,6 +27,8 @@ const message = {
   UPLOAD_SUCCESS: (str: string) => `${str} upload successfully!`,
 
   UPLOAD_IMG: `Please upload a Image`,
+
+  SERVER_ERROR: "Unexpected error",
 };
 
 export { message };

@@ -13,4 +13,5 @@ export const ResponseCodes = {
   tokenError: 552,
   notFound: 404,
   alreadyExist: 409,
+  badRequest: 422,
 };

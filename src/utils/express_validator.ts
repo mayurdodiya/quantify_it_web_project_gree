@@ -10,7 +10,7 @@ const validationHandler = (req: Request, res: Response, next: NextFunction) => {
 
   const result = validationResult(req).formatWith(errorFormatter);
   if (!result.isEmpty()) {
-    return res.status(422).json({ success: "false", message: result.array().join(", ") });
+    return res.status(422).json({ success: false, message: result.array().join(", ") });
   }
   next();
 };
