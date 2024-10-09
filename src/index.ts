@@ -55,7 +55,7 @@ const setGlobalOriginHeader = (req: Request, res: Response, next: NextFunction) 
 app.use(setGlobalOriginHeader);
 
 app.use("/uploads/image", express.static("uploads/image"));
-app.use("/api", verifyGlobalToken, Routes);
+app.use("/api", Routes);
 app.use(
   cors({
     origin: "*",
