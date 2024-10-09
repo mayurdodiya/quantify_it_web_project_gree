@@ -11,7 +11,7 @@ export class ChatBoatController {
   constructor() {
     this.chatBoatRepo = AppDataSource.getRepository(ChatBoat);
   }
-
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async chatCreate(data: any) {
     try {
       const chatBoatMessage = new ChatBoat();

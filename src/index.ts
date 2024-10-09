@@ -81,7 +81,7 @@ io.on("connection", (socketIo) => {
   let chatId = "";
 
   // chat open and ide check and generate
-  socketIo.on("genIdFlag", (genId) => {
+  socketIo.on("genIdFlag", () => {
     const id = `id-${uuidv4()}`;
     io.emit("serGenretedId", id);
   });
@@ -96,13 +96,11 @@ io.on("connection", (socketIo) => {
       case method.question1:
         userId = data.senderId;
         io.emit("serMsgEvent", { message: method.question1, senderId: userId, receiverId: adminId });
-        // chatBoatController.chatCreate(chatId, userId, adminId, method.question1)
         chatBoatController
           .chatCreate({ chatId: chatId, message: method.question1, senderId: userId, receiverId: adminId })
 
           .then(() => {
             io.emit("serMsgEvent", { message: method.answer1, senderId: adminId, receiverId: userId });
-            // chatBoatController.chatCreate(chatId, adminId, userId, method.answer1);
             chatBoatController.chatCreate({ chatId: chatId, message: method.answer1, senderId: adminId, receiverId: userId });
           })
           .catch((err) => {
@@ -114,12 +112,10 @@ io.on("connection", (socketIo) => {
         userId = data.senderId;
 
         io.emit("serMsgEvent", { message: method.question2, senderId: userId, receiverId: adminId });
-        // chatBoatController.chatCreate(chatId, userId, adminId, method.question2)
         chatBoatController
           .chatCreate({ chatId: userId, message: method.question2, senderId: userId, receiverId: adminId })
           .then(() => {
             io.emit("serMsgEvent", { message: method.answer2, senderId: adminId, receiverId: userId });
-            // chatBoatController.chatCreate(chatId, adminId, userId, method.answer2);
             chatBoatController.chatCreate({ chatId: userId, message: method.answer2, senderId: adminId, receiverId: userId });
           })
           .catch((err) => {
@@ -134,7 +130,6 @@ io.on("connection", (socketIo) => {
       chatId = data.chatId;
       io.emit("serMsgEvent", { message: data.message, senderId: data.senderId, receiverId: data.receiverId });
 
-      // chatBoatController.chatCreate(chatId, userId, adminId, data.message);
       chatBoatController.chatCreate({ message: data.message, chatId: chatId, senderId: data.senderId, receiverId: data.receiverId });
     }
   });
