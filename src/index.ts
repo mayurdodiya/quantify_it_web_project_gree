@@ -80,31 +80,30 @@ io.on("connection", (socketIo) => {
   const adminId = process.env.ADMIN_CHATBOAT_ID; // gree admin id
   let chatId = "";
 
-  console.log("new user connected :", socketIo.id);
-
   // chat open and ide check and generate
   socketIo.on("genIdFlag", (genId) => {
-    console.log(genId);
     const id = `id-${uuidv4()}`;
     io.emit("serGenretedId", id);
   });
   socketIo.on("htmlMyIdIs", (myId) => {
     userId = myId;
     chatId = userId;
-    console.log(chatId, userId, "------------------------ myid");
   });
 
   const chatBoatController = new ChatBoatController();
   socketIo.on("htmlMyEve", (data) => {
     switch (data.message) {
       case method.question1:
-        userId = data.userId;
-        io.emit("serMsgEvent", { message: method.question1, userId });
+        userId = data.senderId;
+        io.emit("serMsgEvent", { message: method.question1, senderId: userId, receiverId: adminId });
+        // chatBoatController.chatCreate(chatId, userId, adminId, method.question1)
         chatBoatController
-          .chatCreate(chatId, userId, adminId, method.question1)
+          .chatCreate({ chatId: chatId, message: method.question1, senderId: userId, receiverId: adminId })
+
           .then(() => {
-            io.emit("serMsgEvent", { message: method.answer1, userId });
-            chatBoatController.chatCreate(chatId, adminId, userId, method.answer1);
+            io.emit("serMsgEvent", { message: method.answer1, senderId: adminId, receiverId: userId });
+            // chatBoatController.chatCreate(chatId, adminId, userId, method.answer1);
+            chatBoatController.chatCreate({ chatId: chatId, message: method.answer1, senderId: adminId, receiverId: userId });
           })
           .catch((err) => {
             console.log(err);
@@ -112,13 +111,16 @@ io.on("connection", (socketIo) => {
 
         break;
       case method.question2:
-        userId = data.userId;
-        io.emit("serMsgEvent", { message: method.question2, userId });
+        userId = data.senderId;
+
+        io.emit("serMsgEvent", { message: method.question2, senderId: userId, receiverId: adminId });
+        // chatBoatController.chatCreate(chatId, userId, adminId, method.question2)
         chatBoatController
-          .chatCreate(chatId, userId, adminId, method.question2)
+          .chatCreate({ chatId: userId, message: method.question2, senderId: userId, receiverId: adminId })
           .then(() => {
-            io.emit("serMsgEvent", { message: method.answer2, userId });
-            chatBoatController.chatCreate(chatId, adminId, userId, method.answer2);
+            io.emit("serMsgEvent", { message: method.answer2, senderId: adminId, receiverId: userId });
+            // chatBoatController.chatCreate(chatId, adminId, userId, method.answer2);
+            chatBoatController.chatCreate({ chatId: userId, message: method.answer2, senderId: adminId, receiverId: userId });
           })
           .catch((err) => {
             console.log(err);
@@ -127,14 +129,13 @@ io.on("connection", (socketIo) => {
     }
 
     if (data.message != method.question1 && data.message != method.question2 && data.message != method.question3 && data.message != method.question4 && data.message != method.question5) {
-      console.log(chatId, userId, "------------------------ myid");
       console.log("if condition called!");
       userId = data.senderId;
-      chatId = userId;
+      chatId = data.chatId;
       io.emit("serMsgEvent", { message: data.message, senderId: data.senderId, receiverId: data.receiverId });
-      console.log(chatId, userId, adminId, data.message, "--------------------------------- chat id");
 
-      chatBoatController.chatCreate(chatId, userId, adminId, data.message);
+      // chatBoatController.chatCreate(chatId, userId, adminId, data.message);
+      chatBoatController.chatCreate({ message: data.message, chatId: chatId, senderId: data.senderId, receiverId: data.receiverId });
     }
   });
 });

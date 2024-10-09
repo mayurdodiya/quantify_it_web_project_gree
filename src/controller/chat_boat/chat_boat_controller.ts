@@ -12,14 +12,13 @@ export class ChatBoatController {
     this.chatBoatRepo = AppDataSource.getRepository(ChatBoat);
   }
 
-  // create user chat
-  public async chatCreate(chatId: string, senderId: string, receiverId: string, message: string) {
+  public async chatCreate(data: any) {
     try {
       const chatBoatMessage = new ChatBoat();
-      chatBoatMessage.chat_id = chatId;
-      chatBoatMessage.sender_id = senderId;
-      chatBoatMessage.receiver_id = receiverId;
-      chatBoatMessage.message = message;
+      chatBoatMessage.chat_id = data.chatId;
+      chatBoatMessage.sender_id = data.senderId;
+      chatBoatMessage.receiver_id = data.receiverId;
+      chatBoatMessage.message = data.message;
       await this.chatBoatRepo.save(chatBoatMessage);
     } catch (err) {
       console.log(err);

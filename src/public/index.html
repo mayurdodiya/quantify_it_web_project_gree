@@ -36,7 +36,6 @@
       var myLocalId = localStorage.getItem("name");
 
       socket.on("serMsgEvent", (data) => {
-        console.log(data);
 
         // msg for admin browser
         if (data.senderId == "id-admin-123") {
@@ -56,22 +55,21 @@
         }
       });
 
-      // function addUserId(params) {
-      //   var userInput = document.getElementById("addUserInput");
-      //   var userInputId = userInput.value;
-      //   createConnection(params, userInputId);
-      // }
-      var userInput = document.getElementById("addUserInput");
-      var userInputId = userInput.value;
+      var userInputId = "";
+      function addUserId(params) {
+        var userInput = document.getElementById("addUserInput");
+        var userInputDataId = userInput.value;
+        userInputId = userInputDataId;
+      }
       function createConnection(params) {
         const message = textInput.value;
 
         if (localStorage.getItem("name")) {
           var myUserId = localStorage.getItem("name");
           if (myUserId == "id-admin-123") {
-            socket.emit("htmlMyEve", { message: message, senderId: "id-admin-123", receiverId: userInputId }); // send event to server
+            socket.emit("htmlMyEve", { message: message, senderId: "id-admin-123", receiverId: userInputId, chatId: userInputId }); // send event to server
           } else {
-            socket.emit("htmlMyEve", { message: message, senderId: myUserId, receiverId: "id-admin-123" }); // send event to server
+            socket.emit("htmlMyEve", { message: message, senderId: myUserId, receiverId: "id-admin-123", chatId: myUserId }); // send event to server
           }
         }
 
@@ -80,7 +78,7 @@
           socket.on("serGenretedId", (id) => {
             localStorage.setItem("name", id);
             var myUserId = id;
-            socket.emit("htmlMyEve", { message: message, userId: myUserId }); // send event to server
+            socket.emit("htmlMyEve", { message: message, userId: myUserId, chatId: myUserId }); // send event to server
           });
         }
       }
@@ -94,10 +92,8 @@
           });
         }
         if (localStorage.getItem("name")) {
-          console.log(`id already generated: ${localStorage.getItem("name")}`);
           socket.emit("htmlMyIdIs", localStorage.getItem("name"));
         }
-        console.log(window.location.origin);
       }
     </script>
   </body>
