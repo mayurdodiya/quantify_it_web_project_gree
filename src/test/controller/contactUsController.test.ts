@@ -1,61 +1,196 @@
-import express from "express";
-import request from "supertest";
+import { Request, Response } from "express";
 import { message } from "../../utils/messages";
 import { ResponseCodes } from "../../utils/response-codes";
 import { AppDataSource } from "../../config/database.config";
+import { ContactUs } from "../../entities/contact_us.entity";
 import { ContactUsController } from "../../controller/contact_us/contact_us_controller";
 
-const app = express();
-app.use(express.json());
+jest.mock("../../config/database.config", () => ({
+  AppDataSource: {
+    getRepository: jest.fn().mockReturnValue({
+      findOne: jest.fn(),
+      save: jest.fn(),
+      find: jest.fn(),
+      softDelete: jest.fn(),
+    }),
+  },
+}));
 
 describe("ContactUsController", () => {
   let contactUsController: ContactUsController;
+  let mockRequest: Partial<Request>;
+  let mockResponse: Partial<Response>;
+  let statusMock: jest.Mock;
+  let jsonMock: jest.Mock;
 
-  beforeAll(async () => {
-    await AppDataSource.initialize();
+  beforeEach(() => {
     contactUsController = new ContactUsController();
+    jsonMock = jest.fn();
+    statusMock = jest.fn(() => ({ json: jsonMock }));
 
-    app.post("/contactus", contactUsController.addContactUs);
-    app.get("/contactus/:id", contactUsController.getContactUs);
-    app.get("/contactus", contactUsController.getAllContactUs);
+    mockRequest = {
+      params: {},
+      body: {},
+      get: jest.fn(),
+    };
+
+    mockResponse = {
+      status: statusMock,
+      set: jest.fn(),
+      header: jest.fn(),
+      json: jsonMock,
+    } as unknown as Response;
   });
 
-  afterAll(async () => {
-    await AppDataSource.destroy();
-  });
+  //create
+  it("should return an error if contact already exists", async () => {
+    (AppDataSource.getRepository(ContactUs).findOne as jest.Mock).mockResolvedValueOnce({ id: 1 });
 
-  describe("POST /contactus", () => {
-    it("should create a new contact us entry", async () => {
-      const response = await request(app)
-        .post("/contactus")
-        .send({
-          full_name: "John Doe",
-          email: "john@example.com",
-          contact_purpose: ["Inquiry"],
-          user_message: "This is a test message",
-          budget: "1000",
-        });
+    mockRequest.body = {
+      full_name: "John Doe",
+      email: "john@example.com",
+      contact_purpose: ["Inquiry"],
+      user_message: "This is a test message",
+      budget: "1000",
+    };
 
-      expect(response.status).toBe(ResponseCodes.success);
-      expect(response.body.success).toBe(true);
-      expect(response.body.message).toBe(message.SUBMIT_FORM);
+    await contactUsController.addContactUs(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.insertError);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: message.CREATE_FAIL("contact us data"),
+      data: undefined,
     });
+  });
 
-    it("should return an error if data is missing", async () => {
-      const response = await request(app).post("/contactus").send({});
+  it("should save new contact and return success", async () => {
+    (AppDataSource.getRepository(ContactUs).findOne as jest.Mock).mockResolvedValueOnce(null);
 
-      expect(response.status).toBe(500);
-      expect(response.body.success).toBe(false);
+    (AppDataSource.getRepository(ContactUs).save as jest.Mock).mockResolvedValueOnce({ id: 1 });
+
+    mockRequest.body = {
+      full_name: "John Doe",
+      email: "john@example.com",
+      contact_purpose: ["Inquiry"],
+      user_message: "This is a test message",
+      budget: "100",
+    };
+
+    await contactUsController.addContactUs(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: true,
+      message: message.SUBMIT_FORM,
+      data: undefined,
     });
   });
 
-  describe("GET /contactus", () => {
-    it("should return all contact us entries", async () => {
-      const response = await request(app).get("/contactus");
+  it("should return server error on failure", async () => {
+    (AppDataSource.getRepository(ContactUs).findOne as jest.Mock).mockRejectedValueOnce(new Error("Server error"));
 
-      expect(response.status).toBe(ResponseCodes.serverError);
-      expect(response.body.success).toBe(false);
-      expect(Array.isArray(response.body.data)).toBe(false);
+    await contactUsController.addContactUs(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.insertError);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: message.CREATE_FAIL("contact us data"),
+      data: undefined,
+    });
+  });
+
+  //findOne
+  it("should return contact data if found", async () => {
+    const contactData = {
+      id: 1,
+    };
+
+    (AppDataSource.getRepository(ContactUs).findOne as jest.Mock).mockResolvedValueOnce(contactData);
+
+    mockRequest.params = { id: "1" };
+
+    await contactUsController.getContactUs(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: true,
+      message: message.GET_DATA("Contact us forms"),
+      data: contactData,
+    });
+  });
+
+  it("should return not found if contact does not exist", async () => {
+    (AppDataSource.getRepository(ContactUs).findOne as jest.Mock).mockResolvedValueOnce(null);
+
+    mockRequest.params = { id: "1" };
+
+    await contactUsController.getContactUs(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: message.NO_DATA("This Contact us data"),
+      data: undefined,
+    });
+  });
+
+  it("should return server error on unexpected error", async () => {
+    (AppDataSource.getRepository(ContactUs).findOne as jest.Mock).mockRejectedValueOnce(new Error("Unexpected error"));
+
+    mockRequest.params = { id: "1" };
+
+    await contactUsController.getContactUs(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: "Server error",
+      data: undefined,
+    });
+  });
+
+  //find
+  it("should return contact data if found", async () => {
+    const contactData = {
+      id: 1,
+    };
+
+    (AppDataSource.getRepository(ContactUs).find as jest.Mock).mockResolvedValueOnce(contactData);
+
+    await contactUsController.getAllContactUs(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: true,
+      message: message.GET_DATA("Contact us forms"),
+      data: contactData,
+    });
+  });
+
+  it("should return not found if contact does not exist", async () => {
+    (AppDataSource.getRepository(ContactUs).findOne as jest.Mock).mockResolvedValueOnce(null);
+
+    await contactUsController.getAllContactUs(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: message.NO_DATA("This Contact us data"),
+      data: undefined,
+    });
+  });
+
+  it("should return server error on unexpected error", async () => {
+    (AppDataSource.getRepository(ContactUs).findOne as jest.Mock).mockRejectedValueOnce(new Error("Unexpected error"));
+
+    await contactUsController.getAllContactUs(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: message.NO_DATA("This Contact us data"),
+      data: undefined,
     });
   });
 });

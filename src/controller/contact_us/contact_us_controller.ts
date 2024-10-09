@@ -18,14 +18,16 @@ export class ContactUsController {
     try {
       const { full_name, email, contact_purpose, user_message, budget } = req.body;
 
-      const contactUsData = this.contactUsRepo.create({
-        full_name: full_name,
-        email: email,
-        contact_purpose: contact_purpose,
-        user_message: user_message,
-        budget: budget,
-      });
+      const contactUsData = new ContactUs();
+
+      contactUsData.full_name = full_name;
+      contactUsData.email = email;
+      contactUsData.contact_purpose = contact_purpose;
+      contactUsData.user_message = user_message;
+      contactUsData.budget = budget;
+
       const data = await this.contactUsRepo.save(contactUsData);
+
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("contact us data"), ResponseCodes.insertError);
       }

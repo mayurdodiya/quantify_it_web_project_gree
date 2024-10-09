@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { AppDataSource } from "../../config/database.config";
-import { ProvidedService } from "../../entities/provided_service.entity";
 import { message } from "../../utils/messages";
 import { ResponseCodes } from "../../utils/response-codes";
+import { AppDataSource } from "../../config/database.config";
+import { ProvidedService } from "../../entities/provided_service.entity";
 import { ProvidedServiceController } from "../../controller/provided_service/provided_service_controller";
 
 jest.mock("../../config/database.config", () => ({
