@@ -69,13 +69,7 @@ describe("BannerController", () => {
 
     (AppDataSource.getRepository(Banner).save as jest.Mock).mockResolvedValueOnce({ id: 1 });
 
-    mockRequest.body = {
-      full_name: "John Doe",
-      email: "john@example.com",
-      contact_purpose: ["Inquiry"],
-      user_message: "This is a test message",
-      budget: "100",
-    };
+    mockRequest.body = {};
 
     await bannerController.createBanner(mockRequest as Request, mockResponse as Response);
 

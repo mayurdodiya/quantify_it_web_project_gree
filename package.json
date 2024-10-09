@@ -11,7 +11,7 @@
     "lint:fix": "eslint . --fix",
     "test": "echo \"Error: no test specified\" && exit 1",
     "test:dev": "jest",
-    "start": "jest && docker rm -f quantify-it-container2 || true && docker build -t quantify_it . && docker run -it --name quantify-it-container2 -p 3000:3000 quantify_it"
+    "start": "jest && (docker rm -f quantify-it-container2 || true) && docker build -t quantify_it . && docker run -it --name quantify-it-container2 -p 3000:3000 quantify_it"
   },
   "keywords": [],
   "author": "",

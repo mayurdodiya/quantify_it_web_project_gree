@@ -69,7 +69,7 @@ export class ChatBoatController {
       MIN(chat_boat."createdAt") ASC;  -- Using double quotes for case sensitivity
 `);
 
-      if (getChat.length == 0) {
+      if (getChat?.length == 0) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This user chat"), ResponseCodes.notFound);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA(`User chat`), ResponseCodes.success, getChat);
