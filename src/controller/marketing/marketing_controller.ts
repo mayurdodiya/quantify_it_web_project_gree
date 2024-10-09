@@ -30,7 +30,7 @@ export class MarketingController {
 
       const data = await this.marketingRepo.save(marketing);
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("form data"), ResponseCodes.notFound);
+        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("form data"), ResponseCodes.saveError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.SUBMIT_FORM, ResponseCodes.success, undefined);
     } catch (error) {

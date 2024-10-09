@@ -37,7 +37,7 @@ export class ChatBoatController {
         select: ["id", "chat_id", "message", "sender_id", "receiver_id", "createdAt"],
       });
       if (getChat.length == 0) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This user chat"), ResponseCodes.serverError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This user chat"), ResponseCodes.notFound);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA(`User chat`), ResponseCodes.success, getChat);
     } catch (error) {
@@ -71,7 +71,7 @@ export class ChatBoatController {
 `);
 
       if (getChat.length == 0) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This user chat"), ResponseCodes.serverError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This user chat"), ResponseCodes.notFound);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA(`User chat`), ResponseCodes.success, getChat);
     } catch (error) {

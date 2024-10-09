@@ -19,7 +19,7 @@ export class BannerController {
       const { banner_name, pc_img_url, mobile_img_url, title, description } = req.body;
       const findBanner = await this.bannerRepo.findOne({ where: { banner_name: banner_name } });
       if (findBanner) {
-        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("Banner name"), ResponseCodes.insertError);
+        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("Banner name"), ResponseCodes.alreadyExist);
       }
 
       const banner = new Banner();
@@ -31,7 +31,7 @@ export class BannerController {
 
       const data = await this.bannerRepo.save(banner);
       if (!data) {
-        return RoutesHandler.sendSuccess(req, res, false, message.CREATE_FAIL("Banner"), ResponseCodes.success, undefined);
+        return RoutesHandler.sendSuccess(req, res, false, message.CREATE_FAIL("Banner"), ResponseCodes.saveError, undefined);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Banner"), ResponseCodes.success, undefined);
     } catch (error) {
@@ -57,7 +57,7 @@ export class BannerController {
 
       const data = await this.bannerRepo.save(banner);
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("Banner"), ResponseCodes.success);
+        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("Banner"), ResponseCodes.saveError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Banner"), ResponseCodes.success, undefined);
     } catch (error) {

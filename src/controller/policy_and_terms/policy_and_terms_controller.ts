@@ -22,7 +22,7 @@ export class PolicyAndTermsController {
         where: { subject: subject, document_type: document_type },
       });
       if (getData) {
-        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This data"), ResponseCodes.insertError);
+        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This data"), ResponseCodes.alreadyExist);
       }
 
       const termsData = new PolicyAndTerms();
@@ -33,7 +33,7 @@ export class PolicyAndTermsController {
 
       const data = await this.policyAndTermsRepo.save(termsData);
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("Data"), ResponseCodes.notFound);
+        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("Data"), ResponseCodes.saveError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Data"), ResponseCodes.success, undefined);
     } catch (error) {
@@ -72,7 +72,7 @@ export class PolicyAndTermsController {
 
       const data = await this.policyAndTermsRepo.save(getData);
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("Data"), ResponseCodes.notFound);
+        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("Data"), ResponseCodes.saveError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Data"), ResponseCodes.success, undefined);
     } catch (error) {

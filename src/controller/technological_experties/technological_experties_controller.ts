@@ -27,7 +27,7 @@ export class TechnologicalExpertiesController {
         },
       });
       if (isNameExist) {
-        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This experties name"), ResponseCodes.insertError);
+        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This experties name"), ResponseCodes.alreadyExist);
       }
 
       const technoExp = new TechnologicalExperties();
@@ -38,7 +38,7 @@ export class TechnologicalExpertiesController {
 
       const data = await this.technologicalExpertiesRepo.save(technoExp);
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("experties"), ResponseCodes.notFound);
+        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("experties"), ResponseCodes.saveError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Experties"), ResponseCodes.success, undefined);
     } catch (error) {
@@ -76,7 +76,7 @@ export class TechnologicalExpertiesController {
 
       const data = await this.technologicalExpertiesRepo.save(getData);
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("experties"), ResponseCodes.notFound);
+        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("experties"), ResponseCodes.saveError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Experties"), ResponseCodes.success, undefined);
     } catch (error) {

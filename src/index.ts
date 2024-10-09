@@ -46,6 +46,7 @@ app.use(morgan("tiny"));
 //   return true;
 // };
 
+
 const setGlobalOriginHeader = (req: Request, res: Response, next: NextFunction) => {
   res.header("Access-Control-Allow-Origin", "*");
   next();
@@ -89,10 +90,12 @@ io.on("connection", (socketIo) => {
     io.emit("serGenretedId", id);
   });
   socketIo.on("htmlMyIdIs", (myId) => {
+    
     userId = myId;
     chatId = userId;
+    console.log(chatId,userId, '------------------------ myid');
   });
-
+  
   const chatBoatController = new ChatBoatController();
   socketIo.on("htmlMyEve", (data) => {
     switch (data.message) {
@@ -100,20 +103,20 @@ io.on("connection", (socketIo) => {
         userId = data.userId;
         io.emit("serMsgEvent", { message: method.question1, userId });
         chatBoatController
-          .chatCreate(chatId, userId, adminId, method.question1)
-          .then(() => {
-            io.emit("serMsgEvent", { message: method.answer1, userId });
-            chatBoatController.chatCreate(chatId, adminId, userId, method.answer1);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-
+        .chatCreate(chatId, userId, adminId, method.question1)
+        .then(() => {
+          io.emit("serMsgEvent", { message: method.answer1, userId });
+          chatBoatController.chatCreate(chatId, adminId, userId, method.answer1);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+        
         break;
-      case method.question2:
-        userId = data.userId;
-        io.emit("serMsgEvent", { message: method.question2, userId });
-        chatBoatController
+        case method.question2:
+          userId = data.userId;
+          io.emit("serMsgEvent", { message: method.question2, userId });
+          chatBoatController
           .chatCreate(chatId, userId, adminId, method.question2)
           .then(() => {
             io.emit("serMsgEvent", { message: method.answer2, userId });
@@ -124,12 +127,15 @@ io.on("connection", (socketIo) => {
           });
         break;
     }
-
+    
     if (data.message != method.question1 && data.message != method.question2 && data.message != method.question3 && data.message != method.question4 && data.message != method.question5) {
+      console.log(chatId,userId, '------------------------ myid');
       console.log("if condition called!");
-      userId = data.userId;
+      userId = data.senderId;
       chatId = userId;
       io.emit("serMsgEvent", { message: data.message, senderId: data.senderId, receiverId: data.receiverId });
+      console.log(chatId, userId, adminId, data.message, '--------------------------------- chat id');
+      
       chatBoatController.chatCreate(chatId, userId, adminId, data.message);
     }
   });

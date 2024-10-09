@@ -35,7 +35,7 @@ export class OurContactDetailsController {
       visionExp.address = address;
       const data = await this.ourContactDetailsRepo.save(visionExp);
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("our contact details"), ResponseCodes.notFound);
+        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("our contact details"), ResponseCodes.saveError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Our contact details"), ResponseCodes.success, undefined);
     } catch (error) {
@@ -64,7 +64,7 @@ export class OurContactDetailsController {
 
       const data = await this.ourContactDetailsRepo.save(getData);
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("our contact details"), ResponseCodes.notFound);
+        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("our contact details"), ResponseCodes.saveError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Our contact details"), ResponseCodes.success, undefined);
     } catch (error) {

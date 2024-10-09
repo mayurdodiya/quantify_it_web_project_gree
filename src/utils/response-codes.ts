@@ -10,7 +10,7 @@ export const ResponseCodes = {
   success: 200,
   createSuccess: 201,
   serverError: 500,
-  TokenError: 552,
+  tokenError: 552,
   notFound: 404,
   alreadyExist: 409,
 };

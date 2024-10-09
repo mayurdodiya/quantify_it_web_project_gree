@@ -23,7 +23,7 @@ export class ProvidedServiceController {
         where: { service_type: service_type, service_name: service_name },
       });
       if (serviceNameExist) {
-        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This service name"), ResponseCodes.insertError);
+        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This service name"), ResponseCodes.alreadyExist);
       }
 
       const providedServiceData = new ProvidedService();
@@ -46,7 +46,7 @@ export class ProvidedServiceController {
 
       const data = await this.providedServiceRepo.save(providedServiceData);
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("service provide data"), ResponseCodes.notFound);
+        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("service provide data"), ResponseCodes.saveError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Service provide data"), ResponseCodes.success, undefined);
     } catch (error) {
@@ -96,7 +96,7 @@ export class ProvidedServiceController {
 
       const data = await this.providedServiceRepo.save(getData);
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("service provide data"), ResponseCodes.notFound);
+        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("service provide data"), ResponseCodes.saveError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Service provide data"), ResponseCodes.success, undefined);
     } catch (error) {

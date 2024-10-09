@@ -21,7 +21,7 @@ export class PortfolioController {
         where: { title: title },
       });
       if (getData) {
-        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This portfolio"), ResponseCodes.insertError);
+        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This portfolio"), ResponseCodes.alreadyExist);
       }
 
       const portfolio = new Portfolio();
@@ -34,7 +34,7 @@ export class PortfolioController {
 
       const data = await this.portfolioRepo.save(portfolio);
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.CREATE_SUCCESS("Portfolio"), ResponseCodes.notFound);
+        return RoutesHandler.sendError(req, res, false, message.CREATE_SUCCESS("Portfolio"), ResponseCodes.saveError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Portfolio"), ResponseCodes.success, undefined);
     } catch (error) {
@@ -70,7 +70,7 @@ export class PortfolioController {
 
       const data = await this.portfolioRepo.save(getData);
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("Portfolio"), ResponseCodes.notFound);
+        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("Portfolio"), ResponseCodes.saveError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Portfolio"), ResponseCodes.success, undefined);
     } catch (error) {

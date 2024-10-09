@@ -25,14 +25,14 @@ export const verifyAdminToken = async (req: Request, res: Response, next: NextFu
     const token = req.headers["x-access-token"] as string;
 
     if (!token) {
-      return RoutesHandler.sendError(req, res, false, message.NO_TOKEN, ResponseCodes.TokenError);
+      return RoutesHandler.sendError(req, res, false, message.NO_TOKEN, ResponseCodes.tokenError);
     }
 
     const sKey = process.env.TOKEN_SECRETE_KEY as string;
     const decoded = jwt.verify(token, sKey) as JwtPayload;
 
     if (decoded.role !== Role.ADMIN) {
-      return RoutesHandler.sendError(req, res, false, message.BAD_REQUEST, ResponseCodes.TokenError);
+      return RoutesHandler.sendError(req, res, false, message.BAD_REQUEST, ResponseCodes.tokenError);
     }
     return next();
   } catch (error) {
@@ -46,7 +46,7 @@ export const verifyGlobalToken = async (req: Request, res: Response, next: NextF
     const token2 = req.headers["authorization"] as string;
 
     if (!token2) {
-      return RoutesHandler.sendError(req, res, false, message.NO_TOKEN, ResponseCodes.TokenError);
+      return RoutesHandler.sendError(req, res, false, message.NO_TOKEN, ResponseCodes.tokenError);
     }
 
     const token_2 = token2?.split(" ")[1];
@@ -55,7 +55,7 @@ export const verifyGlobalToken = async (req: Request, res: Response, next: NextF
     const tokenData = await tokenRepo.findOne({ where: { token: token_2 } });
 
     if (!tokenData) {
-      return RoutesHandler.sendError(req, res, false, message.BAD_REQUEST, ResponseCodes.TokenError);
+      return RoutesHandler.sendError(req, res, false, message.BAD_REQUEST, ResponseCodes.tokenError);
     }
     return next();
   } catch (error) {

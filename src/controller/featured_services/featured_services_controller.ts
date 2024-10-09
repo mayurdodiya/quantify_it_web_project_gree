@@ -22,7 +22,7 @@ export class FeaturedServicesController {
         where: { title: title },
       });
       if (getData) {
-        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This featured service"), ResponseCodes.insertError);
+        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This featured service"), ResponseCodes.alreadyExist);
       }
 
       const featuredService = new FeaturedServices();
@@ -33,7 +33,7 @@ export class FeaturedServicesController {
 
       const data = await this.featuredServicesRepo.save(featuredService);
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("featured service data"), ResponseCodes.notFound);
+        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("featured service data"), ResponseCodes.insertError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Featured service"), ResponseCodes.success, undefined);
     } catch (error) {
@@ -68,7 +68,7 @@ export class FeaturedServicesController {
       const data = await this.featuredServicesRepo.save(getData);
 
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("featured service data"), ResponseCodes.notFound);
+        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("featured service data"), ResponseCodes.saveError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Featured service"), ResponseCodes.success, undefined);
     } catch (error) {

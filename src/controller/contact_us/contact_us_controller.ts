@@ -27,7 +27,7 @@ export class ContactUsController {
       });
       const data = await this.contactUsRepo.save(contactUsData);
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("contact us data"), ResponseCodes.notFound);
+        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("contact us data"), ResponseCodes.insertError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.SUBMIT_FORM, ResponseCodes.success, undefined);
     } catch (error) {

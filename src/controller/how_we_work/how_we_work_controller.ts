@@ -33,7 +33,7 @@ export class HowWeWorkController {
 
       const data = await this.howWeWorkRepo.save(questionAnsData);
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("work data"), ResponseCodes.notFound);
+        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("work data"), ResponseCodes.insertError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Work data"), ResponseCodes.success, undefined);
     } catch (error) {
@@ -66,7 +66,7 @@ export class HowWeWorkController {
 
       const data = await this.howWeWorkRepo.save(getData);
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("work data"), ResponseCodes.notFound);
+        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("work data"), ResponseCodes.saveError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Work data"), ResponseCodes.success, undefined);
     } catch (error) {

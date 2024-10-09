@@ -22,7 +22,7 @@ export class VisionExpertiesController {
         where: { title: title },
       });
       if (getData) {
-        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This experties"), ResponseCodes.insertError);
+        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This experties"), ResponseCodes.alreadyExist);
       }
 
       const visionExp = new VisionExperties();
@@ -33,7 +33,7 @@ export class VisionExpertiesController {
 
       const data = await this.visionExpertiesRepo.save(visionExp);
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("Experties"), ResponseCodes.inputError);
+        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("Experties"), ResponseCodes.saveError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Experties"), ResponseCodes.success, undefined);
     } catch (error) {
@@ -65,7 +65,7 @@ export class VisionExpertiesController {
 
       const data = await this.visionExpertiesRepo.save(getData);
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("Experties"), ResponseCodes.inputError);
+        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("Experties"), ResponseCodes.saveError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Experties"), ResponseCodes.success, undefined);
     } catch (error) {

@@ -30,12 +30,12 @@ export class SubServicesController {
         where: { sub_service_name: sub_service_name },
       });
       if (getData) {
-        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This sub services"), ResponseCodes.insertError);
+        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This sub services"), ResponseCodes.alreadyExist);
       }
 
       const coreServ: CoreServices = await this.coreServicesRepo.findOne({ where: { id: core_service_id } });
       if (!coreServ) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This core service"), ResponseCodes.serverError);
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This core service"), ResponseCodes.notFound);
       }
 
       const subServiceDataPromises = req.body.sub_service_data.map((item: SubServicesItem) => {
@@ -51,7 +51,7 @@ export class SubServicesController {
 
       const dataAdd = await this.subServicesRepo.save(data);
       if (!dataAdd) {
-        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("sub services"), ResponseCodes.notFound);
+        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("sub services"), ResponseCodes.saveError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Sub services"), ResponseCodes.success, undefined);
     } catch (error) {
@@ -83,7 +83,7 @@ export class SubServicesController {
 
       const dataAdd = await this.subServicesRepo.save(getData);
       if (!dataAdd) {
-        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("sub services"), ResponseCodes.notFound);
+        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("sub services"), ResponseCodes.saveError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Sub services"), ResponseCodes.success, undefined);
     } catch (error) {

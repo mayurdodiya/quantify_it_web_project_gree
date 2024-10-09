@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -39,9 +39,7 @@
         console.log(data);
 
         // msg for admin browser
-
         if (data.senderId == "id-admin-123") {
-          console.log("---------------------------------2");
           var newPTag = document.createElement("p");
           newPTag.innerText = data.message;
           listDiv.appendChild(newPTag);
@@ -50,7 +48,6 @@
             var newPTag = document.createElement("p");
             newPTag.innerText = data.message;
             listDiv.appendChild(newPTag);
-            console.log("---------------------------------1");
           } else if (data.receiverId == myLocalId) {
             var newPTag = document.createElement("p");
             newPTag.innerText = data.message;
@@ -59,56 +56,19 @@
         }
       });
 
-      // const adminSelectedUserId = "id-9ec6118b-4577-48d1-bbed-917ae5646a2f"
-      // if(localStorage.getItem("name") == "id-admin-123")
-      // {
-      //   console.log('----------------------------------------------------admin called');
-      //   socket.on("serMsgEvent", (data)=>{
-      //     console.log('----------------------------------------------------admin innner');
-
-      //     if (myLocalId == adminSelectedUserId ) {
-      //     var newPTag = document.createElement("p");
-      //     newPTag.innerText = data.message;
-      //     listDiv.appendChild(newPTag);
-      //   }
-
-      //    // msg for admin browser
-      //    if (localStorage.getItem("name") == "id-admin-123") {
-      //       console.log('-------------------------admin browser');
-      //       var newPTag = document.createElement("p");
-      //       newPTag.innerText = data.message;
-      //       listDiv.appendChild(newPTag);
-      //     }
-
-      //   });
+      // function addUserId(params) {
+      //   var userInput = document.getElementById("addUserInput");
+      //   var userInputId = userInput.value;
+      //   createConnection(params, userInputId);
       // }
-
-      // socket.on("serMsgEvent", (data) => {
-      //   var myLocalId = localStorage.getItem("name");
-      //    // msg for admin browser
-      //     if (localStorage.getItem("name") == "id-admin-123") {
-      //       console.log('-------------------------admin browser');
-      //       var newPTag = document.createElement("p");
-      //       newPTag.innerText = data.message;
-      //       listDiv.appendChild(newPTag);
-      //     }
-
-      // });
-
-      function addUserId(params) {
-        console.log("----------------------------------------------btn");
-        var userInput = document.getElementById("addUserInput");
-        var userInputId = userInput.value;
-        createConnection(params, userInputId);
-      }
-      function createConnection(params, userInputId) {
+      var userInput = document.getElementById("addUserInput");
+      var userInputId = userInput.value;
+      function createConnection(params) {
         const message = textInput.value;
 
         if (localStorage.getItem("name")) {
           var myUserId = localStorage.getItem("name");
           if (myUserId == "id-admin-123") {
-            console.log(userInputId, "---------------------------------------------------------------- userInputId");
-
             socket.emit("htmlMyEve", { message: message, senderId: "id-admin-123", receiverId: userInputId }); // send event to server
           } else {
             socket.emit("htmlMyEve", { message: message, senderId: myUserId, receiverId: "id-admin-123" }); // send event to server
@@ -118,7 +78,6 @@
         if (!localStorage.getItem("name")) {
           socket.emit("genIdFlag", "please generate my id!");
           socket.on("serGenretedId", (id) => {
-            console.log(id, "------- new id generated --------");
             localStorage.setItem("name", id);
             var myUserId = id;
             socket.emit("htmlMyEve", { message: message, userId: myUserId }); // send event to server
@@ -131,7 +90,6 @@
         if (!localStorage.getItem("name")) {
           socket.emit("genIdFlag", "please generate my id!");
           socket.on("serGenretedId", (id) => {
-            console.log(id, "------- new id generated --------");
             localStorage.setItem("name", id);
           });
         }
@@ -139,6 +97,7 @@
           console.log(`id already generated: ${localStorage.getItem("name")}`);
           socket.emit("htmlMyIdIs", localStorage.getItem("name"));
         }
+        console.log(window.location.origin);
       }
     </script>
   </body>

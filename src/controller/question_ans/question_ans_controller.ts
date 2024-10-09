@@ -22,7 +22,7 @@ export class QuestionAnsController {
         where: { question: question },
       });
       if (getData) {
-        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This question and ans"), ResponseCodes.insertError);
+        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This question and ans"), ResponseCodes.alreadyExist);
       }
 
       const questionAnsData = new QuestionAns();
@@ -32,7 +32,7 @@ export class QuestionAnsController {
 
       const data = await this.questionAnsRepo.save(questionAnsData);
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("question and ans"), ResponseCodes.notFound);
+        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("question and ans"), ResponseCodes.saveError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Question and ans"), ResponseCodes.success, undefined);
     } catch (error) {
@@ -64,7 +64,7 @@ export class QuestionAnsController {
 
       const data = await this.questionAnsRepo.save(getData);
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("question and ans"), ResponseCodes.notFound);
+        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("question and ans"), ResponseCodes.saveError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Question and ans"), ResponseCodes.success, undefined);
     } catch (error) {

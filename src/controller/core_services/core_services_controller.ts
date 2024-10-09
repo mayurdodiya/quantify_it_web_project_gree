@@ -25,7 +25,7 @@ export class CoreServicesController {
         where: { service_type: service_type },
       });
       if (getData) {
-        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This core services"), ResponseCodes.insertError);
+        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This core services"), ResponseCodes.alreadyExist);
       }
 
       const coreServ = new CoreServices();
@@ -35,7 +35,7 @@ export class CoreServicesController {
       const data = await this.coreServicesRepo.save(coreServ);
 
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("core services data"), ResponseCodes.notFound);
+        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("core services data"), ResponseCodes.insertError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Core services"), ResponseCodes.success, undefined);
     } catch (error) {
@@ -68,7 +68,7 @@ export class CoreServicesController {
       const data = await this.coreServicesRepo.save(getData);
 
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("core services data"), ResponseCodes.notFound);
+        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("core services data"), ResponseCodes.saveError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Core services"), ResponseCodes.success, undefined);
     } catch (error) {

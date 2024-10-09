@@ -22,7 +22,7 @@ export class CertificationDetailsController {
         where: { sub_title: sub_title },
       });
       if (getData) {
-        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This certification details"), ResponseCodes.insertError);
+        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This certification details"), ResponseCodes.alreadyExist);
       }
 
       const visionExp = new CertificationDetails();

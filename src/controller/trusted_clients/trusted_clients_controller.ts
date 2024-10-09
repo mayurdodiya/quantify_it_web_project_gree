@@ -22,7 +22,7 @@ export class TrustedClientsController {
         where: { client_name: client_name },
       });
       if (getData) {
-        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This client"), ResponseCodes.insertError);
+        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This client"), ResponseCodes.alreadyExist);
       }
 
       const trustedClients = new TrustedClients();
@@ -34,7 +34,7 @@ export class TrustedClientsController {
 
       const data = await this.trustedClientsRepo.save(trustedClients);
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("client"), ResponseCodes.inputError);
+        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("client"), ResponseCodes.saveError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Client"), ResponseCodes.success, undefined);
     } catch (error) {
@@ -67,7 +67,7 @@ export class TrustedClientsController {
 
       const data = await this.trustedClientsRepo.save(getData);
       if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("client"), ResponseCodes.inputError);
+        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("client"), ResponseCodes.saveError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Client"), ResponseCodes.success, undefined);
     } catch (error) {
