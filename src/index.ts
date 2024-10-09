@@ -11,7 +11,6 @@ import { Server } from "socket.io";
 import method from "./utils/chatboat_question_ans";
 import { ChatBoatController } from "./controller/chat_boat/chat_boat_controller";
 import { v4 as uuidv4 } from "uuid";
-import { verifyGlobalToken } from "./utils/auth.token";
 
 dotenv.config();
 const app = express();
