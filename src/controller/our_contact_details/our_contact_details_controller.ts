@@ -1,9 +1,9 @@
 import { Repository } from "typeorm";
-import { AppDataSource } from "../../config/database.config";
-import { RoutesHandler } from "../../utils/error_handler";
-import { ResponseCodes } from "../../utils/response-codes";
 import { Request, Response } from "express";
 import { message } from "../../utils/messages";
+import { RoutesHandler } from "../../utils/error_handler";
+import { ResponseCodes } from "../../utils/response-codes";
+import { AppDataSource } from "../../config/database.config";
 import { OurContactDetails } from "../../entities/our_contact_details.entity";
 
 export class OurContactDetailsController {
@@ -83,8 +83,7 @@ export class OurContactDetailsController {
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This our contact details"), ResponseCodes.notFound);
       }
-      // JSON.parse()
-      JSON.stringify(data);
+
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Our contact details"), ResponseCodes.success, data);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);

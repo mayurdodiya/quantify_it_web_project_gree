@@ -1,10 +1,10 @@
-import { ChatBoat } from "../../entities/chat_boat.entity";
 import { Repository } from "typeorm";
-import { AppDataSource } from "../../config/database.config";
 import { Request, Response } from "express";
-import { RoutesHandler } from "../../utils/error_handler";
 import { message } from "../../utils/messages";
+import { RoutesHandler } from "../../utils/error_handler";
+import { ChatBoat } from "../../entities/chat_boat.entity";
 import { ResponseCodes } from "../../utils/response-codes";
+import { AppDataSource } from "../../config/database.config";
 
 export class ChatBoatController {
   chatBoatRepo: Repository<ChatBoat>;
@@ -28,16 +28,14 @@ export class ChatBoatController {
   // get all chat by user id
   public async getUserChatById(req: Request, res: Response) {
     try {
-      const chatId = req.params.id; // chatId and userId are same
+      const chatId = req.params.id;
 
       const getChat = await this.chatBoatRepo.find({
         where: { chat_id: chatId },
         order: { createdAt: "ASC" },
         select: ["id", "chat_id", "message", "sender_id", "receiver_id", "createdAt"],
       });
-      if (getChat.length == 0) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This user chat"), ResponseCodes.notFound);
-      }
+
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA(`User chat`), ResponseCodes.success, getChat);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
@@ -47,9 +45,6 @@ export class ChatBoatController {
   // get user chat
   public async getAllUserChat(req: Request, res: Response) {
     try {
-      // const userId = req.params.id; // userId
-      // const chatId = req.params.id; // chatId and userId are same
-
       const getChat = await this.chatBoatRepo.query(`
   SELECT 
       chat_boat.chat_id,

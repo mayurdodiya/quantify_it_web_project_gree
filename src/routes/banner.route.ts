@@ -6,10 +6,9 @@ import { addBannerValidation, updateBannerValidation } from "../utils/express_va
 const routes = express.Router();
 const bannerController = new BannerController();
 
-// routes.post("/addbanner", bannerController.CreateBanner.bind(bannerController));
-routes.post("/add", verifyAdminToken, addBannerValidation, (req: Request, res: Response) => bannerController.createBanner(req, res));
-routes.put("/edit/:id", verifyAdminToken, updateBannerValidation, (req: Request, res: Response) => bannerController.updateBanner(req, res));
 routes.get("/get", (req: Request, res: Response) => bannerController.getBanner(req, res));
 routes.delete("/remove/:id", verifyAdminToken, (req: Request, res: Response) => bannerController.removeBanner(req, res));
+routes.post("/add", verifyAdminToken, addBannerValidation, (req: Request, res: Response) => bannerController.createBanner(req, res));
+routes.put("/edit/:id", verifyAdminToken, updateBannerValidation, (req: Request, res: Response) => bannerController.updateBanner(req, res));
 
 export default routes;

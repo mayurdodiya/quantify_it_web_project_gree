@@ -1,10 +1,10 @@
-import { Request, Response } from "express";
-import { RoutesHandler } from "../../utils/error_handler";
-import { ResponseCodes } from "../../utils/response-codes";
 import { Repository } from "typeorm";
-import { AppDataSource } from "../../config/database.config";
+import { Request, Response } from "express";
 import { message } from "../../utils/messages";
 import { Banner } from "../../entities/banner.entity";
+import { RoutesHandler } from "../../utils/error_handler";
+import { ResponseCodes } from "../../utils/response-codes";
+import { AppDataSource } from "../../config/database.config";
 
 export class BannerController {
   private bannerRepo: Repository<Banner>;
@@ -68,7 +68,7 @@ export class BannerController {
   // get banner
   public async getBanner(req: Request, res: Response) {
     try {
-      const banner = await this.bannerRepo.find();
+      const banner = await this.bannerRepo.find({});
       if (banner?.length < 0) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This banner"), ResponseCodes.notFound);
       }

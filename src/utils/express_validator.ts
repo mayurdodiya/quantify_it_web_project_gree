@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { check, query, validationResult } from "express-validator";
 
-// return validation error
 const validationHandler = (req: Request, res: Response, next: NextFunction) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const errorFormatter: any = ({ msg }) => {
@@ -417,7 +416,6 @@ const loginValidation = [
 ];
 const imgValidation = [
   check("image").notEmpty().withMessage("please upload image!"),
-  // check("password").notEmpty().withMessage("password is required"),
 
   (req: Request, res: Response, next: NextFunction) => {
     validationHandler(req, res, next);

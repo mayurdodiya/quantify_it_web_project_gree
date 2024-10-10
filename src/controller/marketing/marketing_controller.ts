@@ -1,10 +1,10 @@
 import { Repository } from "typeorm";
-import { AppDataSource } from "../../config/database.config";
-import { RoutesHandler } from "../../utils/error_handler";
-import { ResponseCodes } from "../../utils/response-codes";
 import { Request, Response } from "express";
 import { message } from "../../utils/messages";
+import { RoutesHandler } from "../../utils/error_handler";
+import { ResponseCodes } from "../../utils/response-codes";
 import { Marketing } from "../../entities/marketing.entity";
+import { AppDataSource } from "../../config/database.config";
 
 export class MarketingController {
   private marketingRepo: Repository<Marketing>;

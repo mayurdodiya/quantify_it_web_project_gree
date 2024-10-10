@@ -1,11 +1,11 @@
 import { Not, Repository } from "typeorm";
-import { AppDataSource } from "../../config/database.config";
-import { RoutesHandler } from "../../utils/error_handler";
-import { ResponseCodes } from "../../utils/response-codes";
+import { Status } from "../../utils/enum";
 import { Request, Response } from "express";
 import { message } from "../../utils/messages";
+import { RoutesHandler } from "../../utils/error_handler";
+import { ResponseCodes } from "../../utils/response-codes";
+import { AppDataSource } from "../../config/database.config";
 import { HowWeWork } from "../../entities/how_we_work.entity";
-import { Status } from "../../utils/enum";
 
 export class HowWeWorkController {
   private howWeWorkRepo: Repository<HowWeWork>;

@@ -1,11 +1,11 @@
 import { Not, Repository } from "typeorm";
-import { AppDataSource } from "../../config/database.config";
-import { RoutesHandler } from "../../utils/error_handler";
-import { ResponseCodes } from "../../utils/response-codes";
 import { Request, Response } from "express";
 import { message } from "../../utils/messages";
-import { PolicyAndTerms } from "../../entities/policy_and_terms.entity";
 import { DocumentType, Status } from "../../utils/enum";
+import { RoutesHandler } from "../../utils/error_handler";
+import { ResponseCodes } from "../../utils/response-codes";
+import { AppDataSource } from "../../config/database.config";
+import { PolicyAndTerms } from "../../entities/policy_and_terms.entity";
 
 export class PolicyAndTermsController {
   private policyAndTermsRepo: Repository<PolicyAndTerms>;

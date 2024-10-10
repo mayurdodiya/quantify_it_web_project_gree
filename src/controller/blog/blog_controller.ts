@@ -82,17 +82,19 @@ export class BlogController {
   // get all data
   public async getAllBlog(req: Request, res: Response) {
     try {
-      const { page, size, s } = req.query;
+      const { page = 1, size = 10, s } = req.query;
       const pageData: number = parseInt(page as string, 10);
       const sizeData: number = parseInt(size as string, 10);
 
-      const skipData: number = pageData * sizeData;
-      let Dataobj: { status: Status; blog_title?: FindOperator<string> } = { status: Status.ACTIVE };
+      if (isNaN(pageData) || isNaN(sizeData) || sizeData <= 0 || pageData < 1) {
+        return RoutesHandler.sendError(req, res, false, "Invalid pagination parameters", ResponseCodes.badRequest);
+      }
+
+      const skipData: number = (pageData - 1) * sizeData;
+
+      const Dataobj: { status: Status; blog_title?: FindOperator<string> } = { status: Status.ACTIVE };
       if (s) {
-        Dataobj = {
-          ...Dataobj,
-          blog_title: ILike(`%${s}%`),
-        };
+        Dataobj.blog_title = ILike(`%${s}%`);
       }
 
       const [data, totalItems] = await this.blogRepo.findAndCount({
@@ -101,8 +103,9 @@ export class BlogController {
         skip: skipData,
         take: sizeData,
       });
+
       const response = {
-        totalItems: totalItems,
+        totalItems,
         totalPages: Math.ceil(totalItems / sizeData),
         data,
         currentPage: pageData,
@@ -110,7 +113,7 @@ export class BlogController {
 
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Blog"), ResponseCodes.success, response);
     } catch (error) {
-      return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
+      return RoutesHandler.sendError(req, res, false, error.message || "Internal server error", ResponseCodes.serverError);
     }
   }
 
