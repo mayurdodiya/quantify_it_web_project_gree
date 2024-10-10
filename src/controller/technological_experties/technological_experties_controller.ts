@@ -115,6 +115,7 @@ export class TechnologicalExpertiesController {
     GROUP BY
         experties_type;
 `);
+      console.log(groupedData, "groupedDatagroupedDatagroupedData");
 
       if (!groupedData) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This experties"), ResponseCodes.notFound);
