@@ -53,6 +53,7 @@ describe("ChatBoatController", () => {
     mockRequest.body = { ...mockChat };
     (AppDataSource.getRepository(ChatBoat).save as jest.Mock).mockResolvedValueOnce(mockChat);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await chatBoatController.chatCreate(mockRequest.body as any);
 
     expect(AppDataSource.getRepository(ChatBoat).save);
@@ -69,6 +70,7 @@ describe("ChatBoatController", () => {
     mockRequest.body = { ...mockChat };
     (AppDataSource.getRepository(ChatBoat).save as jest.Mock).mockRejectedValueOnce(new Error("Error"));
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await chatBoatController.chatCreate(mockRequest.body as any);
   });
 
@@ -139,6 +141,7 @@ describe("ChatBoatController", () => {
     mockRequest.body = mockChat;
     (AppDataSource.getRepository(ChatBoat).save as jest.Mock).mockRejectedValueOnce(new Error("Error"));
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await chatBoatController.chatCreate(mockRequest.body as any);
   });
 
