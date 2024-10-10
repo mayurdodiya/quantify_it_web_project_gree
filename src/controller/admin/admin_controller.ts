@@ -8,6 +8,9 @@ import { ResponseCodes } from "../../utils/response-codes";
 import { comparepassword } from "../../utils/bcrypt";
 import { generateToken } from "../../utils/auth.token";
 import { Role, Status } from "../../utils/enum";
+import { FileService } from "../../services/file_upload";
+
+const fileService = new FileService();
 
 export class AdminController {
   private userRepo: Repository<User>;
@@ -51,7 +54,7 @@ export class AdminController {
         location: getAdmin.location,
         token: token,
       };
-      
+
       return RoutesHandler.sendSuccess(req, res, true, message.LOGIN_SUCCESS, ResponseCodes.success, data);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
@@ -64,10 +67,10 @@ export class AdminController {
       if (!req.file) {
         return RoutesHandler.sendError(req, res, false, message.UPLOAD_IMG, ResponseCodes.insertError);
       }
-      const filePath = req.file.path;
-      const pathJoin = process.env.LOCAL_URL + filePath;
 
-      return RoutesHandler.sendSuccess(req, res, true, message.UPLOAD_SUCCESS("Image"), ResponseCodes.success, pathJoin);
+      const response = await fileService.uploadFile("images", req.file.path, req.file.originalname);
+
+      return RoutesHandler.sendSuccess(req, res, true, message.UPLOAD_SUCCESS("Image"), ResponseCodes.success, response);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
