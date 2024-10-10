@@ -89,7 +89,7 @@ describe("certificationDetailsController", () => {
   });
 
   //edit
-  it("should return not found if certification details does not exist", async () => {
+  it("5 should return not found if certification details does not exist", async () => {
     (AppDataSource.getRepository(CertificationDetails).findOne as jest.Mock).mockResolvedValueOnce(null);
 
     mockRequest.params = { id: "1" };
@@ -129,11 +129,11 @@ describe("certificationDetailsController", () => {
 
     await certificationDetailsController.getAllCertificationDetails(mockRequest as Request, mockResponse as Response);
 
-    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
     expect(jsonMock).toHaveBeenCalledWith({
-      success: false,
-      message: message.NO_DATA("This certification details"),
-      data: undefined,
+      success: true,
+      message: message.GET_DATA("Certification Details"),
+      data: null,
     });
   });
 

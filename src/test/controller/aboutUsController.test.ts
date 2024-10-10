@@ -144,8 +144,8 @@ describe("AboutUsController", () => {
       data: undefined,
     });
   });
-  
-   //---------------------------------------------------------------------------------------------------------
+
+  //---------------------------------------------------------------------------------------------------------
 
   //find
   it("12 should return contact data if found", async () => {
@@ -171,10 +171,10 @@ describe("AboutUsController", () => {
 
     await aboutUsController.getAboutUs(mockRequest as Request, mockResponse as Response);
 
-    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.searchError);
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
     expect(jsonMock).toHaveBeenCalledWith({
-      success: false,
-      message: message.NO_DATA("About us page"),
+      success: true,
+      message: message.GET_DATA("About us"),
       data: undefined,
     });
   });
@@ -185,12 +185,11 @@ describe("AboutUsController", () => {
 
     await aboutUsController.getAboutUs(mockRequest as Request, mockResponse as Response);
 
-    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.searchError);
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
     expect(jsonMock).toHaveBeenCalledWith({
-      success: false,
-      message: message.NO_DATA("About us page"),
+      success: true,
+      message: message.GET_DATA("About us"),
       data: undefined,
     });
   });
-  
 });

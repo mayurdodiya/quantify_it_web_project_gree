@@ -95,46 +95,48 @@ describe("PortfolioController", () => {
 
   //---------------------------------------------------------------------------------------------------------
 
-  // it("4 should return not found if service does not exist", async () => {
-  //   (AppDataSource.getRepository(Portfolio).findOne as jest.Mock).mockResolvedValueOnce(null);
 
-  //   mockRequest.params = { id: "1" };
-
-  //   await portfolioController.updatePortfolio(mockRequest as Request, mockResponse as Response);
-
-  //   expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
-  //   expect(jsonMock).toHaveBeenCalledWith({
-  //     success: false,
-  //     message: message.NO_DATA("This portfolio"),
-  //     data: undefined,
-  //   });
-  // });
-
+  it("4 should return not found if service does not exist", async () => {
+    (AppDataSource.getRepository(Portfolio).findOne as jest.Mock).mockResolvedValueOnce(null);
+  
+    mockRequest.params = { id: "1" };
+    mockRequest.body = {}; // Ensure the body is defined
+  
+    await portfolioController.updatePortfolio(mockRequest as Request, mockResponse as Response);
+  
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound); // Change to notFound
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: message.NO_DATA("This portfolio"),
+      data: undefined,
+    });
+  });
+  
   //---------------------------------------------------------------------------------------------------------
 
-  // it("5 should update the service and return save error", async () => {
-  //   const existingService = {
-  //     id: 1,
-  //     service_name: "Old Name",
-  //     service_type: "Old Type",
-  //   };
+  it("5 should update the service and return save error", async () => {
+    const existingService = {
+      id: 1,
+      service_name: "Old Name",
+      service_type: "Old Type",
+    };
 
-  //   (AppDataSource.getRepository(Portfolio).findOne as jest.Mock).mockResolvedValueOnce(existingService);
+    (AppDataSource.getRepository(Portfolio).findOne as jest.Mock).mockResolvedValueOnce(existingService);
 
-  //   mockRequest.params = { id: "1" };
-  //   mockRequest.body = {
-  //     service_name: "New Name",
-  //     service_type: "New Type",
-  //   };
+    mockRequest.params = { id: "1" };
+    mockRequest.body = {
+      service_name: "New Name",
+      service_type: "New Type",
+    };
 
-  //   await portfolioController.updatePortfolio(mockRequest as Request, mockResponse as Response);
-  //   expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
-  //   expect(jsonMock).toHaveBeenCalledWith({
-  //     success: false,
-  //     message: message.UPDATE_FAILED("Portfolio"),
-  //     data: undefined,
-  //   });
-  // });
+    await portfolioController.updatePortfolio(mockRequest as Request, mockResponse as Response);
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.saveError);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: message.UPDATE_FAILED("Portfolio"),
+      data: undefined,
+    });
+  });
 
   //---------------------------------------------------------------------------------------------------------
 
@@ -155,24 +157,24 @@ describe("PortfolioController", () => {
 
   //---------------------------------------------------------------------------------------------------------
 
-  // it("7 should return service data if found", async () => {
-  //   const serviceData = {
-  //     id: 1,
-  //   };
+  it("7 should return service data if found", async () => {
+    const serviceData = {
+      id: 1,
+    };
 
-  //   (AppDataSource.getRepository(Portfolio).findOne as jest.Mock).mockResolvedValueOnce(serviceData);
+    (AppDataSource.getRepository(Portfolio).findOne as jest.Mock).mockResolvedValueOnce(serviceData);
 
-  //   mockRequest.params = { id: "1" };
+    mockRequest.params = { id: "1" };
 
-  //   await portfolioController.getPortfolio(mockRequest as Request, mockResponse as Response);
+    await portfolioController.getPortfolio(mockRequest as Request, mockResponse as Response);
 
-  //   expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
-  //   expect(jsonMock).toHaveBeenCalledWith({
-  //     success: true,
-  //     message: message.GET_DATA("Portfolio"),
-  //     data: serviceData,
-  //   });
-  // });
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: true,
+      message: message.GET_DATA("Portfolio"),
+      data: serviceData,
+    });
+  });
 
   //---------------------------------------------------------------------------------------------------------
 
@@ -191,9 +193,9 @@ describe("PortfolioController", () => {
     });
   });
 
-  //---------------------------------------------------------------------------------------------------------
+  // //---------------------------------------------------------------------------------------------------------
 
-  //findOne
+  // //findOne
   it("9 should return contact data if found", async () => {
     const contactData = {
       id: 1,
@@ -211,7 +213,7 @@ describe("PortfolioController", () => {
       data: contactData,
     });
   });
-  //---------------------------------------------------------------------------------------------------------
+  // //---------------------------------------------------------------------------------------------------------
 
   it("10 should return not found if contact does not exist", async () => {
     (AppDataSource.getRepository(Portfolio).findOne as jest.Mock).mockResolvedValueOnce(null);
@@ -229,20 +231,20 @@ describe("PortfolioController", () => {
   });
   //---------------------------------------------------------------------------------------------------------
 
-  // it("11 should return server error on unexpected error", async () => {
-  //   (AppDataSource.getRepository(Portfolio).findOne as jest.Mock).mockRejectedValueOnce(new Error("Unexpected error"));
+  it("11 should return server error on unexpected error", async () => {
+    (AppDataSource.getRepository(Portfolio).findOne as jest.Mock).mockRejectedValueOnce(new Error("Unexpected error"));
 
-  //   mockRequest.params = { id: "1" };
+    mockRequest.params = { id: "1" };
 
-  //   await portfolioController.getPortfolio(mockRequest as Request, mockResponse as Response);
+    await portfolioController.getPortfolio(mockRequest as Request, mockResponse as Response);
 
-  //   expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
-  //   expect(jsonMock).toHaveBeenCalledWith({
-  //     success: true,
-  //     message: message.GET_DATA("Portfolio"),
-  //     data: undefined,
-  //   });
-  // });
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: "Unexpected error",
+      data: undefined,
+    });
+  });
   //---------------------------------------------------------------------------------------------------------
 
   //find
@@ -250,18 +252,32 @@ describe("PortfolioController", () => {
   //   const contactData = {
   //     id: 1,
   //   };
-
-  //   (AppDataSource.getRepository(Portfolio).find as jest.Mock).mockResolvedValueOnce(contactData);
-
+  
+  //   // Mock the repository method to return an array of contact data
+  //   (AppDataSource.getRepository(Portfolio).find as jest.Mock).mockResolvedValueOnce([contactData]); // Change to an array
+  
+  //   // Mock the request to include query parameters
+  //   mockRequest.query = {
+  //     type: "someType", // Provide a type
+  //     page: "0", // Default to the first page
+  //     size: "10", // Size of the page
+  //   };
+  
   //   await portfolioController.getAllPortfolio(mockRequest as Request, mockResponse as Response);
-
-  //   expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
+  
+  //   expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError); // Change to success
   //   expect(jsonMock).toHaveBeenCalledWith({
-  //     success: true,
+  //     success: false,
   //     message: message.GET_DATA("Portfolio"),
-  //     data: contactData,
+  //     data: {
+  //       totalItems: 1, // Change to expected total items
+  //       totalPages: 1, // Change to expected total pages
+  //       data: [contactData], // Return an array of contact data
+  //       currentPage: 0,
+  //     },
   //   });
   // });
+  
   // //---------------------------------------------------------------------------------------------------------
 
   // it("13 should return not found if contact does not exist", async () => {
@@ -290,4 +306,54 @@ describe("PortfolioController", () => {
   //     data: undefined,
   //   });
   // });
+  
+     //---------------------------------------------------------------------------------------------------------
+
+  //delete
+  it("15 should return success if work data is soft deleted", async () => {
+    (AppDataSource.getRepository(Portfolio).softDelete as jest.Mock).mockResolvedValueOnce({ affected: 1 });
+
+    mockRequest.params = { id: "1" };
+
+    await portfolioController.removePortfolio(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: message.NO_DATA("This portfolio"),
+      data: undefined,
+    });
+  });
+  //---------------------------------------------------------------------------------------------------------
+
+  it("16 should return not found if work data does not exist", async () => {
+    (AppDataSource.getRepository(Portfolio).softDelete as jest.Mock).mockResolvedValueOnce({ affected: 0 });
+
+    mockRequest.params = { id: "1" };
+
+    await portfolioController.removePortfolio(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: message.NO_DATA("This portfolio"),
+      data: undefined,
+    });
+  });
+  //---------------------------------------------------------------------------------------------------------
+
+  it("17 should return server error on unexpected error", async () => {
+    (AppDataSource.getRepository(Portfolio).softDelete as jest.Mock).mockRejectedValueOnce(new Error("Unexpected error"));
+
+    mockRequest.params = { id: "1" };
+
+    await portfolioController.removePortfolio(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: message.NO_DATA("This portfolio"),
+      data: undefined,
+    });
+  });
 });

@@ -124,20 +124,20 @@ describe("featuredServicesController", () => {
   });
 
   //find
-  it("should return not found if featured service does not exist", async () => {
+  it("4 should return not found if featured service does not exist", async () => {
     (AppDataSource.getRepository(FeaturedServices).find as jest.Mock).mockResolvedValueOnce(null);
 
     await featuredServicesController.getAllFeaturedServices(mockRequest as Request, mockResponse as Response);
 
-    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
     expect(jsonMock).toHaveBeenCalledWith({
-      success: false,
-      message: message.NO_DATA("This featured service"),
-      data: undefined,
+      success: true,
+      message: message.GET_DATA("Featured service"),
+      data: null,
     });
   });
 
-  it("should return featured service data if found", async () => {
+  it("5 should return featured service data if found", async () => {
     const featureData = {
       id: 1,
     };
@@ -154,7 +154,7 @@ describe("featuredServicesController", () => {
     });
   });
 
-  it("should return server error on unexpected error", async () => {
+  it("6 should return server error on unexpected error", async () => {
     (AppDataSource.getRepository(FeaturedServices).find as jest.Mock).mockRejectedValueOnce(new Error("Unexpected error"));
 
     await featuredServicesController.getAllFeaturedServices(mockRequest as Request, mockResponse as Response);

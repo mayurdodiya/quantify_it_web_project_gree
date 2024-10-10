@@ -114,9 +114,7 @@ export class SubServicesController {
       const data = await this.subServicesRepo.find({
         select: ["id", "core_service_id", "sub_service_name", "description_title", "description", "updatedAt"],
       });
-      if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This sub services"), ResponseCodes.notFound);
-      }
+      
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Sub services"), ResponseCodes.success, data);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);

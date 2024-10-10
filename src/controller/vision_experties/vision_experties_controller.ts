@@ -97,9 +97,6 @@ export class VisionExpertiesController {
         where: { status: Status.ACTIVE },
         select: ["id", "title", "description", "img_url", "createdAt", "updatedAt"],
       });
-      if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This experties"), ResponseCodes.notFound);
-      }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Experties"), ResponseCodes.success, data);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);

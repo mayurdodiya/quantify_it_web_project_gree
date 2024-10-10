@@ -98,9 +98,9 @@ export class CertificationDetailsController {
         where: { status: Status.ACTIVE },
         select: ["id", "sub_title", "sub_description", "logo_img_url", "createdAt", "updatedAt"],
       });
-      if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This certification details"), ResponseCodes.notFound);
-      }
+      // if (!data) {
+      //   return RoutesHandler.sendError(req, res, false, message.NO_DATA("This certification details"), ResponseCodes.notFound);
+      // }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Certification Details"), ResponseCodes.success, data);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);

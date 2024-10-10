@@ -246,36 +246,36 @@ describe("TrustedClientsController", () => {
   //---------------------------------------------------------------------------------------------------------
 
   //find
-//   it("12 should return contact data if found", async () => {
-//     const contactData = {
-//       id: 1,
-//     };
+  //   it("12 should return contact data if found", async () => {
+  //     const contactData = {
+  //       id: 1,
+  //     };
 
-//     (AppDataSource.getRepository(TrustedClients).find as jest.Mock).mockResolvedValueOnce(contactData);
+  //     (AppDataSource.getRepository(TrustedClients).find as jest.Mock).mockResolvedValueOnce(contactData);
 
-//     await trustedClientsController.getAllTrustedClients(mockRequest as Request, mockResponse as Response);
+  //     await trustedClientsController.getAllTrustedClients(mockRequest as Request, mockResponse as Response);
 
-//     expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
-//     expect(jsonMock).toHaveBeenCalledWith({
-//       success: true,
-//       message: message.GET_DATA("Client"),
-//       data: contactData,
-//     });
-//   });
+  //     expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
+  //     expect(jsonMock).toHaveBeenCalledWith({
+  //       success: true,
+  //       message: message.GET_DATA("Client"),
+  //       data: contactData,
+  //     });
+  //   });
   //---------------------------------------------------------------------------------------------------------
 
-//   it("13 should return not found if contact does not exist", async () => {
-//     (AppDataSource.getRepository(TrustedClients).findOne as jest.Mock).mockResolvedValueOnce(null);
+  //   it("13 should return not found if contact does not exist", async () => {
+  //     (AppDataSource.getRepository(TrustedClients).findOne as jest.Mock).mockResolvedValueOnce(null);
 
-//     await trustedClientsController.getAllTrustedClients(mockRequest as Request, mockResponse as Response);
+  //     await trustedClientsController.getAllTrustedClients(mockRequest as Request, mockResponse as Response);
 
-//     expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
-//     expect(jsonMock).toHaveBeenCalledWith({
-//       success: false,
-//       message: message.NO_DATA("This client"),
-//       data: undefined,
-//     });
-//   });
+  //     expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
+  //     expect(jsonMock).toHaveBeenCalledWith({
+  //       success: false,
+  //       message: message.NO_DATA("This client"),
+  //       data: undefined,
+  //     });
+  //   });
   //---------------------------------------------------------------------------------------------------------
 
   //   it("14 should return server error on unexpected error", async () => {
@@ -290,4 +290,54 @@ describe("TrustedClientsController", () => {
   //       data: undefined,
   //     });
   //   });
+
+  //---------------------------------------------------------------------------------------------------------
+
+  //delete
+  it("15 should return success if work data is soft deleted", async () => {
+    (AppDataSource.getRepository(TrustedClients).softDelete as jest.Mock).mockResolvedValueOnce({ affected: 1 });
+
+    mockRequest.params = { id: "1" };
+
+    await trustedClientsController.removeTrustedClients(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: message.NO_DATA("This client"),
+      data: undefined,
+    });
+  });
+  // ---------------------------------------------------------------------------------------------------------
+
+  it("16 should return not found if work data does not exist", async () => {
+    (AppDataSource.getRepository(TrustedClients).softDelete as jest.Mock).mockResolvedValueOnce({ affected: 0 });
+
+    mockRequest.params = { id: "1" };
+
+    await trustedClientsController.removeTrustedClients(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: message.NO_DATA("This client"),
+      data: undefined,
+    });
+  });
+  // ---------------------------------------------------------------------------------------------------------
+
+  it("17 should return server error on unexpected error", async () => {
+    (AppDataSource.getRepository(TrustedClients).softDelete as jest.Mock).mockRejectedValueOnce(new Error("Unexpected error"));
+
+    mockRequest.params = { id: "1" };
+
+    await trustedClientsController.removeTrustedClients(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: message.NO_DATA("This client"),
+      data: undefined,
+    });
+  });
 });

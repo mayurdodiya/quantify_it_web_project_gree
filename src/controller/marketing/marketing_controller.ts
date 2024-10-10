@@ -61,9 +61,7 @@ export class MarketingController {
       const data = await this.marketingRepo.find({
         select: ["id", "marketing_type", "referred_by", "business_stage", "full_name", "email", "location", "company_name", "user_message", "createdAt"],
       });
-      if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This data"), ResponseCodes.notFound);
-      }
+   
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Marketing forms"), ResponseCodes.success, data);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);

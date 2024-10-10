@@ -20,9 +20,6 @@ export class TokenController {
           deletedAt: IsNull(),
         },
       });
-      if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("Token"), ResponseCodes.notFound);
-      }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Token"), ResponseCodes.success, data);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);

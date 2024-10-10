@@ -96,9 +96,7 @@ export class QuestionAnsController {
         where: { status: Status.ACTIVE },
         select: ["id", "question", "answer", "createdAt", "updatedAt"],
       });
-      if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This question and ans"), ResponseCodes.notFound);
-      }
+
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Question and ans"), ResponseCodes.success, data);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);

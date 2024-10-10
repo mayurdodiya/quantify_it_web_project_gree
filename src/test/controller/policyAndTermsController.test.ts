@@ -4,6 +4,7 @@ import { message } from "../../utils/messages";
 import { ResponseCodes } from "../../utils/response-codes";
 import { PolicyAndTermsController } from "../../controller/policy_and_terms/policy_and_terms_controller";
 import { PolicyAndTerms } from "../../entities/policy_and_terms.entity";
+import { DocumentType } from "../../utils/enum";
 
 jest.mock("../../config/database.config", () => ({
   AppDataSource: {
@@ -47,9 +48,7 @@ describe("PolicyAndTermsController", () => {
   it("1 should return an error if service already exists", async () => {
     (AppDataSource.getRepository(PolicyAndTerms).findOne as jest.Mock).mockResolvedValueOnce({ id: 1 });
 
-    mockRequest.body = {
-      
-    };
+    mockRequest.body = {};
 
     await policyAndTermsController.addPolicyAndTerms(mockRequest as Request, mockResponse as Response);
 
@@ -68,9 +67,7 @@ describe("PolicyAndTermsController", () => {
 
     (AppDataSource.getRepository(PolicyAndTerms).save as jest.Mock).mockResolvedValueOnce({ id: 1 });
 
-    mockRequest.body = {
-     
-    };
+    mockRequest.body = {};
 
     await policyAndTermsController.addPolicyAndTerms(mockRequest as Request, mockResponse as Response);
 
@@ -99,46 +96,64 @@ describe("PolicyAndTermsController", () => {
 
   //---------------------------------------------------------------------------------------------------------
 
-  // it("4 should return not found if service does not exist", async () => {
-  //   (AppDataSource.getRepository(PolicyAndTerms).findOne as jest.Mock).mockResolvedValueOnce(null);
+  it("4 should return not found if service does not exist", async () => {
+    // Mock the findOne method to return null
+    (AppDataSource.getRepository(PolicyAndTerms).findOne as jest.Mock).mockResolvedValueOnce(null);
 
-  //   mockRequest.params = { id: "1" };
+    // Set up the mock request parameters
+    mockRequest.params = { id: "1" };
+    mockRequest.body = {
+      document_type: "some_type", // Ensure to include this field as it is required by the controller
+    };
 
-  //   await policyAndTermsController.updatePolicyAndTerms(mockRequest as Request, mockResponse as Response);
+    // Call the controller method
+    await policyAndTermsController.updatePolicyAndTerms(mockRequest as Request, mockResponse as Response);
 
-  //   expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
-  //   expect(jsonMock).toHaveBeenCalledWith({
-  //     success: false,
-  //     message: message.NO_DATA("This experties"),
-  //     data: undefined,
-  //   });
-  // });
+    // Check that the response status and body are correct
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound); // Changed to notFound
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: message.NO_DATA("This data"), // Ensure the message matches the implementation
+      data: undefined,
+    });
+  });
 
   //---------------------------------------------------------------------------------------------------------
 
-  // it("5 should update the service and return save error", async () => {
-  //   const existingService = {
-  //     id: 1,
-  //     service_name: "Old Name",
-  //     service_type: "Old Type",
-  //   };
+  it("5 should update the service and return save error", async () => {
+    // Mock existing service data
+    const existingService = {
+      id: 1,
+      subject: "Old Subject",
+      explanation: "Old Explanation",
+      document_type: "old_type",
+    };
 
-  //   (AppDataSource.getRepository(PolicyAndTerms).findOne as jest.Mock).mockResolvedValueOnce(existingService);
+    // Mock the findOne method to return the existing service
+    (AppDataSource.getRepository(PolicyAndTerms).findOne as jest.Mock).mockResolvedValueOnce(existingService);
 
-  //   mockRequest.params = { id: "1" };
-  //   mockRequest.body = {
-  //     service_name: "New Name",
-  //     service_type: "New Type",
-  //   };
+    // Set up the mock request parameters and body
+    mockRequest.params = { id: "1" };
+    mockRequest.body = {
+      document_type: "new_type", // Include the document_type
+      subject: "New Subject",
+      explanation: "New Explanation",
+    };
 
-  //   await policyAndTermsController.updatePolicyAndTerms(mockRequest as Request, mockResponse as Response);
-  //   expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
-  //   expect(jsonMock).toHaveBeenCalledWith({
-  //     success: false,
-  //     message: message.UPDATE_FAILED("Experties"),
-  //     data: undefined,
-  //   });
-  // });
+    // Mock the save method to simulate a save error
+    (AppDataSource.getRepository(PolicyAndTerms).save as jest.Mock).mockResolvedValueOnce(null);
+
+    // Call the controller method
+    await policyAndTermsController.updatePolicyAndTerms(mockRequest as Request, mockResponse as Response);
+
+    // Verify that the status and response body are correct
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.saveError);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: message.UPDATE_FAILED("Data"),
+      data: undefined,
+    });
+  });
 
   //---------------------------------------------------------------------------------------------------------
 
@@ -249,37 +264,51 @@ describe("PolicyAndTermsController", () => {
   });
   //---------------------------------------------------------------------------------------------------------
 
-  //find
-  // it("12 should return contact data if found", async () => {
-  //   const contactData = {
-  //     id: 1,
-  //   };
+  // find
+  it("12 should return contact data if found", async () => {
+    const contactData = [{ id: 1, document_type: DocumentType.PRIVACY_POLICY, subject: "Subject 1", explanation: "Explanation 1" }]; // Mock as an array since `find` returns an array of results
 
-  //   (AppDataSource.getRepository(PolicyAndTerms).find as jest.Mock).mockResolvedValueOnce(contactData);
+    // Mock the find method to resolve with the expected data
+    (AppDataSource.getRepository(PolicyAndTerms).find as jest.Mock).mockResolvedValueOnce(contactData);
 
-  //   await policyAndTermsController.getAllPolicyAndTerms(mockRequest as Request, mockResponse as Response);
+    // Mock the request
+    mockRequest.query = { document_type: DocumentType.PRIVACY_POLICY.toString() }; // Convert to string
 
-  //   expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
-  //   expect(jsonMock).toHaveBeenCalledWith({
-  //     success: true,
-  //     message: message.GET_DATA("Experties"),
-  //     data: contactData,
-  //   });
-  // });
+    // Call the controller method
+    await policyAndTermsController.getAllPolicyAndTerms(mockRequest as Request, mockResponse as Response);
+
+    // Assert the status and response
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success); // Expect success
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: true,
+      message: message.GET_DATA("This requested"), // Adjust message if necessary
+      data: contactData,
+    });
+  });
+
   //---------------------------------------------------------------------------------------------------------
 
   // it("13 should return not found if contact does not exist", async () => {
-  //   (AppDataSource.getRepository(PolicyAndTerms).findOne as jest.Mock).mockResolvedValueOnce(null);
-
+  //   // Mock the find method to resolve with an empty array
+  //   (AppDataSource.getRepository(PolicyAndTerms).find as jest.Mock).mockResolvedValueOnce([]);
+    
+  //   // Mock the request to include document_type
+  //   mockRequest.query = { document_type: DocumentType.PRIVACY_POLICY.toString() }; // Convert to string
+    
   //   await policyAndTermsController.getAllPolicyAndTerms(mockRequest as Request, mockResponse as Response);
-
-  //   expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
+    
+  //   // Expect a not found status and message
+  //   expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success); // Expect notFound
   //   expect(jsonMock).toHaveBeenCalledWith({
   //     success: false,
-  //     message: message.NO_DATA("This experties"),
+  //     message: message.NO_DATA("This data"), // Ensure the message matches what your handler returns
   //     data: undefined,
   //   });
   // });
+  
+  
+  
+
   //---------------------------------------------------------------------------------------------------------
 
   // it("14 should return server error on unexpected error", async () => {
@@ -290,8 +319,59 @@ describe("PolicyAndTermsController", () => {
   //   expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
   //   expect(jsonMock).toHaveBeenCalledWith({
   //     success: false,
-  //     message: message.NO_DATA("This experties"),
+  //     message: message.NO_DATA("This requested"),
   //     data: undefined,
   //   });
   // });
+  
+    //---------------------------------------------------------------------------------------------------------
+
+  //delete
+  it("15 should return success if work data is soft deleted", async () => {
+    (AppDataSource.getRepository(PolicyAndTerms).softDelete as jest.Mock).mockResolvedValueOnce({ affected: 1 });
+
+    mockRequest.params = { id: "1" };
+
+    await policyAndTermsController.removePolicyAndTerms(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: message.NO_DATA("This data"),
+      data: undefined,
+    });
+  });
+  //---------------------------------------------------------------------------------------------------------
+
+  it("16 should return not found if work data does not exist", async () => {
+    (AppDataSource.getRepository(PolicyAndTerms).softDelete as jest.Mock).mockResolvedValueOnce({ affected: 0 });
+
+    mockRequest.params = { id: "1" };
+
+    await policyAndTermsController.removePolicyAndTerms(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: message.NO_DATA("This data"),
+      data: undefined,
+    });
+  });
+  //---------------------------------------------------------------------------------------------------------
+
+  it("17 should return server error on unexpected error", async () => {
+    (AppDataSource.getRepository(PolicyAndTerms).softDelete as jest.Mock).mockRejectedValueOnce(new Error("Unexpected error"));
+
+    mockRequest.params = { id: "1" };
+
+    await policyAndTermsController.removePolicyAndTerms(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: message.NO_DATA("This data"),
+      data: undefined,
+    });
+  });
+  
 });

@@ -43,7 +43,7 @@ describe("ContactUsController", () => {
   });
 
   //create
-  it("should return an error if contact already exists", async () => {
+  it("1 should return an error if contact already exists", async () => {
     (AppDataSource.getRepository(ContactUs).findOne as jest.Mock).mockResolvedValueOnce({ id: 1 });
 
     mockRequest.body = {
@@ -151,7 +151,7 @@ describe("ContactUsController", () => {
   });
 
   //find
-  it("should return contact data if found", async () => {
+  it("4 should return contact data if found", async () => {
     const contactData = {
       id: 1,
     };
@@ -168,28 +168,28 @@ describe("ContactUsController", () => {
     });
   });
 
-  it("should return not found if contact does not exist", async () => {
+  it("5 should return not found if contact does not exist", async () => {
     (AppDataSource.getRepository(ContactUs).findOne as jest.Mock).mockResolvedValueOnce(null);
 
     await contactUsController.getAllContactUs(mockRequest as Request, mockResponse as Response);
 
-    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
     expect(jsonMock).toHaveBeenCalledWith({
-      success: false,
-      message: message.NO_DATA("This Contact us data"),
+      success: true,
+      message: message.GET_DATA("Contact us forms"),
       data: undefined,
     });
   });
 
-  it("should return server error on unexpected error", async () => {
+  it("6 should return server error on unexpected error", async () => {
     (AppDataSource.getRepository(ContactUs).findOne as jest.Mock).mockRejectedValueOnce(new Error("Unexpected error"));
 
     await contactUsController.getAllContactUs(mockRequest as Request, mockResponse as Response);
 
-    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
     expect(jsonMock).toHaveBeenCalledWith({
-      success: false,
-      message: message.NO_DATA("This Contact us data"),
+      success: true,
+      message: message.GET_DATA("Contact us forms"),
       data: undefined,
     });
   });

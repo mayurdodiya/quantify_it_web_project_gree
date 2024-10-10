@@ -47,9 +47,7 @@ describe("VisionExpertiesController", () => {
   it("1 should return an error if service already exists", async () => {
     (AppDataSource.getRepository(VisionExperties).findOne as jest.Mock).mockResolvedValueOnce({ id: 1 });
 
-    mockRequest.body = {
-      
-    };
+    mockRequest.body = {};
 
     await visionExpertiesController.addVisionExperties(mockRequest as Request, mockResponse as Response);
 
@@ -68,9 +66,7 @@ describe("VisionExpertiesController", () => {
 
     (AppDataSource.getRepository(VisionExperties).save as jest.Mock).mockResolvedValueOnce({ id: 1 });
 
-    mockRequest.body = {
-     
-    };
+    mockRequest.body = {};
 
     await visionExpertiesController.addVisionExperties(mockRequest as Request, mockResponse as Response);
 
@@ -273,10 +269,10 @@ describe("VisionExpertiesController", () => {
 
     await visionExpertiesController.getAllVisionExperties(mockRequest as Request, mockResponse as Response);
 
-    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
     expect(jsonMock).toHaveBeenCalledWith({
-      success: false,
-      message: message.NO_DATA("This experties"),
+      success: true,
+      message: message.GET_DATA("Experties"),
       data: undefined,
     });
   });
@@ -286,6 +282,56 @@ describe("VisionExpertiesController", () => {
     (AppDataSource.getRepository(VisionExperties).findOne as jest.Mock).mockRejectedValueOnce(new Error("Unexpected error"));
 
     await visionExpertiesController.getAllVisionExperties(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: true,
+      message: message.GET_DATA("Experties"),
+      data: undefined,
+    });
+  });
+
+  //---------------------------------------------------------------------------------------------------------
+
+  //delete
+  it("15 should return success if work data is soft deleted", async () => {
+    (AppDataSource.getRepository(VisionExperties).softDelete as jest.Mock).mockResolvedValueOnce({ affected: 1 });
+
+    mockRequest.params = { id: "1" };
+
+    await visionExpertiesController.removeVisionExperties(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: message.NO_DATA("This experties"),
+      data: undefined,
+    });
+  });
+  // ---------------------------------------------------------------------------------------------------------
+
+  it("16 should return not found if work data does not exist", async () => {
+    (AppDataSource.getRepository(VisionExperties).softDelete as jest.Mock).mockResolvedValueOnce({ affected: 0 });
+
+    mockRequest.params = { id: "1" };
+
+    await visionExpertiesController.removeVisionExperties(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: "Unexpected error",
+      data: undefined,
+    });
+  });
+  // ---------------------------------------------------------------------------------------------------------
+
+  it("17 should return server error on unexpected error", async () => {
+    (AppDataSource.getRepository(VisionExperties).softDelete as jest.Mock).mockRejectedValueOnce(new Error("Unexpected error"));
+
+    mockRequest.params = { id: "1" };
+
+    await visionExpertiesController.removeVisionExperties(mockRequest as Request, mockResponse as Response);
 
     expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
     expect(jsonMock).toHaveBeenCalledWith({

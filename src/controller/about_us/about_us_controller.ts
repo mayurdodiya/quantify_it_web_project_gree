@@ -92,11 +92,7 @@ export class AboutUsController {
     try {
       const data = await this.aboutUsRepo.find({ select: ["id", "title", "description", "who_we_are_img_url_1", "who_we_are_img_url_2", "our_vision", "our_mission", "vision_mission_img_url", "works_about_title", "works_about_description", "works_about_img_url", "total_experience", "talented_it_professionals", "successfull_projects", "served_country", "createdAt", "updatedAt"] });
 
-      if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("About us page"), ResponseCodes.searchError);
-      } else {
-        return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("About us"), ResponseCodes.success, data);
-      }
+      return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("About us"), ResponseCodes.success, data);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }

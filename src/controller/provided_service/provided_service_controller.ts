@@ -128,9 +128,7 @@ export class ProvidedServiceController {
         where: { status: Status.ACTIVE },
         select: ["id", "card_img_url", "service_type", "service_name", "service_name_title", "description", "service_benifits", "work_planning_title", "work_planning_description", "work_planning_img_url", "business_solutions_title", "business_solutions_description", "business_solutions_img_url", "completed_works", "client_ratings", "bussiness_reports_percentage", "createdAt", "updatedAt"],
       });
-      if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This service provide data"), ResponseCodes.notFound);
-      }
+  
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Service provide data"), ResponseCodes.success, data);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);

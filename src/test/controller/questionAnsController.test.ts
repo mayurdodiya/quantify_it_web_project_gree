@@ -47,9 +47,7 @@ describe("QuestionAnsController", () => {
   it("1 should return an error if service already exists", async () => {
     (AppDataSource.getRepository(QuestionAns).findOne as jest.Mock).mockResolvedValueOnce({ id: 1 });
 
-    mockRequest.body = {
-      
-    };
+    mockRequest.body = {};
 
     await questionAnsController.addQuestionAns(mockRequest as Request, mockResponse as Response);
 
@@ -68,9 +66,7 @@ describe("QuestionAnsController", () => {
 
     (AppDataSource.getRepository(QuestionAns).save as jest.Mock).mockResolvedValueOnce({ id: 1 });
 
-    mockRequest.body = {
-     
-    };
+    mockRequest.body = {};
 
     await questionAnsController.addQuestionAns(mockRequest as Request, mockResponse as Response);
 
@@ -273,10 +269,10 @@ describe("QuestionAnsController", () => {
 
     await questionAnsController.getAllQuestionAns(mockRequest as Request, mockResponse as Response);
 
-    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
     expect(jsonMock).toHaveBeenCalledWith({
-      success: false,
-      message: message.NO_DATA("This question and ans"),
+      success: true,
+      message: message.GET_DATA("Question and ans"),
       data: undefined,
     });
   });
@@ -286,6 +282,56 @@ describe("QuestionAnsController", () => {
     (AppDataSource.getRepository(QuestionAns).findOne as jest.Mock).mockRejectedValueOnce(new Error("Unexpected error"));
 
     await questionAnsController.getAllQuestionAns(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: true,
+      message: message.GET_DATA("Question and ans"),
+      data: undefined,
+    });
+  });
+
+  //---------------------------------------------------------------------------------------------------------
+
+  //delete
+  it("15 should return success if work data is soft deleted", async () => {
+    (AppDataSource.getRepository(QuestionAns).softDelete as jest.Mock).mockResolvedValueOnce({ affected: 1 });
+
+    mockRequest.params = { id: "1" };
+
+    await questionAnsController.removeQuestionAns(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: message.NO_DATA("This question and ans"),
+      data: undefined,
+    });
+  });
+  // ---------------------------------------------------------------------------------------------------------
+
+  it("16 should return not found if work data does not exist", async () => {
+    (AppDataSource.getRepository(QuestionAns).softDelete as jest.Mock).mockResolvedValueOnce({ affected: 0 });
+
+    mockRequest.params = { id: "1" };
+
+    await questionAnsController.removeQuestionAns(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: "Unexpected error",
+      data: undefined,
+    });
+  });
+  // ---------------------------------------------------------------------------------------------------------
+
+  it("17 should return server error on unexpected error", async () => {
+    (AppDataSource.getRepository(QuestionAns).softDelete as jest.Mock).mockRejectedValueOnce(new Error("Unexpected error"));
+
+    mockRequest.params = { id: "1" };
+
+    await questionAnsController.removeQuestionAns(mockRequest as Request, mockResponse as Response);
 
     expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
     expect(jsonMock).toHaveBeenCalledWith({

@@ -97,9 +97,7 @@ export class EmployeeDetailsController {
       const data = await this.employeeDetailsRepo.find({
         select: ["id", "name", "img_url", "rating", "description", "createdAt", "updatedAt"],
       });
-      if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This employee data"), ResponseCodes.notFound);
-      }
+
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Employee data"), ResponseCodes.success, data);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);

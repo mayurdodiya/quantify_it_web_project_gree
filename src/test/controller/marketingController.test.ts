@@ -89,20 +89,20 @@ describe("marketingController", () => {
   });
 
   //find
-  it("should return not found if marketing does not exist", async () => {
+  it("4 should return not found if marketing does not exist", async () => {
     (AppDataSource.getRepository(Marketing).find as jest.Mock).mockResolvedValueOnce(null);
 
     await marketingController.getAllMarketing(mockRequest as Request, mockResponse as Response);
 
-    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
     expect(jsonMock).toHaveBeenCalledWith({
-      success: false,
-      message: message.NO_DATA("This data"),
-      data: undefined,
+      success: true,
+      message: message.GET_DATA("Marketing forms"),
+      data: null,
     });
   });
 
-  it("should return marketing data if found", async () => {
+  it("5 should return marketing data if found", async () => {
     const empData = {
       id: 1,
     };
@@ -119,7 +119,7 @@ describe("marketingController", () => {
     });
   });
 
-  it("should return server error on unexpected error", async () => {
+  it("6 should return server error on unexpected error", async () => {
     (AppDataSource.getRepository(Marketing).find as jest.Mock).mockRejectedValueOnce(new Error("Unexpected error"));
 
     await marketingController.getAllMarketing(mockRequest as Request, mockResponse as Response);

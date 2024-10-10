@@ -43,7 +43,7 @@ describe("coreServicesController", () => {
   });
 
   //create
-  // it("should return an error if core services already exists", async () => {
+  // it("1 should return an error if core services already exists", async () => {
   //   (AppDataSource.getRepository(CoreServices).findOne as jest.Mock).mockResolvedValueOnce({ id: 1 });
 
   //   mockRequest.body = {};
@@ -58,7 +58,7 @@ describe("coreServicesController", () => {
   //   });
   // });
 
-  // it("should save new core services and return success", async () => {
+  // it("2 should save new core services and return success", async () => {
   //   (AppDataSource.getRepository(CoreServices).findOne as jest.Mock).mockResolvedValueOnce(null);
 
   //   (AppDataSource.getRepository(CoreServices).save as jest.Mock).mockResolvedValueOnce({ id: 1 });
@@ -75,7 +75,7 @@ describe("coreServicesController", () => {
   //   });
   // });
 
-  // it("should return server error on failure", async () => {
+  // it("3 should return server error on failure", async () => {
   //   (AppDataSource.getRepository(CoreServices).findOne as jest.Mock).mockRejectedValueOnce(new Error("Server error"));
 
   //   await coreServicesController.addCoreServices(mockRequest as Request, mockResponse as Response);
@@ -89,7 +89,7 @@ describe("coreServicesController", () => {
   // });
 
   //edit
-  // it("should return not found if core services does not exist", async () => {
+  // it("4 should return not found if core services does not exist", async () => {
   //   (AppDataSource.getRepository(CoreServices).findOne as jest.Mock).mockResolvedValueOnce(null);
 
   //   mockRequest.params = { id: "1" };
@@ -104,7 +104,7 @@ describe("coreServicesController", () => {
   //   });
   // });
 
-  // it("should update the core services and return save error", async () => {
+  // it("5 should update the core services and return save error", async () => {
   //   const existingService = {
   //     id: 1,
   //   };
@@ -124,20 +124,20 @@ describe("coreServicesController", () => {
   // });
 
   //find
-  it("should return not found if core services does not exist", async () => {
+  it("6 should return not found if core services does not exist", async () => {
     (AppDataSource.getRepository(CoreServices).find as jest.Mock).mockResolvedValueOnce(null);
 
     await coreServicesController.getAllCoreServices(mockRequest as Request, mockResponse as Response);
 
-    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
     expect(jsonMock).toHaveBeenCalledWith({
-      success: false,
-      message: message.NO_DATA("This core services"),
-      data: undefined,
+      success: true,
+      message: message.GET_DATA("Core services"),
+      data: null,
     });
   });
 
-  it("should return core services data if found", async () => {
+  it("7 should return core services data if found", async () => {
     const coreData = {
       id: 1,
     };
@@ -154,7 +154,7 @@ describe("coreServicesController", () => {
     });
   });
 
-  it("should return server error on unexpected error", async () => {
+  it("8 should return server error on unexpected error", async () => {
     (AppDataSource.getRepository(CoreServices).find as jest.Mock).mockRejectedValueOnce(new Error("Unexpected error"));
 
     await coreServicesController.getAllCoreServices(mockRequest as Request, mockResponse as Response);
@@ -168,7 +168,7 @@ describe("coreServicesController", () => {
   });
 
   //findOne
-  it("should return core services data if found", async () => {
+  it("9 should return core services data if found", async () => {
     const coreData = {
       id: 1,
     };
@@ -187,7 +187,7 @@ describe("coreServicesController", () => {
     });
   });
 
-  it("should return not found if core services does not exist", async () => {
+  it("10 should return not found if core services does not exist", async () => {
     (AppDataSource.getRepository(CoreServices).findOne as jest.Mock).mockResolvedValueOnce(null);
     mockRequest.params = { id: "1" };
 
@@ -201,7 +201,7 @@ describe("coreServicesController", () => {
     });
   });
 
-  it("should return server error on unexpected error", async () => {
+  it("11 should return server error on unexpected error", async () => {
     (AppDataSource.getRepository(CoreServices).findOne as jest.Mock).mockRejectedValueOnce(new Error("Unexpected error"));
     mockRequest.params = { id: "1" };
 
@@ -216,7 +216,7 @@ describe("coreServicesController", () => {
   });
 
   //delete
-  it("should return success if core services is soft deleted", async () => {
+  it("12 should return success if core services is soft deleted", async () => {
     (AppDataSource.getRepository(CoreServices).softDelete as jest.Mock).mockResolvedValueOnce({ affected: 1 });
 
     mockRequest.params = { id: "1" };
@@ -231,7 +231,7 @@ describe("coreServicesController", () => {
     });
   });
 
-  it("should return not found if core services does not exist", async () => {
+  it("13 should return not found if core services does not exist", async () => {
     (AppDataSource.getRepository(CoreServices).softDelete as jest.Mock).mockResolvedValueOnce({ affected: 0 });
 
     mockRequest.params = { id: "1" };
@@ -246,7 +246,7 @@ describe("coreServicesController", () => {
     });
   });
 
-  it("should return server error on unexpected error", async () => {
+  it("14 should return server error on unexpected error", async () => {
     (AppDataSource.getRepository(CoreServices).softDelete as jest.Mock).mockRejectedValueOnce(new Error("Unexpected error"));
 
     mockRequest.params = { id: "1" };

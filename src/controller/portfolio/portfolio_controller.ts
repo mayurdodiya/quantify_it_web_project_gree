@@ -46,7 +46,7 @@ export class PortfolioController {
   public async updatePortfolio(req: Request, res: Response) {
     try {
       const { title, sub_title, description, img_url } = req.body;
-      const type = req.body.type.toLocaleLowerCase();
+      const type = req.body.type?.toLocaleLowerCase();
 
       const dataId = req.params.id;
       const getData = await this.portfolioRepo.findOne({

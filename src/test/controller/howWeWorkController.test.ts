@@ -124,20 +124,20 @@ describe("howWeWorkController", () => {
   });
 
   //find
-  it("should return not found if work data does not exist", async () => {
+  it("5 should return not found if work data does not exist", async () => {
     (AppDataSource.getRepository(HowWeWork).find as jest.Mock).mockResolvedValueOnce(null);
 
     await howWeWorkController.getAllHowWeWork(mockRequest as Request, mockResponse as Response);
 
-    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
     expect(jsonMock).toHaveBeenCalledWith({
-      success: false,
-      message: message.NO_DATA("This work data"),
-      data: undefined,
+      success: true,
+      message: message.GET_DATA("Work data"),
+      data: null,
     });
   });
 
-  it("should return work data data if found", async () => {
+  it("6 should return work data data if found", async () => {
     const workData = {
       id: 1,
     };

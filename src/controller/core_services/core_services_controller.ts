@@ -99,9 +99,6 @@ export class CoreServicesController {
       const data = await this.coreServicesRepo.find({
         select: ["id", "service_type", "img_url", "createdAt", "updatedAt"],
       });
-      if (!data) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This core services"), ResponseCodes.notFound);
-      }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Core services"), ResponseCodes.success, data);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
