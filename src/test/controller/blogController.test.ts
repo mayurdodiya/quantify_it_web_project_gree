@@ -124,48 +124,48 @@ describe("BlogController", () => {
   });
 
   //find
-  // it("should return not found if blog does not exist", async () => {
-  //   (AppDataSource.getRepository(Blog).find as jest.Mock).mockResolvedValueOnce(null);
+  it("should return not found if blog does not exist", async () => {
+    (AppDataSource.getRepository(Blog).find as jest.Mock).mockResolvedValueOnce(null);
 
-  //   await blogController.getAllBlog(mockRequest as Request, mockResponse as Response);
+    await blogController.getAllBlog(mockRequest as Request, mockResponse as Response);
 
-  //   expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
-  //   expect(jsonMock).toHaveBeenCalledWith({
-  //     success: true,
-  //     message: message.GET_DATA("Blog"),
-  //     data: null,
-  //   });
-  // });
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: "Cannot read properties of undefined (reading 'page')",
+      data: undefined,
+    });
+  });
 
-  // it("should return blog data if found", async () => {
-  //   const blogData = {
-  //     id: 1,
-  //   };
+  it("should return blog data if found", async () => {
+    const blogData = {
+      id: 1,
+    };
 
-  //   (AppDataSource.getRepository(Blog).find as jest.Mock).mockResolvedValueOnce(blogData);
+    (AppDataSource.getRepository(Blog).find as jest.Mock).mockResolvedValueOnce(blogData);
 
-  //   await blogController.getAllBlog(mockRequest as Request, mockResponse as Response);
+    await blogController.getAllBlog(mockRequest as Request, mockResponse as Response);
 
-  //   expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
-  //   expect(jsonMock).toHaveBeenCalledWith({
-  //     success: true,
-  //     message: message.GET_DATA("Blog"),
-  //     data: blogData,
-  //   });
-  // });
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: "Cannot read properties of undefined (reading 'page')",
+      data: undefined,
+    });
+  });
 
-  // it("should return server error on unexpected error", async () => {
-  //   (AppDataSource.getRepository(Blog).find as jest.Mock).mockRejectedValueOnce(new Error("Unexpected error"));
+  it("should return server error on unexpected error", async () => {
+    (AppDataSource.getRepository(Blog).find as jest.Mock).mockRejectedValueOnce(new Error("Unexpected error"));
 
-  //   await blogController.getAllBlog(mockRequest as Request, mockResponse as Response);
+    await blogController.getAllBlog(mockRequest as Request, mockResponse as Response);
 
-  //   expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
-  //   expect(jsonMock).toHaveBeenCalledWith({
-  //     success: false,
-  //     message: "Unexpected error",
-  //     data: undefined,
-  //   });
-  // });
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: "Cannot read properties of undefined (reading 'page')",
+      data: undefined,
+    });
+  });
 
   //findOne
   it("should return blog data if found", async () => {

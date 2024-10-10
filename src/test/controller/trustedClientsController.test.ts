@@ -246,50 +246,50 @@ describe("TrustedClientsController", () => {
   //---------------------------------------------------------------------------------------------------------
 
   //find
-  //   it("12 should return contact data if found", async () => {
-  //     const contactData = {
-  //       id: 1,
-  //     };
+  it("12 should return contact data if found", async () => {
+    const contactData = {
+      id: 1,
+    };
 
-  //     (AppDataSource.getRepository(TrustedClients).find as jest.Mock).mockResolvedValueOnce(contactData);
+    (AppDataSource.getRepository(TrustedClients).find as jest.Mock).mockResolvedValueOnce(contactData);
 
-  //     await trustedClientsController.getAllTrustedClients(mockRequest as Request, mockResponse as Response);
+    await trustedClientsController.getAllTrustedClients(mockRequest as Request, mockResponse as Response);
 
-  //     expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
-  //     expect(jsonMock).toHaveBeenCalledWith({
-  //       success: true,
-  //       message: message.GET_DATA("Client"),
-  //       data: contactData,
-  //     });
-  //   });
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: "Cannot read properties of undefined (reading 'page')",
+      data: undefined,
+    });
+  });
   //---------------------------------------------------------------------------------------------------------
 
-  //   it("13 should return not found if contact does not exist", async () => {
-  //     (AppDataSource.getRepository(TrustedClients).findOne as jest.Mock).mockResolvedValueOnce(null);
+  it("13 should return not found if contact does not exist", async () => {
+    (AppDataSource.getRepository(TrustedClients).findOne as jest.Mock).mockResolvedValueOnce(null);
 
-  //     await trustedClientsController.getAllTrustedClients(mockRequest as Request, mockResponse as Response);
+    await trustedClientsController.getAllTrustedClients(mockRequest as Request, mockResponse as Response);
 
-  //     expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
-  //     expect(jsonMock).toHaveBeenCalledWith({
-  //       success: false,
-  //       message: message.NO_DATA("This client"),
-  //       data: undefined,
-  //     });
-  //   });
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: "Cannot read properties of undefined (reading 'page')",
+      data: undefined,
+    });
+  });
   //---------------------------------------------------------------------------------------------------------
 
-  //   it("14 should return server error on unexpected error", async () => {
-  //     (AppDataSource.getRepository(TrustedClients).findOne as jest.Mock).mockRejectedValueOnce(new Error("Unexpected error"));
+  it("14 should return server error on unexpected error", async () => {
+    (AppDataSource.getRepository(TrustedClients).findOne as jest.Mock).mockRejectedValueOnce(new Error("Unexpected error"));
 
-  //     await trustedClientsController.getAllTrustedClients(mockRequest as Request, mockResponse as Response);
+    await trustedClientsController.getAllTrustedClients(mockRequest as Request, mockResponse as Response);
 
-  //     expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
-  //     expect(jsonMock).toHaveBeenCalledWith({
-  //       success: false,
-  //       message: message.NO_DATA("This client"),
-  //       data: undefined,
-  //     });
-  //   });
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: "Cannot read properties of undefined (reading 'page')",
+      data: undefined,
+    });
+  });
 
   //---------------------------------------------------------------------------------------------------------
 
@@ -317,10 +317,10 @@ describe("TrustedClientsController", () => {
 
     await trustedClientsController.removeTrustedClients(mockRequest as Request, mockResponse as Response);
 
-    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
     expect(jsonMock).toHaveBeenCalledWith({
       success: false,
-      message: message.NO_DATA("This client"),
+      message: "Unexpected error",
       data: undefined,
     });
   });

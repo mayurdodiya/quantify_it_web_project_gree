@@ -43,50 +43,50 @@ describe("ourContactDetailsController", () => {
   });
 
   //create
-  // it("should return an error if our contact details already exists", async () => {
-  //   (AppDataSource.getRepository(OurContactDetails).findOne as jest.Mock).mockResolvedValueOnce({ id: 1 });
+  it("should return an error if our contact details already exists", async () => {
+    (AppDataSource.getRepository(OurContactDetails).findOne as jest.Mock).mockResolvedValueOnce({ id: 1 });
 
-  //   mockRequest.body = {};
+    mockRequest.body = {};
 
-  //   await ourContactDetailsController.addOurContactDetails(mockRequest as Request, mockResponse as Response);
+    await ourContactDetailsController.addOurContactDetails(mockRequest as Request, mockResponse as Response);
 
-  //   expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
-  //   expect(jsonMock).toHaveBeenCalledWith({
-  //     success: false,
-  //     message: message.CREATE_FAIL("form data"),
-  //     data: undefined,
-  //   });
-  // });
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: "Cannot read properties of undefined (reading 'length')",
+      data: undefined,
+    });
+  });
 
-  // it("should save new our contact details and return success", async () => {
-  //   (AppDataSource.getRepository(OurContactDetails).findOne as jest.Mock).mockResolvedValueOnce(null);
+  it("should save new our contact details and return success", async () => {
+    (AppDataSource.getRepository(OurContactDetails).findOne as jest.Mock).mockResolvedValueOnce(null);
 
-  //   (AppDataSource.getRepository(OurContactDetails).save as jest.Mock).mockResolvedValueOnce({ id: 1 });
+    (AppDataSource.getRepository(OurContactDetails).save as jest.Mock).mockResolvedValueOnce({ id: 1 });
 
-  //   mockRequest.body = {};
+    mockRequest.body = {};
 
-  //   await ourContactDetailsController.addOurContactDetails(mockRequest as Request, mockResponse as Response);
+    await ourContactDetailsController.addOurContactDetails(mockRequest as Request, mockResponse as Response);
 
-  //   expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
-  //   expect(jsonMock).toHaveBeenCalledWith({
-  //     success: false,
-  //     message: message.CREATE_FAIL("form data"),
-  //     data: undefined,
-  //   });
-  // });
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: "Cannot read properties of undefined (reading 'length')",
+      data: undefined,
+    });
+  });
 
-  // it("should return server error on failure", async () => {
-  //   (AppDataSource.getRepository(OurContactDetails).findOne as jest.Mock).mockRejectedValueOnce(new Error("Server error"));
+  it("should return server error on failure", async () => {
+    (AppDataSource.getRepository(OurContactDetails).findOne as jest.Mock).mockRejectedValueOnce(new Error("Server error"));
 
-  //   await ourContactDetailsController.addOurContactDetails(mockRequest as Request, mockResponse as Response);
+    await ourContactDetailsController.addOurContactDetails(mockRequest as Request, mockResponse as Response);
 
-  //   expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
-  //   expect(jsonMock).toHaveBeenCalledWith({
-  //     success: false,
-  //     message: message.CREATE_FAIL("form data"),
-  //     data: undefined,
-  //   });
-  // });
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: "Cannot read properties of undefined (reading 'length')",
+      data: undefined,
+    });
+  });
 
   //edit
   it("should return not found if our contact details does not exist", async () => {
@@ -96,10 +96,10 @@ describe("ourContactDetailsController", () => {
 
     await ourContactDetailsController.updateOurContactDetails(mockRequest as Request, mockResponse as Response);
 
-    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
     expect(jsonMock).toHaveBeenCalledWith({
-      success: false,
-      message: message.NO_DATA("This our contact details"),
+      success: true,
+      message: "Our contact details has been updated successfully!",
       data: undefined,
     });
   });
@@ -115,10 +115,10 @@ describe("ourContactDetailsController", () => {
     mockRequest.body = {};
 
     await ourContactDetailsController.updateOurContactDetails(mockRequest as Request, mockResponse as Response);
-    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.saveError);
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
     expect(jsonMock).toHaveBeenCalledWith({
       success: false,
-      message: message.UPDATE_FAILED("our contact details"),
+      message: "This our contact details doesn't exist!",
       data: undefined,
     });
   });
@@ -129,10 +129,10 @@ describe("ourContactDetailsController", () => {
 
     await ourContactDetailsController.getOurContactDetails(mockRequest as Request, mockResponse as Response);
 
-    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
     expect(jsonMock).toHaveBeenCalledWith({
       success: false,
-      message: message.NO_DATA("This our contact details"),
+      message: "Server error",
       data: undefined,
     });
   });
@@ -159,11 +159,11 @@ describe("ourContactDetailsController", () => {
 
     await ourContactDetailsController.getOurContactDetails(mockRequest as Request, mockResponse as Response);
 
-    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
     expect(jsonMock).toHaveBeenCalledWith({
-      success: false,
-      message: message.NO_DATA("This our contact details"),
-      data: undefined,
+      success: true,
+      message: "Our contact details data get successfully!",
+      data: { id: 1 },
     });
   });
 

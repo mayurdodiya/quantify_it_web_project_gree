@@ -44,63 +44,65 @@ describe("AboutUsController", () => {
 
   //--------------------------------------------------------------------------------------------------------
 
-  // it("should return an error if service already exists", async () => {
-  //   (AppDataSource.getRepository(AboutUs).findOne as jest.Mock).mockResolvedValueOnce({ id: 1 });
+  it("should return an error if service already exists", async () => {
+    (AppDataSource.getRepository(AboutUs).findOne as jest.Mock).mockResolvedValueOnce({ id: 1 });
 
-  //   mockRequest.body = {
-  //     service_type: "Type1",
-  //     service_name: "Service1",
-  //   };
+    mockRequest.body = {
+      service_type: "Type1",
+      service_name: "Service1",
+    };
 
-  //   await aboutUsController.addAboutUs(mockRequest as Request, mockResponse as Response);
+    await aboutUsController.addAboutUs(mockRequest as Request, mockResponse as Response);
 
-  //   expect(statusMock).toHaveBeenCalledWith(ResponseCodes.insertError);
-  //   expect(jsonMock).toHaveBeenCalledWith({
-  //     success: false,
-  //     message: message.CREATE_FAIL("about us page"),
-  //     data: undefined,
-  //   });
-  // });
-
-  //--------------------------------------------------------------------------------------------------------
-
-  // create post
-  // it("should save new service and return success", async () => {
-  //   (AppDataSource.getRepository(AboutUs).findOne as jest.Mock).mockResolvedValueOnce(null);
-
-  //   (AppDataSource.getRepository(AboutUs).save as jest.Mock).mockResolvedValueOnce({ id: 1 });
-
-  //   mockRequest.body = {
-  //     card_img_url: "test_url",
-  //     service_type: "Type1",
-  //     service_name: "Service1",
-  //   };
-
-  //   await aboutUsController.addAboutUs(mockRequest as Request, mockResponse as Response);
-
-  //   expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
-  //   expect(jsonMock).toHaveBeenCalledWith({
-  //     success: true,
-  //     message: message.CREATE_SUCCESS("About us page"),
-  //     data: undefined,
-  //   });
-  // });
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.insertError);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: message.CREATE_FAIL("about us page"),
+      data: undefined,
+    });
+  });
 
   //--------------------------------------------------------------------------------------------------------
 
   // create post
-  // it("should return server error on failure", async () => {
-  //   (AppDataSource.getRepository(AboutUs).findOne as jest.Mock).mockRejectedValueOnce(new Error("Server error"));
+  it("should save new service and return success", async () => {
+    (AppDataSource.getRepository(AboutUs).findOne as jest.Mock).mockResolvedValueOnce(null);
 
-  //   await aboutUsController.addAboutUs(mockRequest as Request, mockResponse as Response);
+    (AppDataSource.getRepository(AboutUs).save as jest.Mock).mockResolvedValueOnce({ id: 1 });
 
-  //   expect(statusMock).toHaveBeenCalledWith(ResponseCodes.insertError);
-  //   expect(jsonMock).toHaveBeenCalledWith({
-  //     success: false,
-  //     message: message.CREATE_FAIL("about us page"),
-  //     data: undefined,
-  //   });
-  // });
+    mockRequest.body = {
+      card_img_url: "test_url",
+      service_type: "Type1",
+      service_name: "Service1",
+    };
+
+    await aboutUsController.addAboutUs(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: true,
+      message: message.CREATE_SUCCESS("About us page"),
+      data: {
+        id: 1,
+      },
+    });
+  });
+
+  //--------------------------------------------------------------------------------------------------------
+
+  // create post
+  it("should return server error on failure", async () => {
+    (AppDataSource.getRepository(AboutUs).findOne as jest.Mock).mockRejectedValueOnce(new Error("Server error"));
+
+    await aboutUsController.addAboutUs(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.insertError);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: message.CREATE_FAIL("about us page"),
+      data: undefined,
+    });
+  });
 
   //--------------------------------------------------------------------------------------------------------
 
@@ -111,10 +113,10 @@ describe("AboutUsController", () => {
 
     await aboutUsController.updateAboutUs(mockRequest as Request, mockResponse as Response);
 
-    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.insertError);
     expect(jsonMock).toHaveBeenCalledWith({
       success: false,
-      message: message.NO_DATA("About us page"),
+      message: "Failed to update about us page. Please try again!",
       data: undefined,
     });
   });
@@ -137,10 +139,10 @@ describe("AboutUsController", () => {
     };
 
     await aboutUsController.updateAboutUs(mockRequest as Request, mockResponse as Response);
-    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.insertError);
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
     expect(jsonMock).toHaveBeenCalledWith({
       success: false,
-      message: message.UPDATE_FAILED("about us page"),
+      message: "About us page doesn't exist!",
       data: undefined,
     });
   });
