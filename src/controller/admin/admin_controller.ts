@@ -68,7 +68,7 @@ export class AdminController {
         return RoutesHandler.sendError(req, res, false, message.UPLOAD_IMG, ResponseCodes.insertError);
       }
 
-      const response = await fileService.uploadFile("images", req.file.path, req.file.originalname);
+      const response = await fileService.uploadFile("images", req.file, req.file.originalname);
 
       return RoutesHandler.sendSuccess(req, res, true, message.UPLOAD_SUCCESS("Image"), ResponseCodes.success, response);
     } catch (error) {

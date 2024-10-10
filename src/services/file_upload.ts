@@ -2,12 +2,12 @@ import fs from "fs";
 import multer from "multer";
 import B2 from "backblaze-b2";
 
-const applicationKeyId: string | undefined = process.env.BACKBLAZE_APPLICATION_KEY || "17bd792484b7";
-const applicationKey: string | undefined = process.env.BACKBLAZE_APPLICATION_KEY || "0050ce02c71cb8c1779dcf67fc3b43a0d7b7d96e53";
+const applicationKeyId: string = process.env.BACKBLAZE_APPLICATION_KEY_ID || "your_default_key_id";
+const applicationKey: string = process.env.BACKBLAZE_APPLICATION_KEY || "your_default_key";
 
 const b2 = new B2({
-  applicationKeyId: applicationKeyId,
-  applicationKey: applicationKey,
+  applicationKeyId,
+  applicationKey,
 });
 
 const path = "./uploads/image";
@@ -17,121 +17,112 @@ if (!fs.existsSync(path)) {
 }
 
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/image");
+  destination: (req, file, cb) => {
+    cb(null, path);
   },
-  filename: function (req, file, cb) {
+  filename: (req, file, cb) => {
     const imageNameModify = Date.now() + "-" + Math.round(Math.random() * 1e9);
-
-    cb(null, `${file.fieldname}-${imageNameModify}.${file.mimetype.split("/")[1]}`);
+    const extension = file.mimetype.split("/")[1];
+    cb(null, `${file.fieldname}-${imageNameModify}.${extension}`);
   },
 });
 
 export const imageUpload = multer({
-  storage: storage,
+  storage,
   limits: {
-    fileSize: 5000000,
+    fileSize: 5 * 1024 * 1024,
   },
   fileFilter(req, file, cb) {
-    if (!file.originalname.match(/\.(png|jpg|jpeg)$/)) {
-      return cb(new Error("Please upload a Image"));
+    const isImage = /\.(png|jpg|jpeg)$/i.test(file.originalname);
+    if (!isImage) {
+      return cb(new Error("Please upload an image"));
     }
-    cb(undefined, true);
+    cb(null, true);
   },
 });
 
 export class FileService {
-  constructor() {
-    const me = this;
-  }
-  public async uploadFileInS3(folderName: string, files: any): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        await b2.authorize();
-        const allFiles = await Promise.all(
-          files.map(async (file: any) => {
-            return await this.uploadFile(folderName, file);
-          })
-        );
-        resolve(allFiles || []);
-      } catch (error: any) {
-        reject(error.message);
-      }
-    });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public async uploadFileInS3(folderName: string, files: Express.Multer.File[]): Promise<any[]> {
+    await b2.authorize();
+    try {
+      const allFiles = await Promise.all(files.map((file) => this.uploadFile(folderName, file)));
+      return allFiles;
+    } catch (error) {
+      throw new Error(`Failed to upload files: ${error.message}`);
+    }
   }
 
-  async streamToBuffer(stream: any): Promise<Buffer> {
-    const buffer: Uint8Array[] = [];
-
-    return await new Promise((resolve, reject) =>
+  private async streamToBuffer(stream: NodeJS.ReadableStream): Promise<Buffer> {
+    const chunks: Uint8Array[] = [];
+    return new Promise((resolve, reject) => {
       stream
-        .on("error", (error: any) => reject(error))
-        .on("data", (data: any) => buffer.push(data))
-        .on("end", () => resolve(Buffer.concat(buffer)))
-    );
-  }
-
-  public async uploadFile(folderName: string, file: any, fileName: any = ""): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        await b2.authorize();
-        const data = await b2.getUploadUrl({
-          bucketId: process.env.BLACKBLAZE_BUCKETID,
-        });
-
-        const readDataData = await this.streamToBuffer(fs.createReadStream(file));
-
-        const filename = fileName || file;
-        const response = await b2.uploadFile({
-          uploadUrl: data.data.uploadUrl,
-          uploadAuthToken: data.data.authorizationToken,
-          fileName: `${folderName}/${filename}`,
-          data: readDataData,
-          contentLength: 1000000000,
-        });
-        resolve({ fileName: `${process.env.BACKBLAZE_ACCESS_URL}${response.data.fileName}`, fileId: response?.data?.fileId });
-      } catch (error: any) {
-        reject(error.message);
-      }
+        .on("error", reject)
+        .on("data", (chunk) => chunks.push(chunk))
+        .on("end", () => resolve(Buffer.concat(chunks)));
     });
   }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public async uploadFile(folderName: string, file: Express.Multer.File, fileName: string = ""): Promise<any> {
+    await b2.authorize();
+    try {
+      const data = await b2.getUploadUrl({ bucketId: process.env.BLACKBLAZE_BUCKETID });
+      const fileBuffer = await this.streamToBuffer(fs.createReadStream(file.path));
+      const filename = fileName || file.originalname;
 
-  async uploadFileBase64(folderName: string, file: any, fileName: any = ""): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        await b2.authorize();
+      const response = await b2.uploadFile({
+        uploadUrl: data.data.uploadUrl,
+        uploadAuthToken: data.data.authorizationToken,
+        fileName: `${folderName}/${filename}`,
+        data: fileBuffer,
+        contentLength: fileBuffer.length,
+      });
 
-        const fileList = await b2.listFileNames({
-          bucketId: process.env.BLACKBLAZE_BUCKETID,
-          prefix: folderName,
+      return {
+        fileName: `${process.env.BACKBLAZE_ACCESS_URL}${response.data.fileName}`,
+        fileId: response.data.fileId,
+      };
+    } catch (error) {
+      throw new Error(`Failed to upload file: ${error.message}`);
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public async uploadFileBase64(folderName: string, file: string, fileName: string = ""): Promise<any> {
+    await b2.authorize();
+    try {
+      const fileList = await b2.listFileNames({
+        bucketId: process.env.BLACKBLAZE_BUCKETID,
+        prefix: folderName,
+      });
+
+      for (const fileItem of fileList.data.files) {
+        await b2.deleteFileVersion({
+          fileId: fileItem.fileId,
+          fileName: fileItem.fileName,
         });
-
-        for (const file of fileList.data.files) {
-          await b2.deleteFileVersion({
-            fileId: file.fileId,
-            fileName: file.fileName,
-          });
-        }
-
-        const data = await b2.getUploadUrl({
-          bucketId: process.env.BLACKBLAZE_BUCKETID,
-        });
-        const base64Image = file?.split(";base64,");
-        const extension = base64Image[0]?.split("/")?.pop();
-        const readData = Buffer.from(file?.replace(/^data:image\/\w+;base64,/, ""), "base64");
-        const filename = fileName || `${+new Date()}.${extension}`;
-
-        const response = await b2.uploadFile({
-          uploadUrl: data.data.uploadUrl,
-          uploadAuthToken: data.data.authorizationToken,
-          fileName: `${folderName}/${filename}`,
-          data: readData,
-          contentLength: 1000000000,
-        });
-        resolve({ fileName: `${process.env.BACKBLAZE_ACCESS_URL}${response.data.fileName}`, fileId: response?.data?.fileId });
-      } catch (error: any) {
-        reject(error.message);
       }
-    });
+
+      const data = await b2.getUploadUrl({ bucketId: process.env.BLACKBLAZE_BUCKETID });
+      const [base64Header, base64Data] = file.split(";base64,");
+      const extension = base64Header.split("/")[1];
+      const buffer = Buffer.from(base64Data, "base64");
+      const filename = fileName || `${Date.now()}.${extension}`;
+
+      const response = await b2.uploadFile({
+        uploadUrl: data.data.uploadUrl,
+        uploadAuthToken: data.data.authorizationToken,
+        fileName: `${folderName}/${filename}`,
+        data: buffer,
+        contentLength: buffer.length,
+      });
+
+      return {
+        fileName: `${process.env.BACKBLAZE_ACCESS_URL}${response.data.fileName}`,
+        fileId: response.data.fileId,
+      };
+    } catch (error) {
+      throw new Error(`Failed to upload base64 file: ${error.message}`);
+    }
   }
 }
