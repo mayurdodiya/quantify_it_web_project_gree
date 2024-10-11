@@ -1,9 +1,9 @@
 import http from "http";
-import { Server } from "socket.io";
 import app from "./app";
-import { ChatBoatController } from "./controller/chat_boat/chat_boat_controller";
-import method from "./utils/chatboat_question_ans";
+import { Server } from "socket.io";
 import { v4 as uuidv4 } from "uuid";
+import method from "./utils/chatboat_question_ans";
+import { ChatBoatController } from "./controller/chat_boat/chat_boat_controller";
 
 const server = http.createServer(app);
 const io = new Server(server);
