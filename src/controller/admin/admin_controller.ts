@@ -79,7 +79,7 @@ export class AdminController {
 
   public async ipAddress(req: Request, res: Response) {
     try {
-      let userIp = (req.headers["x-forwarded-for"] as string) || req.connection.remoteAddress;
+      const userIp = (req.headers["x-forwarded-for"] as string) || req.connection.remoteAddress;
 
       const ipAddress = networkUtils.getMappedIp(userIp);
 
