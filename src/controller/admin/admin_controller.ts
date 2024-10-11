@@ -9,6 +9,7 @@ import { comparepassword } from "../../utils/bcrypt";
 import { generateToken } from "../../utils/auth.token";
 import { Role, Status } from "../../utils/enum";
 import { FileService } from "../../services/file_upload";
+import { networkUtils } from "../../utils/ip_address";
 
 const fileService = new FileService();
 
@@ -71,6 +72,18 @@ export class AdminController {
       const response = await fileService.uploadFile("images", req.file, req.file.originalname);
 
       return RoutesHandler.sendSuccess(req, res, true, message.UPLOAD_SUCCESS("Image"), ResponseCodes.success, response);
+    } catch (error) {
+      return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
+    }
+  }
+
+  public async ipAddress(req: Request, res: Response) {
+    try {
+      let userIp = (req.headers["x-forwarded-for"] as string) || req.connection.remoteAddress;
+
+      const ipAddress = networkUtils.getMappedIp(userIp);
+
+      return res.send(ipAddress);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }

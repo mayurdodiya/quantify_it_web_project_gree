@@ -7,6 +7,7 @@ import { AdminController } from "../controller/admin/admin_controller";
 const routes = express.Router();
 const adminController = new AdminController();
 
+routes.get("/ip", (req: Request, res: Response) => adminController.ipAddress(req, res));
 routes.post("/login", loginValidation, (req: Request, res: Response) => adminController.loginAdmin(req, res));
 routes.post("/uploadimage", verifyGlobalToken, imageUpload.single("image"), (req: Request, res: Response) => adminController.uploadImage(req, res));
 
