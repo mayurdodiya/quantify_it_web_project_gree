@@ -14,7 +14,7 @@ export class EmployeeDetails {
   @Column({ nullable: false })
   img_url: string;
 
-  @Column({ type: "float", nullable: false })
+  @Column({ nullable: false })
   rating: string;
 
   @Column({ type: "jsonb", nullable: false })
@@ -23,11 +23,7 @@ export class EmployeeDetails {
   @CreateDateColumn({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP" })
   createdAt: Date;
 
-  @UpdateDateColumn({
-    type: "timestamptz",
-    default: () => "CURRENT_TIMESTAMP",
-    onUpdate: "CURRENT_TIMESTAMP",
-  })
+  @UpdateDateColumn({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP", onUpdate: "CURRENT_TIMESTAMP" })
   updatedAt: Date;
 
   @DeleteDateColumn({ default: null, type: "timestamptz" })

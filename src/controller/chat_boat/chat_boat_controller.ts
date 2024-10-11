@@ -5,6 +5,7 @@ import { RoutesHandler } from "../../utils/error_handler";
 import { ChatBoat } from "../../entities/chat_boat.entity";
 import { ResponseCodes } from "../../utils/response-codes";
 import { AppDataSource } from "../../config/database.config";
+import { getPagination, getPagingData } from "../../services/paginate";
 
 export class ChatBoatController {
   chatBoatRepo: Repository<ChatBoat>;
@@ -45,35 +46,66 @@ export class ChatBoatController {
   // get user chat
   public async getAllUserChat(req: Request, res: Response) {
     try {
-      const getChat = await this.chatBoatRepo.query(`
-  SELECT 
-      chat_boat.chat_id,
-      JSON_AGG(
-          JSON_BUILD_OBJECT(
-              'sender_id', chat_boat.sender_id,
-              'receiver_id', chat_boat.receiver_id,
-              'message', chat_boat.message,
-              'createdAt', chat_boat."createdAt"  -- Using double quotes for case sensitivity
-          )
-      ) AS messages
-  FROM 
-      chat_boat
-  GROUP BY 
-      chat_boat.chat_id
-  ORDER BY 
-      MIN(chat_boat."createdAt") ASC;  -- Using double quotes for case sensitivity
-`);
+      const { page = 1, size = 10, s = "" } = req.query;
 
-      if (getChat?.length == 0) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This user chat"), ResponseCodes.notFound);
+      const pageData = parseInt(page as string, 10);
+      const sizeData = parseInt(size as string, 10);
+      const { limit, offset } = getPagination(pageData, sizeData);
+
+      let searchCondition = "";
+      if (s) {
+        searchCondition = `
+        WHERE 
+          chat_boat.sender_id ILIKE '%${s}%' OR 
+          chat_boat.receiver_id ILIKE '%${s}%' OR 
+          chat_boat.message::text ILIKE '%${s}%'
+      `;
       }
-      return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA(`User chat`), ResponseCodes.success, getChat);
+
+      const getChat = await this.chatBoatRepo.query(`
+      SELECT 
+          chat_boat.chat_id,
+          JSON_AGG(
+              JSON_BUILD_OBJECT(
+                  'sender_id', chat_boat.sender_id,
+                  'receiver_id', chat_boat.receiver_id,
+                  'message', chat_boat.message,
+                  'createdAt', chat_boat."createdAt"
+              )
+          ) AS messages
+      FROM 
+          chat_boat
+      ${searchCondition}  -- Add search condition here
+      GROUP BY 
+          chat_boat.chat_id
+      ORDER BY 
+          MIN(chat_boat."createdAt") ASC
+      LIMIT ${limit} OFFSET ${offset};
+    `);
+
+      const totalChats = await this.chatBoatRepo.query(`
+      SELECT COUNT(DISTINCT chat_id) AS totalItems 
+      FROM chat_boat 
+      ${searchCondition};  -- Add search condition here
+    `);
+
+      const totalItems = parseInt(totalChats[0].totalitems, 10);
+
+      const alldata = {
+        count: totalItems,
+        rows: getChat,
+      };
+
+      const response = getPagingData(alldata, pageData, limit);
+
+      return RoutesHandler.sendSuccess(req, res, true, "Chat data retrieved successfully", ResponseCodes.success, response);
     } catch (error) {
-      return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
+      console.error(error);
+      return RoutesHandler.sendError(req, res, false, error.message || "Internal server error", ResponseCodes.serverError);
     }
   }
 
-  // get all chat by user id
+  // add replay to user
   public async addreplayToUser(req: Request, res: Response) {
     try {
       const { chat_id, user_id, msg } = req.body;

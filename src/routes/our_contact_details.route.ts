@@ -8,7 +8,7 @@ const ourContactDetailsController = new OurContactDetailsController();
 
 routes.post("/add", verifyAdminToken, addOurContactDetailsValidation, (req: Request, res: Response) => ourContactDetailsController.addOurContactDetails(req, res));
 routes.put("/edit", verifyAdminToken, updateOurContactDetailsValidation, (req: Request, res: Response) => ourContactDetailsController.updateOurContactDetails(req, res));
-routes.get("/get/:id", (req, res) => ourContactDetailsController.getOurContactDetails(req, res));
-// routes.delete("/remove/:id", (req, res) => ourContactDetailsController.removeData(req, res));
+routes.get("/get", (req, res) => ourContactDetailsController.getOurContactDetails(req, res));
+routes.delete("/remove/:id", verifyAdminToken, (req, res) => ourContactDetailsController.removeContactDetails(req, res));
 
 export default routes;

@@ -44,13 +44,14 @@ export const verifyAdminToken = async (req: Request, res: Response, next: NextFu
 export const verifyGlobalToken = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const token2 = req.headers["authorization"] as string;
-
+    
+    
     if (!token2) {
       return RoutesHandler.sendError(req, res, false, message.NO_TOKEN, ResponseCodes.tokenError);
     }
-
+    
     const token_2 = token2?.split(" ")[1];
-
+    
     const tokenRepo = AppDataSource.getRepository(Token);
     const tokenData = await tokenRepo.findOne({ where: { token: token_2 } });
 

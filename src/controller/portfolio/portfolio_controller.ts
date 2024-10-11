@@ -1,10 +1,11 @@
-import { Not, Repository } from "typeorm";
+import {  Not, Repository } from "typeorm";
 import { AppDataSource } from "../../config/database.config";
 import { RoutesHandler } from "../../utils/error_handler";
 import { ResponseCodes } from "../../utils/response-codes";
 import { Request, Response } from "express";
 import { message } from "../../utils/messages";
 import { Portfolio } from "../../entities/portfolio.entity";
+import { getPagination, getPagingData } from "../../services/paginate";
 
 export class PortfolioController {
   private portfolioRepo: Repository<Portfolio>;
@@ -98,46 +99,27 @@ export class PortfolioController {
   // get all data
   public async getAllPortfolio(req: Request, res: Response) {
     try {
-      const { type, page, size } = req.query;
+      const { type = "", page = 1, size = 10 } = req.query;
       const pageData: number = parseInt(page as string, 10);
       const sizeData: number = parseInt(size as string, 10);
 
-      const searchType: string = type.length == 0 ? "" : `AND "type" = '${type}'`;
+      const { limit, offset } = getPagination(pageData, sizeData);
 
-      const data = await AppDataSource.query(`
-      SELECT
-          type AS type,
-          ARRAY_AGG(json_build_object('id', id, 'title', title,'sub_title', sub_title, 'img_url', img_url, 'description', description)) AS data
-      FROM portfolio
-      WHERE "deletedAt" IS NULL ${searchType}
-      GROUP BY type
-      LIMIT ${sizeData} OFFSET ${sizeData * pageData};
-  `);
+      const whereCondition = type ? { where: { type: type as string } } : {};
 
-      const countedData = await AppDataSource.query(`
-      SELECT
-          type AS type,
-          ARRAY_AGG(json_build_object('id', id, 'title', title,'sub_title', sub_title, 'img_url', img_url, 'description', description)) AS data
-      FROM portfolio
-      WHERE "deletedAt" IS NULL ${searchType}
-      GROUP BY type
-  `);
+      const [data, totalItems] = await this.portfolioRepo.findAndCount({
+        ...whereCondition,
+        select: ["id", "title", "type", "sub_title", "img_url", "description"],
+        skip: offset,
+        take: limit,
+      });
 
-      const totalItems = countedData.length;
+      const response = getPagingData({ count: totalItems, rows: data }, pageData, limit);
 
-      const response = {
-        totalItems: totalItems,
-        totalPages: Math.ceil(totalItems / sizeData),
-        data,
-        currentPage: pageData,
-      };
-
-      if (!data || data.length === 0) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This portfolio"), ResponseCodes.notFound);
-      }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Portfolio"), ResponseCodes.success, response);
     } catch (error) {
-      return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
+      console.log(error);
+      return RoutesHandler.sendError(req, res, false, error.message || "Internal server error", ResponseCodes.serverError);
     }
   }
 

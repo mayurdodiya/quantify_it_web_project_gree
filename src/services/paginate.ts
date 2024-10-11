@@ -41,3 +41,17 @@ export const paginateData = async <T>(userdata: T[], input: PaginateInput): Prom
     });
   });
 };
+
+export const getPagination = (page: number, size: number) => {
+  const limit = size ? +size : 10;
+  const offset = page ? (page - 1) * limit : 0;
+  return { limit, offset };
+};
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const getPagingData = (alldata: { count: number; rows: any[] }, page: number, limit: number) => {
+  const { count: totalItems, rows: data } = alldata;
+  const currentPage = page ? +page : 1;
+  const totalPages = Math.ceil(totalItems / limit);
+   
+  return { totalItems, data, totalPages, currentPage };
+};

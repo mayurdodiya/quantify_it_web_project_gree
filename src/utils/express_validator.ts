@@ -399,8 +399,24 @@ const portfolioQueryValidation = [
 ];
 
 const pageAndSizeQueryValidation = [
-  query("page").notEmpty().withMessage("Query parameter 'page' is required!"),
-  query("size").notEmpty().withMessage("Query parameter 'size' is required!"),
+  query("page")
+    .notEmpty()
+    .withMessage("Query parameter 'page' is required!")
+    .custom((value) => {
+      if (value == 0) {
+        throw new Error("Page size must be greater than 0. Please provide a valid size.");
+      }
+      return true;
+    }),
+  query("size")
+    .notEmpty()
+    .withMessage("Query parameter 'size' is required!")
+    .custom((value) => {
+      if (value == 0) {
+        throw new Error("Size must be greater than 0. Please provide a valid size.");
+      }
+      return true;
+    }),
   (req: Request, res: Response, next: NextFunction) => {
     validationHandler(req, res, next);
   },

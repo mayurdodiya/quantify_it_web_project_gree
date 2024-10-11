@@ -1,4 +1,4 @@
-import { Not, Repository } from "typeorm";
+import { FindOperator, ILike, Not, Repository } from "typeorm";
 import { AppDataSource } from "../../config/database.config";
 import { RoutesHandler } from "../../utils/error_handler";
 import { ResponseCodes } from "../../utils/response-codes";
@@ -6,6 +6,7 @@ import { Request, Response } from "express";
 import { message } from "../../utils/messages";
 import { ProvidedService } from "../../entities/provided_service.entity";
 import { Status } from "../../utils/enum";
+import { getPagination, getPagingData } from "../../services/paginate";
 
 export class ProvidedServiceController {
   private providedServiceRepo: Repository<ProvidedService>;
@@ -121,17 +122,29 @@ export class ProvidedServiceController {
     }
   }
 
-  // get all data
   public async getAllProvidedService(req: Request, res: Response) {
     try {
-      const data = await this.providedServiceRepo.find({
-        where: { status: Status.ACTIVE },
-        select: ["id", "card_img_url", "service_type", "service_name", "service_name_title", "description", "service_benifits", "work_planning_title", "work_planning_description", "work_planning_img_url", "business_solutions_title", "business_solutions_description", "business_solutions_img_url", "completed_works", "client_ratings", "bussiness_reports_percentage", "createdAt", "updatedAt"],
+      const { page = 1, size = 10, s = "" } = req.query;
+
+      const { limit, offset } = getPagination(parseInt(page as string, 10), parseInt(size as string, 10));
+
+      const Dataobj: { service_type?: FindOperator<string>; status: Status } = { status: Status.ACTIVE };
+      if (s) {
+        Dataobj.service_type = ILike(`%${s}%`);
+      }
+
+      const [data, totalItems] = await this.providedServiceRepo.findAndCount({
+        where: Dataobj,
+        skip: offset,
+        take: limit,
       });
-  
-      return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Service provide data"), ResponseCodes.success, data);
+
+      const response = getPagingData({ count: totalItems, rows: data }, parseInt(page as string, 10), limit);
+
+      return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Service provide data"), ResponseCodes.success, response);
     } catch (error) {
-      return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
+      console.log(error);
+      return RoutesHandler.sendError(req, res, false, error.message || "Internal server error", ResponseCodes.serverError);
     }
   }
 

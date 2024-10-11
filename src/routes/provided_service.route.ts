@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { addprovidedServiceValidation, updateprovidedServiceValidation } from "../utils/express_validator";
+import { addprovidedServiceValidation, pageAndSizeQueryValidation, updateprovidedServiceValidation } from "../utils/express_validator";
 import { ProvidedServiceController } from "../controller/provided_service/provided_service_controller";
 import { verifyAdminToken } from "../utils/auth.token";
 
@@ -10,6 +10,6 @@ routes.post("/add", verifyAdminToken, addprovidedServiceValidation, (req: Reques
 routes.put("/edit/:id", verifyAdminToken, updateprovidedServiceValidation, (req: Request, res: Response) => providedServiceController.updateProvidedService(req, res));
 routes.get("/get/:id", (req: Request, res: Response) => providedServiceController.getProvidedService(req, res));
 routes.delete("/remove/:id", verifyAdminToken, (req: Request, res: Response) => providedServiceController.removeProvidedService(req, res));
-routes.get("/get", (req, res) => providedServiceController.getAllProvidedService(req, res));
+routes.get("/get", pageAndSizeQueryValidation, (req: Request, res: Response) => providedServiceController.getAllProvidedService(req, res));
 
 export default routes;

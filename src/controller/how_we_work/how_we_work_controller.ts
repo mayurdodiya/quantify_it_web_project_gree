@@ -1,4 +1,4 @@
-import { Not, Repository } from "typeorm";
+import { FindOperator, ILike, Not, Repository } from "typeorm";
 import { Status } from "../../utils/enum";
 import { Request, Response } from "express";
 import { message } from "../../utils/messages";
@@ -6,6 +6,7 @@ import { RoutesHandler } from "../../utils/error_handler";
 import { ResponseCodes } from "../../utils/response-codes";
 import { AppDataSource } from "../../config/database.config";
 import { HowWeWork } from "../../entities/how_we_work.entity";
+import { getPagination, getPagingData } from "../../services/paginate";
 
 export class HowWeWorkController {
   private howWeWorkRepo: Repository<HowWeWork>;
@@ -94,14 +95,28 @@ export class HowWeWorkController {
   // get all data
   public async getAllHowWeWork(req: Request, res: Response) {
     try {
-      const data = await this.howWeWorkRepo.find({
-        where: { status: Status.ACTIVE },
+      const { page = 1, size = 10, s } = req.query;
+
+      const { limit, offset } = getPagination(parseInt(page as string, 10), parseInt(size as string, 10));
+
+      const Dataobj: { status: Status; title?: FindOperator<string> } = { status: Status.ACTIVE };
+      if (s) {
+        Dataobj.title = ILike(`%${s}%`);
+      }
+
+      const [data, totalItems] = await this.howWeWorkRepo.findAndCount({
+        where: Dataobj,
         select: ["id", "title", "description", "logo_img_url", "createdAt", "updatedAt"],
+        skip: offset,
+        take: limit,
       });
 
-      return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Work data"), ResponseCodes.success, data);
+      const response = getPagingData({ count: totalItems, rows: data }, parseInt(page as string, 10), limit);
+
+      return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("How We Work data"), ResponseCodes.success, response);
     } catch (error) {
-      return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
+      console.log(error);
+      return RoutesHandler.sendError(req, res, false, error.message || "Internal server error", ResponseCodes.serverError);
     }
   }
 

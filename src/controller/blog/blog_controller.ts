@@ -6,6 +6,7 @@ import { Request, Response } from "express";
 import { message } from "../../utils/messages";
 import { Blog } from "../../entities/blog.entity";
 import { Status } from "../../utils/enum";
+import { getPagination, getPagingData } from "../../services/paginate";
 
 export class BlogController {
   private blogRepo: Repository<Blog>;
@@ -79,18 +80,12 @@ export class BlogController {
     }
   }
 
-  // get all data
+    // get all data
   public async getAllBlog(req: Request, res: Response) {
     try {
       const { page = 1, size = 10, s } = req.query;
-      const pageData: number = parseInt(page as string, 10);
-      const sizeData: number = parseInt(size as string, 10);
-
-      if (isNaN(pageData) || isNaN(sizeData) || sizeData <= 0 || pageData < 1) {
-        return RoutesHandler.sendError(req, res, false, "Invalid pagination parameters", ResponseCodes.badRequest);
-      }
-
-      const skipData: number = (pageData - 1) * sizeData;
+      
+      const { limit, offset } = getPagination(parseInt(page as string, 10), parseInt(size as string, 10));
 
       const Dataobj: { status: Status; blog_title?: FindOperator<string> } = { status: Status.ACTIVE };
       if (s) {
@@ -100,22 +95,19 @@ export class BlogController {
       const [data, totalItems] = await this.blogRepo.findAndCount({
         where: Dataobj,
         select: ["id", "blog_title", "description", "img_url", "createdAt", "updatedAt"],
-        skip: skipData,
-        take: sizeData,
+        skip: offset,
+        take: limit,
       });
 
-      const response = {
-        totalItems,
-        totalPages: Math.ceil(totalItems / sizeData),
-        data,
-        currentPage: pageData,
-      };
+      const response = getPagingData({ count: totalItems, rows: data }, parseInt(page as string, 10), limit);
 
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Blog"), ResponseCodes.success, response);
     } catch (error) {
+      console.log(error);    
       return RoutesHandler.sendError(req, res, false, error.message || "Internal server error", ResponseCodes.serverError);
     }
   }
+
 
   // delete data
   public async removeBlog(req: Request, res: Response) {

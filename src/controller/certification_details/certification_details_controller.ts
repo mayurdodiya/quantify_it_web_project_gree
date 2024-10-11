@@ -1,4 +1,4 @@
-import { Not, Repository } from "typeorm";
+import { FindOperator, ILike, Not, Repository } from "typeorm";
 import { Status } from "../../utils/enum";
 import { Request, Response } from "express";
 import { message } from "../../utils/messages";
@@ -6,6 +6,7 @@ import { RoutesHandler } from "../../utils/error_handler";
 import { ResponseCodes } from "../../utils/response-codes";
 import { AppDataSource } from "../../config/database.config";
 import { CertificationDetails } from "../../entities/certification_details.entity";
+import { getPagination, getPagingData } from "../../services/paginate";
 
 export class CertificationDetailsController {
   private certificationDetailsRepo: Repository<CertificationDetails>;
@@ -91,19 +92,31 @@ export class CertificationDetailsController {
     }
   }
 
-  // get all data
+  // get all certification details
   public async getAllCertificationDetails(req: Request, res: Response) {
     try {
-      const data = await this.certificationDetailsRepo.find({
-        where: { status: Status.ACTIVE },
+      const { page = 1, size = 10, s } = req.query;
+
+      const { limit, offset } = getPagination(parseInt(page as string, 10), parseInt(size as string, 10));
+
+      const Dataobj: { status: Status; sub_title?: FindOperator<string> } = { status: Status.ACTIVE };
+      if (s) {
+        Dataobj.sub_title = ILike(`%${s}%`);
+      }
+
+      const [data, totalItems] = await this.certificationDetailsRepo.findAndCount({
+        where: Dataobj,
         select: ["id", "sub_title", "sub_description", "logo_img_url", "createdAt", "updatedAt"],
+        skip: offset,
+        take: limit,
       });
-      // if (!data) {
-      //   return RoutesHandler.sendError(req, res, false, message.NO_DATA("This certification details"), ResponseCodes.notFound);
-      // }
-      return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Certification Details"), ResponseCodes.success, data);
+
+      const response = getPagingData({ count: totalItems, rows: data }, parseInt(page as string, 10), limit);
+
+      return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Certification Details"), ResponseCodes.success, response);
     } catch (error) {
-      return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
+      console.log(error);
+      return RoutesHandler.sendError(req, res, false, error.message || "Internal server error", ResponseCodes.serverError);
     }
   }
 
