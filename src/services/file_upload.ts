@@ -83,6 +83,7 @@ export class FileService {
         fileId: response.data.fileId,
       };
     } catch (error) {
+      console.log(error);
       throw new Error(`Failed to upload file: ${error.message}`);
     }
   }
@@ -92,8 +93,11 @@ export class FileService {
     await b2.authorize();
     try {
       const fileList = await b2.listFileNames({
-        bucketId: process.env.BLACKBLAZE_BUCKETID,
+        bucketId: process.env.BLACKBLAZE_BUCKETID as string,
         prefix: folderName,
+        startFileName: "", // Optional: start listing files from this file name
+        maxFileCount: 1000, // Optional: max number of files to return (default can be set)
+        delimiter: "",
       });
 
       for (const fileItem of fileList.data.files) {

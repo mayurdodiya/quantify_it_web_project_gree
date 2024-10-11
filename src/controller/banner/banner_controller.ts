@@ -68,7 +68,7 @@ export class BannerController {
   // get banner
   public async getBanner(req: Request, res: Response) {
     try {
-      const banner = await this.bannerRepo.find();
+      const banner = await this.bannerRepo.find({ select: ["id", "banner_name", "pc_img_url", "mobile_img_url", "title", "description", "createdAt"] });
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Banner"), ResponseCodes.success, banner);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);

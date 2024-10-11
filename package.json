@@ -11,7 +11,8 @@
     "lint:fix": "eslint . --fix",
     "test": "echo \"Error: no test specified\" && exit 1",
     "test:dev": "jest",
-    "start": "jest && docker rm -f quantify-it-container2 || true && docker build -t quantify_it . && docker run -it --name quantify-it-container2 -p 3000:3000 quantify_it"  },
+    "start": "jest && docker rm -f quantify-it-container2 || true && docker build -t quantify_it . && docker run -it --name quantify-it-container2 -p 3000:3000 quantify_it"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -52,6 +53,7 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@types/backblaze-b2": "^1.5.6",
     "@types/bcrypt": "^5.0.2",
     "@types/jest": "^29.5.13",
     "@types/jsonwebtoken": "^9.0.7",

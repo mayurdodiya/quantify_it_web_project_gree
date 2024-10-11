@@ -37,7 +37,7 @@ export const verifyAdminToken = async (req: Request, res: Response, next: NextFu
     return next();
   } catch (error) {
     console.log("token not match ", error.message);
-    return false;
+    return RoutesHandler.sendError(req, res, false, message.TOKEN_EXPIRED, ResponseCodes.tokenError);
   }
 };
 
