@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { addVisionExpertiesValidation, pageAndSizeQueryValidation, updateVisionExpertiesValidation } from "../utils/express_validator";
+import { addVisionExpertiesValidation, updateVisionExpertiesValidation } from "../utils/express_validator";
 import { VisionExpertiesController } from "../controller/vision_experties/vision_experties_controller";
 import { verifyAdminToken } from "../utils/auth.token";
 

@@ -6,7 +6,6 @@ import { ResponseCodes } from "../../utils/response-codes";
 import { Marketing } from "../../entities/marketing.entity";
 import { AppDataSource } from "../../config/database.config";
 import { getPagination } from "../../services/paginate";
-import { Status } from "../../utils/enum";
 
 export class MarketingController {
   private marketingRepo: Repository<Marketing>;

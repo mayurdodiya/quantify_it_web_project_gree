@@ -1,4 +1,4 @@
-import { FindOperator, FindOptions, ILike, Repository } from "typeorm";
+import { FindOperator,  ILike, Repository } from "typeorm";
 import { Request, Response } from "express";
 import { message } from "../../utils/messages";
 import { RoutesHandler } from "../../utils/error_handler";
