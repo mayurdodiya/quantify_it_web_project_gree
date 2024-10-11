@@ -97,23 +97,19 @@ describe("PolicyAndTermsController", () => {
   //---------------------------------------------------------------------------------------------------------
 
   it("4 should return not found if service does not exist", async () => {
-    // Mock the findOne method to return null
     (AppDataSource.getRepository(PolicyAndTerms).findOne as jest.Mock).mockResolvedValueOnce(null);
 
-    // Set up the mock request parameters
     mockRequest.params = { id: "1" };
     mockRequest.body = {
-      document_type: "some_type", // Ensure to include this field as it is required by the controller
+      document_type: "some_type",
     };
 
-    // Call the controller method
     await policyAndTermsController.updatePolicyAndTerms(mockRequest as Request, mockResponse as Response);
 
-    // Check that the response status and body are correct
-    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound); // Changed to notFound
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
     expect(jsonMock).toHaveBeenCalledWith({
       success: false,
-      message: message.NO_DATA("This data"), // Ensure the message matches the implementation
+      message: message.NO_DATA("This data"),
       data: undefined,
     });
   });
@@ -121,7 +117,6 @@ describe("PolicyAndTermsController", () => {
   //---------------------------------------------------------------------------------------------------------
 
   it("5 should update the service and return save error", async () => {
-    // Mock existing service data
     const existingService = {
       id: 1,
       subject: "Old Subject",
@@ -129,24 +124,18 @@ describe("PolicyAndTermsController", () => {
       document_type: "old_type",
     };
 
-    // Mock the findOne method to return the existing service
     (AppDataSource.getRepository(PolicyAndTerms).findOne as jest.Mock).mockResolvedValueOnce(existingService);
 
-    // Set up the mock request parameters and body
     mockRequest.params = { id: "1" };
     mockRequest.body = {
-      document_type: "new_type", // Include the document_type
+      document_type: "new_type",
       subject: "New Subject",
       explanation: "New Explanation",
     };
 
-    // Mock the save method to simulate a save error
     (AppDataSource.getRepository(PolicyAndTerms).save as jest.Mock).mockResolvedValueOnce(null);
-
-    // Call the controller method
     await policyAndTermsController.updatePolicyAndTerms(mockRequest as Request, mockResponse as Response);
 
-    // Verify that the status and response body are correct
     expect(statusMock).toHaveBeenCalledWith(ResponseCodes.saveError);
     expect(jsonMock).toHaveBeenCalledWith({
       success: false,
@@ -273,24 +262,20 @@ describe("PolicyAndTermsController", () => {
         subject: "Subject 1",
         explanation: "Explanation 1",
       },
-    ]; // Mock as an array since `find` returns an array of results
+    ];
 
-    // Mock the find method to resolve with the expected data
     (AppDataSource.getRepository(PolicyAndTerms).find as jest.Mock).mockResolvedValueOnce(contactData);
 
-    // Mock the request
     mockRequest.query = {
       document_type: DocumentType.PRIVACY_POLICY.toString(),
-    }; // Convert to string
+    };
 
-    // Call the controller method
     await policyAndTermsController.getAllPolicyAndTerms(mockRequest as Request, mockResponse as Response);
 
-    // Assert the status and response
-    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success); // Expect success
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
     expect(jsonMock).toHaveBeenCalledWith({
       success: true,
-      message: message.GET_DATA("This requested"), // Adjust message if necessary
+      message: message.GET_DATA("This requested"),
       data: contactData,
     });
   });
@@ -298,21 +283,18 @@ describe("PolicyAndTermsController", () => {
   //---------------------------------------------------------------------------------------------------------
 
   it("13 should return not found if contact does not exist", async () => {
-    // Mock the find method to resolve with an empty array
     (AppDataSource.getRepository(PolicyAndTerms).find as jest.Mock).mockResolvedValueOnce([]);
 
-    // Mock the request to include document_type
     mockRequest.query = {
       document_type: DocumentType.PRIVACY_POLICY.toString(),
-    }; // Convert to string
+    };
 
     await policyAndTermsController.getAllPolicyAndTerms(mockRequest as Request, mockResponse as Response);
 
-    // Expect a not found status and message
-    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success); // Expect notFound
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
     expect(jsonMock).toHaveBeenCalledWith({
       success: true,
-      message: "This requested data get successfully!", // Ensure the message matches what your handler returns
+      message: "This requested data get successfully!",
       data: [],
     });
   });

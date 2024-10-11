@@ -1,11 +1,12 @@
 import { VisionExperties } from "../../entities/vision_experties.entity";
-import { Not, Repository } from "typeorm";
+import { FindOperator, ILike, Not, Repository } from "typeorm";
 import { AppDataSource } from "../../config/database.config";
 import { RoutesHandler } from "../../utils/error_handler";
 import { ResponseCodes } from "../../utils/response-codes";
 import { Request, Response } from "express";
 import { message } from "../../utils/messages";
 import { Status } from "../../utils/enum";
+import { getPagination } from "../../services/paginate";
 
 export class VisionExpertiesController {
   private visionExpertiesRepo: Repository<VisionExperties>;

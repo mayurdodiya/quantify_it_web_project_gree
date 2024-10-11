@@ -95,8 +95,8 @@ export class FileService {
       const fileList = await b2.listFileNames({
         bucketId: process.env.BLACKBLAZE_BUCKETID as string,
         prefix: folderName,
-        startFileName: "", // Optional: start listing files from this file name
-        maxFileCount: 1000, // Optional: max number of files to return (default can be set)
+        startFileName: "",
+        maxFileCount: 1000,
         delimiter: "",
       });
 

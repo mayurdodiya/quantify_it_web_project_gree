@@ -1,10 +1,11 @@
-import { Repository } from "typeorm";
+import { FindOperator, FindOptions, ILike, Repository } from "typeorm";
 import { Request, Response } from "express";
 import { message } from "../../utils/messages";
 import { RoutesHandler } from "../../utils/error_handler";
 import { ResponseCodes } from "../../utils/response-codes";
 import { AppDataSource } from "../../config/database.config";
 import { ContactUs } from "../../entities/contact_us.entity";
+import { getPagination } from "../../services/paginate";
 
 export class ContactUsController {
   private contactUsRepo: Repository<ContactUs>;
@@ -58,12 +59,35 @@ export class ContactUsController {
   // get all data
   public async getAllContactUs(req: Request, res: Response) {
     try {
-      const data = await this.contactUsRepo.find({
+      const { page = 1, size = 10, s = "" } = req.query;
+      const pageData: number = parseInt(page as string, 10);
+      const sizeData: number = parseInt(size as string, 10);
+      const { limit, offset } = getPagination(pageData, sizeData);
+
+      const DataObj: [{ full_name?: FindOperator<string> }, { email?: FindOperator<string> }] = [{}, {}];
+      if (s) {
+        DataObj.push({ full_name: ILike(`%${s}%`) });
+        DataObj.push({ email: ILike(`%${s}%`) });
+      }
+
+      const [data, totalItems] = await this.contactUsRepo.findAndCount({
+        where: DataObj,
         select: ["id", "full_name", "email", "contact_purpose", "user_message", "budget", "createdAt"],
+        skip: offset,
+        take: limit,
       });
-      return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Contact us forms"), ResponseCodes.success, data);
+
+      const response = {
+        totalItems: totalItems,
+        totalPages: Math.ceil(totalItems / sizeData),
+        data,
+        currentPage: pageData,
+      };
+
+      return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Contact us forms"), ResponseCodes.success, response);
     } catch (error) {
-      return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
+      console.log(error);
+      return RoutesHandler.sendError(req, res, false, error.message || "Internal server error", ResponseCodes.serverError);
     }
   }
 }

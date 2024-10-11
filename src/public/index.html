@@ -28,7 +28,8 @@
     <!-- for server connection ==> Socket.io client-side library -->
     <script src="/socket.io/socket.io.js"></script>
     <script>
-      var socket = io(); // create new socket connection
+      // create new socket connection
+      var socket = io();
       var sendBtn = document.getElementById("sendBtn");
       var listDiv = document.getElementById("list");
       var textInput = document.getElementById("text");
@@ -36,7 +37,6 @@
       var myLocalId = localStorage.getItem("name");
 
       socket.on("serMsgEvent", (data) => {
-
         // msg for admin browser
         if (data.senderId == "id-admin-123") {
           var newPTag = document.createElement("p");
@@ -67,9 +67,9 @@
         if (localStorage.getItem("name")) {
           var myUserId = localStorage.getItem("name");
           if (myUserId == "id-admin-123") {
-            socket.emit("htmlMyEve", { message: message, senderId: "id-admin-123", receiverId: userInputId, chatId: userInputId }); // send event to server
+            socket.emit("htmlMyEve", { message: message, senderId: "id-admin-123", receiverId: userInputId, chatId: userInputId });
           } else {
-            socket.emit("htmlMyEve", { message: message, senderId: myUserId, receiverId: "id-admin-123", chatId: myUserId }); // send event to server
+            socket.emit("htmlMyEve", { message: message, senderId: myUserId, receiverId: "id-admin-123", chatId: myUserId });
           }
         }
 
@@ -78,7 +78,7 @@
           socket.on("serGenretedId", (id) => {
             localStorage.setItem("name", id);
             var myUserId = id;
-            socket.emit("htmlMyEve", { message: message, userId: myUserId, chatId: myUserId }); // send event to server
+            socket.emit("htmlMyEve", { message: message, userId: myUserId, chatId: myUserId });
           });
         }
       }

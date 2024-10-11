@@ -19,6 +19,9 @@ export class Portfolio {
 
   @Column({ default: null })
   img_url: string;
+  
+  @Column({ default: null })
+  live_url: string;
 
   @Column({ type: "jsonb", default: null })
   description: string;

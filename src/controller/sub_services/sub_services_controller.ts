@@ -1,11 +1,12 @@
 import { CoreServices } from "../../entities/core_services.entity";
-import { Not, Repository } from "typeorm";
+import { FindOperator, ILike, Not, Repository } from "typeorm";
 import { AppDataSource } from "../../config/database.config";
 import { RoutesHandler } from "../../utils/error_handler";
 import { ResponseCodes } from "../../utils/response-codes";
 import { Request, Response } from "express";
 import { message } from "../../utils/messages";
 import { SubServices } from "../../entities/sub_services.entity";
+import { getPagination, getPagingData } from "../../services/paginate";
 
 interface SubServicesItem {
   sub_service_name: string;
@@ -111,11 +112,27 @@ export class SubServicesController {
   // get all data
   public async getAllSubServices(req: Request, res: Response) {
     try {
-      const data = await this.subServicesRepo.find({
-        select: ["id", "core_service_id", "sub_service_name", "description_title", "description", "updatedAt"],
+      const { page = 1, size = 10, s = "" } = req.query;
+      const { limit, offset } = getPagination(parseInt(page as string, 10), parseInt(size as string, 10));
+
+      const query: {
+        sub_service_name?: FindOperator<string>;
+      } = {};
+
+      if (s) {
+        query.sub_service_name = ILike(`%${s}%`);
+      }
+
+      const [data, totalItems] = await this.subServicesRepo.findAndCount({
+        where: query,
+        select: ["id", "core_service_id", "sub_service_name", "description_title", "description", "createdAt"],
+        skip: offset,
+        take: limit,
       });
-      
-      return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Sub services"), ResponseCodes.success, data);
+
+      const response = getPagingData({ count: totalItems, rows: data }, parseInt(page as string, 10), limit);
+
+      return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Sub services"), ResponseCodes.success, response);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }

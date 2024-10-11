@@ -122,13 +122,14 @@ export class ProvidedServiceController {
     }
   }
 
+  // get all data
   public async getAllProvidedService(req: Request, res: Response) {
     try {
       const { page = 1, size = 10, s = "" } = req.query;
 
       const { limit, offset } = getPagination(parseInt(page as string, 10), parseInt(size as string, 10));
 
-      const Dataobj: { service_type?: FindOperator<string>; status: Status } = { status: Status.ACTIVE };
+      const Dataobj: { service_type?: FindOperator<string>; service_name?: FindOperator<string>; status: Status } = { status: Status.ACTIVE };
       if (s) {
         Dataobj.service_type = ILike(`%${s}%`);
       }

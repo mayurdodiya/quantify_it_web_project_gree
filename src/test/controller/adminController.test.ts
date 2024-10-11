@@ -24,7 +24,7 @@ jest.mock("../../config/database.config", () => ({
 
 jest.mock("../../utils/bcrypt");
 jest.mock("../../utils/auth.token");
-jest.mock("../../services/file_upload"); // Mock the entire FileService module
+jest.mock("../../services/file_upload");
 
 describe("AdminController", () => {
   let adminController: AdminController;

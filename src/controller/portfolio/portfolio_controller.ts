@@ -1,4 +1,4 @@
-import {  Not, Repository } from "typeorm";
+import { Not, Repository } from "typeorm";
 import { AppDataSource } from "../../config/database.config";
 import { RoutesHandler } from "../../utils/error_handler";
 import { ResponseCodes } from "../../utils/response-codes";
@@ -17,7 +17,7 @@ export class PortfolioController {
   // add data
   public addPortfolio = async (req: Request, res: Response) => {
     try {
-      const { type, title, sub_title, img_url, description } = req.body;
+      const { type, title, sub_title, img_url, description, live_url } = req.body;
       const getData = await this.portfolioRepo.findOne({
         where: { title: title },
       });
@@ -32,6 +32,7 @@ export class PortfolioController {
       portfolio.sub_title = sub_title;
       portfolio.img_url = img_url || null;
       portfolio.description = description || null;
+      portfolio.live_url = live_url || null;
 
       const data = await this.portfolioRepo.save(portfolio);
       if (!data) {
@@ -46,7 +47,7 @@ export class PortfolioController {
   // edit data
   public async updatePortfolio(req: Request, res: Response) {
     try {
-      const { title, sub_title, description, img_url } = req.body;
+      const { title, sub_title, description, img_url, live_url } = req.body;
       const type = req.body.type?.toLocaleLowerCase();
 
       const dataId = req.params.id;
@@ -68,6 +69,7 @@ export class PortfolioController {
       getData.sub_title = sub_title || getData.sub_title;
       getData.description = description || getData.description;
       getData.img_url = img_url || getData.img_url;
+      getData.live_url = live_url || getData.live_url;
 
       const data = await this.portfolioRepo.save(getData);
       if (!data) {
@@ -85,7 +87,7 @@ export class PortfolioController {
       const dataId = req.params.id;
       const data = await this.portfolioRepo.findOne({
         where: { id: dataId },
-        select: ["id", "type", "title", "sub_title", "img_url", "description", "createdAt"],
+        select: ["id", "type", "title", "sub_title", "img_url", "live_url", "description", "createdAt"],
       });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This portfolio"), ResponseCodes.notFound);
@@ -109,7 +111,7 @@ export class PortfolioController {
 
       const [data, totalItems] = await this.portfolioRepo.findAndCount({
         ...whereCondition,
-        select: ["id", "title", "type", "sub_title", "img_url", "description"],
+        select: ["id", "title", "type", "sub_title", "img_url", "live_url", "description"],
         skip: offset,
         take: limit,
       });

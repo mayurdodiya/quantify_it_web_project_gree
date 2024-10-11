@@ -1,4 +1,4 @@
-import { Not, Repository } from "typeorm";
+import { FindOperator, ILike, Not, Repository } from "typeorm";
 import { Request, Response } from "express";
 import { message } from "../../utils/messages";
 import { DocumentType, Status } from "../../utils/enum";
@@ -6,6 +6,7 @@ import { RoutesHandler } from "../../utils/error_handler";
 import { ResponseCodes } from "../../utils/response-codes";
 import { AppDataSource } from "../../config/database.config";
 import { PolicyAndTerms } from "../../entities/policy_and_terms.entity";
+import { getPagination, getPagingData } from "../../services/paginate";
 
 export class PolicyAndTermsController {
   private policyAndTermsRepo: Repository<PolicyAndTerms>;
@@ -104,8 +105,11 @@ export class PolicyAndTermsController {
     try {
       const docTypeString = req.query.document_type as string;
       const docType = Number(docTypeString);
+      const { page = 1, size = 10, s = "" } = req.query;
 
-      const query = {
+      const { limit, offset } = getPagination(parseInt(page as string, 10), parseInt(size as string, 10));
+
+      const query: { document_type: DocumentType; status: Status; subject?: FindOperator<string> } = {
         document_type: DocumentType.PRIVACY_POLICY,
         status: Status.ACTIVE,
       };
@@ -113,13 +117,19 @@ export class PolicyAndTermsController {
       if (docType === DocumentType.TERMS_CONDITION) {
         query.document_type = DocumentType.TERMS_CONDITION;
       }
+      if (s) {
+        query.subject = ILike(`%${s}%`);
+      }
 
-      const data = await this.policyAndTermsRepo.find({
+      const [data, totalItems] = await this.policyAndTermsRepo.findAndCount({
         where: query,
         select: ["id", "document_type", "subject", "explanation", "createdAt", "updatedAt"],
+        skip: offset,
+        take: limit,
       });
+      const response = getPagingData({ count: totalItems, rows: data }, parseInt(page as string, 10), limit);
 
-      return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("This requested"), ResponseCodes.success, data);
+      return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("This requested"), ResponseCodes.success, response);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }

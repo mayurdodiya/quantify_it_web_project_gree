@@ -1,4 +1,4 @@
-import { Not, Repository } from "typeorm";
+import { FindOperator, ILike, Not, Repository } from "typeorm";
 import { AppDataSource } from "../../config/database.config";
 import { RoutesHandler } from "../../utils/error_handler";
 import { ResponseCodes } from "../../utils/response-codes";
@@ -6,6 +6,7 @@ import { Request, Response } from "express";
 import { message } from "../../utils/messages";
 import { TrustedClients } from "../../entities/trusted_clients.entity";
 import { Status } from "../../utils/enum";
+import { getPagination } from "../../services/paginate";
 
 export class TrustedClientsController {
   private trustedClientsRepo: Repository<TrustedClients>;
@@ -95,17 +96,24 @@ export class TrustedClientsController {
   // get all data
   public async getAllTrustedClients(req: Request, res: Response) {
     try {
-      const { page=0, size=10 } = req.query;
+      const { page = 1, size = 10, s = "" } = req.query;
       const pageData: number = parseInt(page as string, 10);
       const sizeData: number = parseInt(size as string, 10);
+      const { limit, offset } = getPagination(pageData, sizeData);
 
-      const skipData: number = pageData * sizeData;
+      const Dataobj: [{ client_name?: FindOperator<string>; status: Status.ACTIVE }, { his_profession?: FindOperator<string>; status: Status.ACTIVE }] = [{ status: Status.ACTIVE }, { status: Status.ACTIVE }];
+      if (s) {
+        Dataobj.push({ client_name: ILike(`%${s}%`), status: Status.ACTIVE });
+        Dataobj.push({ his_profession: ILike(`%${s}%`), status: Status.ACTIVE });
+      }
+
       const [data, totalItems] = await this.trustedClientsRepo.findAndCount({
-        where: { status: Status.ACTIVE },
-        select: ["id", "client_name", "his_profession", "img_url", "description", "createdAt", "createdAt"],
-        skip: skipData,
-        take: sizeData,
+        where: Dataobj,
+        select: ["id", "client_name", "his_profession", "img_url", "description", "status", "createdAt"],
+        skip: offset,
+        take: limit,
       });
+
       const response = {
         totalItems: totalItems,
         totalPages: Math.ceil(totalItems / sizeData),
@@ -113,9 +121,6 @@ export class TrustedClientsController {
         currentPage: pageData,
       };
 
-      if (!data || data.length === 0) {
-        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This client"), ResponseCodes.notFound);
-      }
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Client"), ResponseCodes.success, response);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
