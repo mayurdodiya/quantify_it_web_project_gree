@@ -21,6 +21,7 @@ import termsAndConditionRoute from "./policy_and_terms.route";
 import adminRoute from "./admin.route";
 import chatBoatRoute from "./chat_boat.route";
 import tokenRoute from "./token.route";
+import subAdminRoute from "./sub_admin.route";
 import { verifyGlobalToken } from "../utils/auth.token";
 
 const Routes = express.Router();
@@ -47,5 +48,6 @@ Routes.use("/contactus", verifyGlobalToken, contactUsRoute);
 Routes.use("/termscondition", verifyGlobalToken, termsAndConditionRoute);
 Routes.use("/chat", verifyGlobalToken, chatBoatRoute);
 Routes.use("/token", tokenRoute);
+Routes.use("/subadmin", subAdminRoute);
 
 export default Routes;

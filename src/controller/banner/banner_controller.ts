@@ -69,15 +69,15 @@ export class BannerController {
   // get banner
   public async getBanner(req: Request, res: Response) {
     try {
-      const cachedBanners = await redisClient.get("banners");
+      // const cachedBanners = await redisClient.get("banners");
 
-      if (cachedBanners) {
-        return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Banner"), ResponseCodes.success, JSON.parse(cachedBanners));
-      }
+      // if (cachedBanners) {
+      //   return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Banner"), ResponseCodes.success, JSON.parse(cachedBanners));
+      // }
 
       const banner = await this.bannerRepo.find({ select: ["id", "banner_name", "pc_img_url", "mobile_img_url", "title", "description", "createdAt"] });
 
-      await redisClient.setEx("banners", 3600, JSON.stringify(banner));
+      // await redisClient.setEx("banners", 3600, JSON.stringify(banner));
 
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Banner"), ResponseCodes.success, banner);
     } catch (error) {

@@ -154,6 +154,36 @@ export class AdminController {
     }
   }
 
+  // add sub admin
+  public async addSubAdmin(req: Request, res: Response) {
+    try {
+      const { first_name, last_name, email, phone_no, password, location } = req.body;
+      const isExist = await this.userRepo.findOne({ where: { email: email } });
+      if (isExist) {
+        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("Email"), ResponseCodes.insertError);
+      }
+      
+      var user = new User();
+      user.first_name = first_name;
+      user.last_name = last_name;
+      user.email = email;
+      user.phone_no = phone_no;
+      user.password = password;
+      user.location = location;
+      user.role = Role.SUBADMIN;
+      user.status = Status.ACTIVE;
+
+      const data = await this.userRepo.save(user);
+      if (!data) {
+        return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("Sub admin"), ResponseCodes.insertError);
+      }
+      return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Sub admin"), ResponseCodes.createSuccess, undefined);
+    } catch (error) {
+      console.log(error);
+      return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
+    }
+  }
+
   // upload image
   public async uploadImage(req: Request, res: Response) {
     try {

@@ -138,6 +138,41 @@ export class SubServicesController {
     }
   }
 
+  // get all SubServices By Core ServiceId
+  public async getAllSubServicesByCoreServiceId(req: Request, res: Response) {
+    try {
+      const { page = 1, size = 10, s = "" } = req.query;
+      const id = req.params.id;
+      var isEsixt = await this.subServicesRepo.find({ where: { core_service_id: id } });
+      if (!isEsixt) {
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This core services"), ResponseCodes.notFound);
+      }
+
+      const { limit, offset } = getPagination(parseInt(page as string, 10), parseInt(size as string, 10));
+
+      const query: {
+        sub_service_name?: FindOperator<string>;
+      } = {};
+
+      if (s) {
+        query.sub_service_name = ILike(`%${s}%`);
+      }
+
+      const [data, totalItems] = await this.subServicesRepo.findAndCount({
+        where: { core_service_id: id, ...query },
+        select: ["id", "core_service_id", "sub_service_name", "description_title", "description", "createdAt"],
+        skip: offset,
+        take: limit,
+      });
+
+      const response = getPagingData({ count: totalItems, rows: data }, parseInt(page as string, 10), limit);
+
+      return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Sub services"), ResponseCodes.success, response);
+    } catch (error) {
+      return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
+    }
+  }
+
   // delete data
   public async removeSubServices(req: Request, res: Response) {
     try {

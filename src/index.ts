@@ -1,6 +1,6 @@
 import http from "http";
 import app from "./app";
-import "./config/redis.config";
+// import "./config/redis.config";
 import { Server } from "socket.io";
 import { v4 as uuidv4 } from "uuid";
 import logger from "./utils/winston";

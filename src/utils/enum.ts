@@ -24,4 +24,5 @@ export enum DocumentType {
 export enum Role {
   ADMIN,
   USER,
+  SUBADMIN,
 }

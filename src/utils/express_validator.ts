@@ -435,6 +435,17 @@ const loginValidation = [
 
 const emailValidation = [
   check("email").notEmpty().withMessage("email is required"),
+  (req: Request, res: Response, next: NextFunction) => {
+    validationHandler(req, res, next);
+  },
+];
+
+const addUserValidation = [
+  check("first_name").notEmpty().withMessage("First name is required"),
+  check("last_name").notEmpty().withMessage("Last name is required"),
+  check("email").notEmpty().withMessage("Email is required"),
+  check("phone_no").notEmpty().withMessage("Phone no is required"),
+  check("password").notEmpty().withMessage("Password is required").isLength({ min: 8 }).withMessage("Password must be at least 8 characters long"),
 
   (req: Request, res: Response, next: NextFunction) => {
     validationHandler(req, res, next);
@@ -449,44 +460,4 @@ const imgValidation = [
   },
 ];
 
-export {
-  addBannerValidation,
-  addVisionExpertiesValidation,
-  updateVisionExpertiesValidation,
-  addCoreServiceValidation,
-  addSubServiceValidation,
-  updateSubServiceValidation,
-  addTechExpertiesValidation,
-  addPortfolioValidation,
-  updatePortfolioValidation,
-  addTrustedClientsValidation,
-  updateTrustedClientsValidation,
-  addblogValidation,
-  updateblogValidation,
-  addQuestionAnsValidation,
-  addAboutUsValidation,
-  updateAboutUsValidation,
-  addCertificationValidation,
-  updateHowWeWorkValidation,
-  updateCertificationValidation,
-  addHowWeWorkValidation,
-  addEmployeeDetailsValidation,
-  updateEmployeeDetailsValidation,
-  addprovidedServiceValidation,
-  updateprovidedServiceValidation,
-  addfeaturedServicesValidation,
-  updatefeaturedServicesValidation,
-  addOurContactDetailsValidation,
-  updateOurContactDetailsValidation,
-  addMarketingValidation,
-  addContactUsValidation,
-  addPolicyAndTermsValidation,
-  updatePolicyAndTermsValidation,
-  policyAndTermsQueryValidation,
-  portfolioQueryValidation,
-  pageAndSizeQueryValidation,
-  updateBannerValidation,
-  loginValidation,
-  imgValidation,
-  emailValidation,
-};
+export { addBannerValidation, addVisionExpertiesValidation, updateVisionExpertiesValidation, addCoreServiceValidation, addSubServiceValidation, updateSubServiceValidation, addTechExpertiesValidation, addPortfolioValidation, updatePortfolioValidation, addTrustedClientsValidation, updateTrustedClientsValidation, addblogValidation, updateblogValidation, addQuestionAnsValidation, addAboutUsValidation, updateAboutUsValidation, addCertificationValidation, updateHowWeWorkValidation, updateCertificationValidation, addHowWeWorkValidation, addEmployeeDetailsValidation, updateEmployeeDetailsValidation, addprovidedServiceValidation, updateprovidedServiceValidation, addfeaturedServicesValidation, updatefeaturedServicesValidation, addOurContactDetailsValidation, updateOurContactDetailsValidation, addMarketingValidation, addContactUsValidation, addPolicyAndTermsValidation, updatePolicyAndTermsValidation, policyAndTermsQueryValidation, portfolioQueryValidation, pageAndSizeQueryValidation, updateBannerValidation, loginValidation, imgValidation, emailValidation, addUserValidation };
