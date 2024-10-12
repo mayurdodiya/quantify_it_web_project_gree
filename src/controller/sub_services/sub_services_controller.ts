@@ -143,7 +143,7 @@ export class SubServicesController {
     try {
       const { page = 1, size = 10, s = "" } = req.query;
       const id = req.params.id;
-      var isEsixt = await this.subServicesRepo.find({ where: { core_service_id: id } });
+      const isEsixt = await this.subServicesRepo.find({ where: { core_service_id: id } });
       if (!isEsixt) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This core services"), ResponseCodes.notFound);
       }

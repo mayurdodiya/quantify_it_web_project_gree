@@ -163,7 +163,7 @@ export class AdminController {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("Email"), ResponseCodes.insertError);
       }
       
-      var user = new User();
+      const user = new User();
       user.first_name = first_name;
       user.last_name = last_name;
       user.email = email;

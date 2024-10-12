@@ -5,7 +5,7 @@ import { Banner } from "../../entities/banner.entity";
 import { RoutesHandler } from "../../utils/error_handler";
 import { ResponseCodes } from "../../utils/response-codes";
 import { AppDataSource } from "../../config/database.config";
-import { redisClient } from "../../config/redis.config";
+// import { redisClient } from "../../config/redis.config";
 
 export class BannerController {
   private bannerRepo: Repository<Banner>;
