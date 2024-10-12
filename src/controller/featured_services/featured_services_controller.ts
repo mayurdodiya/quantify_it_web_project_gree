@@ -101,7 +101,9 @@ export class FeaturedServicesController {
 
       const { limit, offset } = getPagination(parseInt(page as string, 10), parseInt(size as string, 10));
 
-      const Dataobj: { status: Status; title?: FindOperator<string> } = { status: Status.ACTIVE };
+      const Dataobj: { status: Status; title?: FindOperator<string> } = {
+        status: Status.ACTIVE,
+      };
       if (s) {
         Dataobj.title = ILike(`%${s}%`);
       }
@@ -117,7 +119,6 @@ export class FeaturedServicesController {
 
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Featured service"), ResponseCodes.success, response);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message || "Internal server error", ResponseCodes.serverError);
     }
   }

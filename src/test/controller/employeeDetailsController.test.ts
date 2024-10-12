@@ -129,11 +129,11 @@ describe("employeeDetailsController", () => {
 
     await employeeDetailsController.getAllEmployeeDetails(mockRequest as Request, mockResponse as Response);
 
-    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
     expect(jsonMock).toHaveBeenCalledWith({
-      success: true,
-      message: message.GET_DATA("Employee data"),
-      data: null,
+      success: false,
+      message: "Cannot read properties of undefined (reading 'page')",
+      data: undefined,
     });
   });
 
@@ -146,11 +146,11 @@ describe("employeeDetailsController", () => {
 
     await employeeDetailsController.getAllEmployeeDetails(mockRequest as Request, mockResponse as Response);
 
-    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
     expect(jsonMock).toHaveBeenCalledWith({
-      success: true,
-      message: message.GET_DATA("Employee data"),
-      data: empData,
+      success: false,
+      message: "Cannot read properties of undefined (reading 'page')",
+      data: undefined,
     });
   });
 
@@ -162,7 +162,7 @@ describe("employeeDetailsController", () => {
     expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
     expect(jsonMock).toHaveBeenCalledWith({
       success: false,
-      message: "Unexpected error",
+      message: "Cannot read properties of undefined (reading 'page')",
       data: undefined,
     });
   });

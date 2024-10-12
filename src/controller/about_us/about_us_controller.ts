@@ -18,7 +18,9 @@ export class AboutUsController {
     try {
       const { title, description, who_we_are_img_url_1, who_we_are_img_url_2, our_vision, our_mission, vision_mission_img_url, works_about_title, works_about_description, works_about_img_url, total_experience, talented_it_professionals, successfull_projects, served_country } = req.body;
 
-      const getData = await this.aboutUsRepo.find({ order: { createdAt: "ASC" } });
+      const getData = await this.aboutUsRepo.find({
+        order: { createdAt: "ASC" },
+      });
       if (getData?.length) {
         return RoutesHandler.sendError(req, res, false, message.ADD_ONCE("About us page"), ResponseCodes.insertError);
       }
@@ -46,7 +48,6 @@ export class AboutUsController {
       }
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("About us page"), ResponseCodes.success, data);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   };
@@ -90,7 +91,27 @@ export class AboutUsController {
   // get data
   public async getAboutUs(req: Request, res: Response) {
     try {
-      const data = await this.aboutUsRepo.find({ select: ["id", "title", "description", "who_we_are_img_url_1", "who_we_are_img_url_2", "our_vision", "our_mission", "vision_mission_img_url", "works_about_title", "works_about_description", "works_about_img_url", "total_experience", "talented_it_professionals", "successfull_projects", "served_country", "createdAt", "updatedAt"] });
+      const data = await this.aboutUsRepo.find({
+        select: [
+          "id",
+          "title",
+          "description",
+          "who_we_are_img_url_1",
+          "who_we_are_img_url_2",
+          "our_vision",
+          "our_mission",
+          "vision_mission_img_url",
+          "works_about_title",
+          "works_about_description",
+          "works_about_img_url",
+          "total_experience",
+          "talented_it_professionals",
+          "successfull_projects",
+          "served_country",
+          "createdAt",
+          "updatedAt",
+        ],
+      });
 
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("About us"), ResponseCodes.success, data);
     } catch (error) {

@@ -18,7 +18,9 @@ export class EmployeeDetailsController {
   public addEmployeeDetails = async (req: Request, res: Response) => {
     try {
       const { name, img_url, rating, description } = req.body;
-      const getData = await this.employeeDetailsRepo.findOne({ where: { name: name } });
+      const getData = await this.employeeDetailsRepo.findOne({
+        where: { name: name },
+      });
       if (getData) {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This employee data"), ResponseCodes.alreadyExist);
       }
@@ -99,7 +101,10 @@ export class EmployeeDetailsController {
 
       const { limit, offset } = getPagination(parseInt(page as string, 10), parseInt(size as string, 10));
 
-      const Dataobj: { name?: FindOperator<string>; rating?: FindOperator<string> } = {};
+      const Dataobj: {
+        name?: FindOperator<string>;
+        rating?: FindOperator<string>;
+      } = {};
       if (s) {
         Dataobj.name = ILike(`%${s}%`);
         Dataobj.rating = ILike(`%${s}%`);
@@ -116,7 +121,6 @@ export class EmployeeDetailsController {
 
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Employee data"), ResponseCodes.success, response);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message || "Internal server error", ResponseCodes.serverError);
     }
   }

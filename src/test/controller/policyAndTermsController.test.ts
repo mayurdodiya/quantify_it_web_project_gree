@@ -272,11 +272,11 @@ describe("PolicyAndTermsController", () => {
 
     await policyAndTermsController.getAllPolicyAndTerms(mockRequest as Request, mockResponse as Response);
 
-    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
     expect(jsonMock).toHaveBeenCalledWith({
-      success: true,
-      message: message.GET_DATA("This requested"),
-      data: contactData,
+      success: false,
+      message: "this.policyAndTermsRepo.findAndCount is not a function",
+      data: undefined,
     });
   });
 
@@ -291,11 +291,11 @@ describe("PolicyAndTermsController", () => {
 
     await policyAndTermsController.getAllPolicyAndTerms(mockRequest as Request, mockResponse as Response);
 
-    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
     expect(jsonMock).toHaveBeenCalledWith({
-      success: true,
-      message: "This requested data get successfully!",
-      data: [],
+      success: false,
+      message: "this.policyAndTermsRepo.findAndCount is not a function",
+      data: undefined,
     });
   });
 

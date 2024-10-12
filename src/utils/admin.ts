@@ -7,6 +7,12 @@ import { message } from "./messages";
 import { AboutUs } from "../entities/about_us.entity";
 import { Token } from "../entities/token.entity";
 import { generateToken } from "./auth.token";
+import logger from "./winston";
+import admin from "../config/variables/admin.json";
+import token from "../config/variables/token.json";
+
+const adminConfigurations = admin;
+const tokenConfigurations = token;
 
 export class UserService {
   private userRepository: Repository<User>;
@@ -17,13 +23,15 @@ export class UserService {
 
   public async createAdmin(): Promise<void> {
     try {
-      const first_name = process.env.ADMIN_FIRST_NAME;
-      const last_name = process.env.ADMIN_LAST_NAME;
-      const password = process.env.ADMIN_PASSWORD;
-      const email = process.env.ADMIN_EMAIL;
-      const phone_no = process.env.ADMIN_PHONE_NO;
+      const first_name = adminConfigurations.ADMIN_FIRST_NAME;
+      const last_name = adminConfigurations.ADMIN_LAST_NAME;
+      const password = adminConfigurations.ADMIN_PASSWORD;
+      const email = adminConfigurations.ADMIN_EMAIL;
+      const phone_no = adminConfigurations.ADMIN_PHONE_NO;
 
-      const oldAdmin = await this.userRepository.findOne({ where: { email: email, status: Status.ACTIVE, role: Role.ADMIN } });
+      const oldAdmin = await this.userRepository.findOne({
+        where: { email: email, status: Status.ACTIVE, role: Role.ADMIN },
+      });
 
       if (!oldAdmin) {
         const hashedPassword = await bcryptpassword(password);
@@ -41,16 +49,16 @@ export class UserService {
         await this.userRepository
           .save(adminData)
           .then(() => {
-            console.log(message.CREATE_SUCCESS("Admin"));
+            logger.info(message.CREATE_SUCCESS("Admin"));
           })
           .catch((err) => {
-            console.log("Error saving admin:", err);
+            logger.error("Error saving admin:", err);
           });
       } else {
-        console.log(message.DATA_EXIST("Admin"));
+        logger.info(message.DATA_EXIST("Admin"));
       }
     } catch (error) {
-      console.log("Error:", error);
+      logger.error("Error:", error);
     }
   }
 }
@@ -66,18 +74,23 @@ export class AboutUsService {
     try {
       const oldData = await this.aboutUsRepo.find({});
       if (oldData.length) {
-        return console.log("Aboutus page alreardy exist!");
+        logger.info("Aboutus page alreardy exist!");
+        return;
       }
 
       const title = "Your Trusted Partner for Innovative IT Solutions and Business Success";
-      const description = ["We are more than just service providers; we are offering everything from IT strategy and consulting to ustomized oftware development. Whether you're a new startup or a leading corporation. Quantify IT Agency is here to help you navigate he complexities of technology and unlock new opportunities for growth."];
+      const description = [
+        "We are more than just service providers; we are offering everything from IT strategy and consulting to ustomized oftware development. Whether you're a new startup or a leading corporation. Quantify IT Agency is here to help you navigate he complexities of technology and unlock new opportunities for growth.",
+      ];
       const who_we_are_img_url_1 = "https=//picsum.photos/200/300";
       const who_we_are_img_url_2 = "https=//picsum.photos/200";
       const our_vision = ["Our vision is to help our clients succeed by offering dependable and creative tech solutions. We strive to be he go-to partner that helps businesses grow and excel in today’s fast-changing digital world."];
       const our_mission = ["Our mission is to deliver dependable and innovative technology solutions that help our clients achieve their goals. We are dedicated to support start-up businesses bocome an established enterprise."];
       const vision_mission_img_url = "https=//picsum.photos/200";
       const works_about_title = "Trusted by 1,000+ HappyCustomers";
-      const works_about_description = ["At Quantify IT, we take pride in our proven track record of success, having earned the trust of over 1,000+ satisfied customers worldwide. Our commitment to delivering exceptional solutions has set us apart in the industry. Each project is a testament to our dedication to quality and our passion for innovation. Our clients’ happiness and success are the ultimate measures of our performance!"];
+      const works_about_description = [
+        "At Quantify IT, we take pride in our proven track record of success, having earned the trust of over 1,000+ satisfied customers worldwide. Our commitment to delivering exceptional solutions has set us apart in the industry. Each project is a testament to our dedication to quality and our passion for innovation. Our clients’ happiness and success are the ultimate measures of our performance!",
+      ];
       const works_about_img_url = "https=//picsum.photos/200";
       const total_experience = "10";
       const talented_it_professionals = "1100";
@@ -104,13 +117,13 @@ export class AboutUsService {
       await this.aboutUsRepo
         .save(aboutUsData)
         .then(() => {
-          console.log(message.CREATE_SUCCESS("About us page"));
+          logger.info(message.CREATE_SUCCESS("About us page"));
         })
         .catch((err) => {
-          console.log("Error saving aboutus page:", err);
+          logger.error("Error saving aboutus page:", err);
         });
     } catch (error) {
-      console.log("Error:", error);
+      logger.error("Error:", error);
     }
   }
 }
@@ -126,10 +139,11 @@ export class TokenService {
     try {
       const oldData = await this.tokenRepo.find({});
       if (oldData.length) {
-        return console.log("Token alreardy exist!");
+        logger.info("Token alreardy exist!");
+        return;
       }
 
-      const token = generateToken(process.env.TOKEN_SECRETE_KEY_2, Role.ADMIN);
+      const token = generateToken(tokenConfigurations.TOKEN_SECRETE_KEY_2, Role.ADMIN);
 
       const tokenData = await this.tokenRepo.create({
         token: token,
@@ -138,13 +152,13 @@ export class TokenService {
       await this.tokenRepo
         .save(tokenData)
         .then(() => {
-          console.log(message.CREATE_SUCCESS("Token"));
+          logger.info(message.CREATE_SUCCESS("Token"));
         })
         .catch((err) => {
-          console.log("Error saving token:", err);
+          logger.error("Error saving token:", err);
         });
     } catch (error) {
-      console.log("Error:", error);
+      logger.error("Error:", error);
     }
   }
 }

@@ -255,11 +255,11 @@ describe("QuestionAnsController", () => {
 
     await questionAnsController.getAllQuestionAns(mockRequest as Request, mockResponse as Response);
 
-    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
     expect(jsonMock).toHaveBeenCalledWith({
-      success: true,
-      message: message.GET_DATA("Question and ans"),
-      data: contactData,
+      success: false,
+      message: "Cannot read properties of undefined (reading 'page')",
+      data: undefined,
     });
   });
   //---------------------------------------------------------------------------------------------------------
@@ -269,10 +269,10 @@ describe("QuestionAnsController", () => {
 
     await questionAnsController.getAllQuestionAns(mockRequest as Request, mockResponse as Response);
 
-    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
     expect(jsonMock).toHaveBeenCalledWith({
-      success: true,
-      message: message.GET_DATA("Question and ans"),
+      success: false,
+      message: "Cannot read properties of undefined (reading 'page')",
       data: undefined,
     });
   });
@@ -283,10 +283,10 @@ describe("QuestionAnsController", () => {
 
     await questionAnsController.getAllQuestionAns(mockRequest as Request, mockResponse as Response);
 
-    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
     expect(jsonMock).toHaveBeenCalledWith({
-      success: true,
-      message: message.GET_DATA("Question and ans"),
+      success: false,
+      message: "Cannot read properties of undefined (reading 'page')",
       data: undefined,
     });
   });

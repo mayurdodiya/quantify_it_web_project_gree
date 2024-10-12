@@ -87,7 +87,6 @@ export class MarketingController {
 
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Marketing forms"), ResponseCodes.success, response);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message || "Internal server error", ResponseCodes.serverError);
     }
   }

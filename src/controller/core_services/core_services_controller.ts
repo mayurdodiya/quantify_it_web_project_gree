@@ -7,6 +7,7 @@ import { AppDataSource } from "../../config/database.config";
 import { SubServices } from "../../entities/sub_services.entity";
 import { CoreServices } from "../../entities/core_services.entity";
 import { getPagination, getPagingData } from "../../services/paginate";
+import logger from "../../utils/winston";
 
 export class CoreServicesController {
   private coreServicesRepo: Repository<CoreServices>;
@@ -106,7 +107,7 @@ export class CoreServicesController {
         Dataobj.service_type = ILike(`%${s}%`);
       }
 
-      const [data, totalItems] = await this.coreServicesRepo.findAndCount({ 
+      const [data, totalItems] = await this.coreServicesRepo.findAndCount({
         where: Dataobj,
         select: ["id", "service_type", "img_url", "createdAt", "updatedAt"],
         skip: offset,
@@ -117,11 +118,9 @@ export class CoreServicesController {
 
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Core services"), ResponseCodes.success, response);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message || "Internal server error", ResponseCodes.serverError);
     }
   }
-  
 
   // delete data
   public async removeCoreServices(req: Request, res: Response) {
@@ -146,7 +145,7 @@ export class CoreServicesController {
         await queryRunner.commitTransaction();
         return RoutesHandler.sendSuccess(req, res, true, message.DELETE_SUCCESS("Core services"), ResponseCodes.success, undefined);
       } catch (error) {
-        console.log(error);
+        logger.error(error);
         await queryRunner.rollbackTransaction();
       }
     } catch (error) {

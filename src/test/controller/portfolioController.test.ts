@@ -267,7 +267,7 @@ describe("PortfolioController", () => {
     expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError); // Change to success
     expect(jsonMock).toHaveBeenCalledWith({
       success: false,
-      message: "database_config_1.AppDataSource.query is not a function",
+      message: "this.portfolioRepo.findAndCount is not a function",
       data: undefined,
       // {
       //   totalItems: 1, // Change to expected total items
@@ -288,7 +288,7 @@ describe("PortfolioController", () => {
     expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
     expect(jsonMock).toHaveBeenCalledWith({
       success: false,
-      message: "Cannot destructure property 'type' of 'req.query' as it is undefined.",
+      message: "Cannot read properties of undefined (reading 'type')",
       data: undefined,
     });
   });
@@ -302,7 +302,7 @@ describe("PortfolioController", () => {
     expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
     expect(jsonMock).toHaveBeenCalledWith({
       success: false,
-      message: "Cannot destructure property 'type' of 'req.query' as it is undefined.",
+      message: "Cannot read properties of undefined (reading 'type')",
       data: undefined,
     });
   });

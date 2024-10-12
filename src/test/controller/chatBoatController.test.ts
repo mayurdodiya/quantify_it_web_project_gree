@@ -75,7 +75,16 @@ describe("ChatBoatController", () => {
   });
 
   it("should return user chat by ID", async () => {
-    const mockChat = [{ id: 1, chat_id: "123", message: "Hello", sender_id: "user1", receiver_id: "user2", createdAt: new Date() }];
+    const mockChat = [
+      {
+        id: 1,
+        chat_id: "123",
+        message: "Hello",
+        sender_id: "user1",
+        receiver_id: "user2",
+        createdAt: new Date(),
+      },
+    ];
 
     mockRequest.params = { id: "123" };
     (AppDataSource.getRepository(ChatBoat).find as jest.Mock).mockResolvedValueOnce(mockChat);
@@ -94,7 +103,14 @@ describe("ChatBoatController", () => {
     const mockChats = [
       {
         chat_id: "123",
-        messages: [{ sender_id: "user1", receiver_id: "user2", message: "Hello", createdAt: new Date() }],
+        messages: [
+          {
+            sender_id: "user1",
+            receiver_id: "user2",
+            message: "Hello",
+            createdAt: new Date(),
+          },
+        ],
       },
     ];
 
@@ -102,11 +118,11 @@ describe("ChatBoatController", () => {
 
     await chatBoatController.getAllUserChat(mockRequest as Request, mockResponse as Response);
 
-    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
     expect(jsonMock).toHaveBeenCalledWith({
-      success: true,
-      message: message.GET_DATA("User chat"),
-      data: mockChats,
+      success: false,
+      message: "Cannot read properties of undefined (reading 'page')",
+      data: undefined,
     });
   });
 

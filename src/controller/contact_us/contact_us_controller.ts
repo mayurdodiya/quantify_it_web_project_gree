@@ -1,4 +1,4 @@
-import { FindOperator,  ILike, Repository } from "typeorm";
+import { FindOperator, ILike, Repository } from "typeorm";
 import { Request, Response } from "express";
 import { message } from "../../utils/messages";
 import { RoutesHandler } from "../../utils/error_handler";
@@ -34,7 +34,6 @@ export class ContactUsController {
       }
       return RoutesHandler.sendSuccess(req, res, true, message.SUBMIT_FORM, ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   };
@@ -86,7 +85,6 @@ export class ContactUsController {
 
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Contact us forms"), ResponseCodes.success, response);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message || "Internal server error", ResponseCodes.serverError);
     }
   }

@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { check, query, validationResult } from "express-validator";
+import logger from "./winston";
 
 const validationHandler = (req: Request, res: Response, next: NextFunction) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -9,6 +10,7 @@ const validationHandler = (req: Request, res: Response, next: NextFunction) => {
 
   const result = validationResult(req).formatWith(errorFormatter);
   if (!result.isEmpty()) {
+    logger.info(result.array().join(", "));
     return res.status(422).json({ success: false, message: result.array().join(", ") });
   }
   next();
@@ -430,6 +432,15 @@ const loginValidation = [
     validationHandler(req, res, next);
   },
 ];
+
+const emailValidation = [
+  check("email").notEmpty().withMessage("email is required"),
+
+  (req: Request, res: Response, next: NextFunction) => {
+    validationHandler(req, res, next);
+  },
+];
+
 const imgValidation = [
   check("image").notEmpty().withMessage("please upload image!"),
 
@@ -438,4 +449,44 @@ const imgValidation = [
   },
 ];
 
-export { addBannerValidation, addVisionExpertiesValidation, updateVisionExpertiesValidation, addCoreServiceValidation, addSubServiceValidation, updateSubServiceValidation, addTechExpertiesValidation, addPortfolioValidation, updatePortfolioValidation, addTrustedClientsValidation, updateTrustedClientsValidation, addblogValidation, updateblogValidation, addQuestionAnsValidation, addAboutUsValidation, updateAboutUsValidation, addCertificationValidation, updateHowWeWorkValidation, updateCertificationValidation, addHowWeWorkValidation, addEmployeeDetailsValidation, updateEmployeeDetailsValidation, addprovidedServiceValidation, updateprovidedServiceValidation, addfeaturedServicesValidation, updatefeaturedServicesValidation, addOurContactDetailsValidation, updateOurContactDetailsValidation, addMarketingValidation, addContactUsValidation, addPolicyAndTermsValidation, updatePolicyAndTermsValidation, policyAndTermsQueryValidation, portfolioQueryValidation, pageAndSizeQueryValidation, updateBannerValidation, loginValidation, imgValidation };
+export {
+  addBannerValidation,
+  addVisionExpertiesValidation,
+  updateVisionExpertiesValidation,
+  addCoreServiceValidation,
+  addSubServiceValidation,
+  updateSubServiceValidation,
+  addTechExpertiesValidation,
+  addPortfolioValidation,
+  updatePortfolioValidation,
+  addTrustedClientsValidation,
+  updateTrustedClientsValidation,
+  addblogValidation,
+  updateblogValidation,
+  addQuestionAnsValidation,
+  addAboutUsValidation,
+  updateAboutUsValidation,
+  addCertificationValidation,
+  updateHowWeWorkValidation,
+  updateCertificationValidation,
+  addHowWeWorkValidation,
+  addEmployeeDetailsValidation,
+  updateEmployeeDetailsValidation,
+  addprovidedServiceValidation,
+  updateprovidedServiceValidation,
+  addfeaturedServicesValidation,
+  updatefeaturedServicesValidation,
+  addOurContactDetailsValidation,
+  updateOurContactDetailsValidation,
+  addMarketingValidation,
+  addContactUsValidation,
+  addPolicyAndTermsValidation,
+  updatePolicyAndTermsValidation,
+  policyAndTermsQueryValidation,
+  portfolioQueryValidation,
+  pageAndSizeQueryValidation,
+  updateBannerValidation,
+  loginValidation,
+  imgValidation,
+  emailValidation,
+};

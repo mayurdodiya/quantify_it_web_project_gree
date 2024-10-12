@@ -8,6 +8,7 @@
 /.env.local
 /.env.prod
 /uploads
+/src/config/variables
 # Logs
 logs
 *.log

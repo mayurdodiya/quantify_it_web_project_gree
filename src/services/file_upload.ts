@@ -1,6 +1,7 @@
 import fs from "fs";
 import multer from "multer";
 import B2 from "backblaze-b2";
+import logger from "../utils/winston";
 
 const applicationKeyId: string = process.env.BACKBLAZE_APPLICATION_KEY_ID || "your_default_key_id";
 const applicationKey: string = process.env.BACKBLAZE_APPLICATION_KEY || "your_default_key";
@@ -42,8 +43,11 @@ export const imageUpload = multer({
 });
 
 export class FileService {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public async uploadFileInS3(folderName: string, files: Express.Multer.File[]): Promise<any[]> {
+  public async uploadFileInS3(
+    folderName: string,
+    files: Express.Multer.File[]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ): Promise<any[]> {
     await b2.authorize();
     try {
       const allFiles = await Promise.all(files.map((file) => this.uploadFile(folderName, file)));
@@ -62,11 +66,18 @@ export class FileService {
         .on("end", () => resolve(Buffer.concat(chunks)));
     });
   }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public async uploadFile(folderName: string, file: Express.Multer.File, fileName: string = ""): Promise<any> {
+
+  public async uploadFile(
+    folderName: string,
+    file: Express.Multer.File,
+    fileName: string = ""
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ): Promise<any> {
     await b2.authorize();
     try {
-      const data = await b2.getUploadUrl({ bucketId: process.env.BLACKBLAZE_BUCKETID });
+      const data = await b2.getUploadUrl({
+        bucketId: process.env.BLACKBLAZE_BUCKETID,
+      });
       const fileBuffer = await this.streamToBuffer(fs.createReadStream(file.path));
       const filename = fileName || file.originalname;
 
@@ -83,13 +94,17 @@ export class FileService {
         fileId: response.data.fileId,
       };
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       throw new Error(`Failed to upload file: ${error.message}`);
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public async uploadFileBase64(folderName: string, file: string, fileName: string = ""): Promise<any> {
+  public async uploadFileBase64(
+    folderName: string,
+    file: string,
+    fileName: string = ""
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ): Promise<any> {
     await b2.authorize();
     try {
       const fileList = await b2.listFileNames({
@@ -107,7 +122,9 @@ export class FileService {
         });
       }
 
-      const data = await b2.getUploadUrl({ bucketId: process.env.BLACKBLAZE_BUCKETID });
+      const data = await b2.getUploadUrl({
+        bucketId: process.env.BLACKBLAZE_BUCKETID,
+      });
       const [base64Header, base64Data] = file.split(";base64,");
       const extension = base64Header.split("/")[1];
       const buffer = Buffer.from(base64Data, "base64");

@@ -1,6 +1,4 @@
 import { DataSource } from "typeorm";
-import dotenv from "dotenv";
-dotenv.config();
 import "reflect-metadata";
 import { User } from "../entities/user.entity";
 import { AboutUsService, TokenService, UserService } from "../utils/admin";
@@ -26,12 +24,16 @@ import { PolicyAndTerms } from "../entities/policy_and_terms.entity";
 import { ChatBoat } from "../entities/chat_boat.entity";
 import { Token } from "../entities/token.entity";
 import { DataCleanupScheduler } from "../utils/crone";
+import logger from "../utils/winston";
+import DB from "../config/variables/database.json";
 
-const host = process.env.HOST;
-const database_port = parseInt(process.env.DATABASE_PORT);
-const user_name = process.env.USER_NAME;
-const password = process.env.PASSWORD;
-const database = process.env.DATABASE;
+const databaseConfigurations = DB;
+
+const host = databaseConfigurations.HOST;
+const database_port = parseInt(databaseConfigurations.DATABASE_PORT);
+const user_name = databaseConfigurations.USER_NAME;
+const password = databaseConfigurations.PASSWORD;
+const database = databaseConfigurations.DATABASE;
 
 export const AppDataSource = new DataSource({
   type: "postgres",
@@ -40,15 +42,38 @@ export const AppDataSource = new DataSource({
   username: user_name,
   password: password,
   database: database,
-  synchronize: true,
+  synchronize: false,
   logging: false,
-  entities: [Banner, User, VisionExperties, CoreServices, SubServices, TechnologicalExperties, Portfolio, TrustedClients, Blog, QuestionAns, AboutUs, CertificationDetails, HowWeWork, EmployeeDetails, ProvidedService, FeaturedServices, OurContactDetails, Marketing, ContactUs, PolicyAndTerms, ChatBoat, Token],
+  entities: [
+    Banner,
+    User,
+    VisionExperties,
+    CoreServices,
+    SubServices,
+    TechnologicalExperties,
+    Portfolio,
+    TrustedClients,
+    Blog,
+    QuestionAns,
+    AboutUs,
+    CertificationDetails,
+    HowWeWork,
+    EmployeeDetails,
+    ProvidedService,
+    FeaturedServices,
+    OurContactDetails,
+    Marketing,
+    ContactUs,
+    PolicyAndTerms,
+    ChatBoat,
+    Token,
+  ],
 });
 
 (async () => {
   try {
     await AppDataSource.initialize();
-    console.log("Database Connected successfully!");
+    logger.info("Database connected successfully!");
     const userService = new UserService(AppDataSource);
     await userService.createAdmin();
     const addAboutUs = new AboutUsService(AppDataSource);
@@ -58,6 +83,6 @@ export const AppDataSource = new DataSource({
     const dataCleanupScheduler = new DataCleanupScheduler();
     dataCleanupScheduler.start();
   } catch (error) {
-    console.error("Error during Data Source initialization", error);
+    logger.error("Error during Data Source initialization", error);
   }
 })();

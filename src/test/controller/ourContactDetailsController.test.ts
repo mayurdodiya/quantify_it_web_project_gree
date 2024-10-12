@@ -129,10 +129,10 @@ describe("ourContactDetailsController", () => {
 
     await ourContactDetailsController.getOurContactDetails(mockRequest as Request, mockResponse as Response);
 
-    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
     expect(jsonMock).toHaveBeenCalledWith({
       success: false,
-      message: "Server error",
+      message: "This our contact details doesn't exist!",
       data: undefined,
     });
   });
@@ -146,11 +146,11 @@ describe("ourContactDetailsController", () => {
 
     await ourContactDetailsController.getOurContactDetails(mockRequest as Request, mockResponse as Response);
 
-    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
     expect(jsonMock).toHaveBeenCalledWith({
-      success: false,
-      message: message.NO_DATA("This our contact details"),
-      data: undefined,
+      success: true,
+      message: "Our contact details data get successfully!",
+      data: { id: 1 },
     });
   });
 
@@ -159,11 +159,11 @@ describe("ourContactDetailsController", () => {
 
     await ourContactDetailsController.getOurContactDetails(mockRequest as Request, mockResponse as Response);
 
-    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
     expect(jsonMock).toHaveBeenCalledWith({
-      success: true,
-      message: "Our contact details data get successfully!",
-      data: { id: 1 },
+      success: false,
+      message: "Unexpected error",
+      data: undefined,
     });
   });
 

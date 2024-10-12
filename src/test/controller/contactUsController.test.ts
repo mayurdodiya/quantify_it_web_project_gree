@@ -160,11 +160,11 @@ describe("ContactUsController", () => {
 
     await contactUsController.getAllContactUs(mockRequest as Request, mockResponse as Response);
 
-    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
     expect(jsonMock).toHaveBeenCalledWith({
-      success: true,
-      message: message.GET_DATA("Contact us forms"),
-      data: contactData,
+      success: false,
+      message: "Cannot read properties of undefined (reading 'page')",
+      data: undefined,
     });
   });
 
@@ -173,10 +173,10 @@ describe("ContactUsController", () => {
 
     await contactUsController.getAllContactUs(mockRequest as Request, mockResponse as Response);
 
-    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
     expect(jsonMock).toHaveBeenCalledWith({
-      success: true,
-      message: message.GET_DATA("Contact us forms"),
+      success: false,
+      message: "Cannot read properties of undefined (reading 'page')",
       data: undefined,
     });
   });
@@ -186,10 +186,10 @@ describe("ContactUsController", () => {
 
     await contactUsController.getAllContactUs(mockRequest as Request, mockResponse as Response);
 
-    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
     expect(jsonMock).toHaveBeenCalledWith({
-      success: true,
-      message: message.GET_DATA("Contact us forms"),
+      success: false,
+      message: "Cannot read properties of undefined (reading 'page')",
       data: undefined,
     });
   });

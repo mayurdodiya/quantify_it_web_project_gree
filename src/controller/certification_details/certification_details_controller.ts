@@ -99,7 +99,9 @@ export class CertificationDetailsController {
 
       const { limit, offset } = getPagination(parseInt(page as string, 10), parseInt(size as string, 10));
 
-      const Dataobj: { status: Status; sub_title?: FindOperator<string> } = { status: Status.ACTIVE };
+      const Dataobj: { status: Status; sub_title?: FindOperator<string> } = {
+        status: Status.ACTIVE,
+      };
       if (s) {
         Dataobj.sub_title = ILike(`%${s}%`);
       }
@@ -115,7 +117,6 @@ export class CertificationDetailsController {
 
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Certification Details"), ResponseCodes.success, response);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message || "Internal server error", ResponseCodes.serverError);
     }
   }

@@ -1,13 +1,10 @@
 import "reflect-metadata";
-import express, { NextFunction, Request, Response } from "express";
-import dotenv from "dotenv";
-import bodyparser from "body-parser";
+import path from "path";
 import cors from "cors";
 import morgan from "morgan";
 import Routes from "./routes";
-import path from "path";
-
-dotenv.config();
+import bodyparser from "body-parser";
+import express, { NextFunction, Request, Response } from "express";
 
 const app = express();
 
@@ -29,5 +26,19 @@ app.use(setGlobalOriginHeader);
 app.get("/", (req: Request, res: Response) => {
   return res.sendFile(path.join(__dirname, "public", "index.html"));
 });
+
+// app.post("/sendmail", async (req, res) => {
+//   try {
+//     await emailService.sendEmail("mailtesttrainer1@mailinator.com", "Test Mail", "This is a test...", "<p>Test mail.....</p>");
+
+//     res.status(200).json({ success: true, message: "Email sent successfully" });
+//   } catch (error) {
+//     res.status(500).json({
+//       success: false,
+//       message: "Failed to send email",
+//       error: error.message,
+//     });
+//   }
+// });
 
 export default app;

@@ -1,8 +1,11 @@
 import http from "http";
 import app from "./app";
+import "./config/redis.config";
 import { Server } from "socket.io";
 import { v4 as uuidv4 } from "uuid";
+import logger from "./utils/winston";
 import method from "./utils/chatboat_question_ans";
+import { PORT } from "./config/variables/common.json";
 import { ChatBoatController } from "./controller/chat_boat/chat_boat_controller";
 
 const server = http.createServer(app);
@@ -12,6 +15,7 @@ io.on("connection", (socketIo) => {
   let userId = "";
   const adminId = process.env.ADMIN_CHATBOAT_ID;
   let chatId = "";
+  logger.info("user connected");
 
   socketIo.on("genIdFlag", () => {
     const id = `id-${uuidv4()}`;
@@ -54,7 +58,9 @@ io.on("connection", (socketIo) => {
               receiverId: userId,
             });
           })
-          .catch(console.log);
+          .catch((error) => {
+            logger.error(error);
+          });
         break;
       case method.question2:
         userId = data.senderId;
@@ -83,7 +89,9 @@ io.on("connection", (socketIo) => {
               receiverId: userId,
             });
           })
-          .catch(console.log);
+          .catch((error) => {
+            logger.error(error);
+          });
         break;
       default:
         userId = data.senderId;
@@ -102,11 +110,15 @@ io.on("connection", (socketIo) => {
         break;
     }
   });
+
+  socketIo.on("disconnect", async () => {
+    logger.info("user disconnect");
+  });
 });
 
 const initializeServer = () => {
-  server.listen(process.env.PORT, () => {
-    console.log(`Server is running on ---> http://localhost:${process.env.PORT}`);
+  server.listen(PORT, async () => {
+    logger.info(`Server start on http://localhost:${PORT}`);
   });
 };
 

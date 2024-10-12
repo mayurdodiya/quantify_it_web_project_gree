@@ -47,7 +47,9 @@ export class BlogController {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This blog"), ResponseCodes.notFound);
       }
 
-      const isExist = await this.blogRepo.findOne({ where: { blog_title: blog_title, id: Not(dataId) } });
+      const isExist = await this.blogRepo.findOne({
+        where: { blog_title: blog_title, id: Not(dataId) },
+      });
       if (isExist) {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This blog"), ResponseCodes.alreadyExist);
       }
@@ -70,7 +72,10 @@ export class BlogController {
   public async getBlog(req: Request, res: Response) {
     try {
       const dataId = req.params.id as string;
-      const data = await this.blogRepo.findOne({ where: { id: dataId, status: Status.ACTIVE }, select: ["id", "blog_title", "description", "img_url", "createdAt"] });
+      const data = await this.blogRepo.findOne({
+        where: { id: dataId, status: Status.ACTIVE },
+        select: ["id", "blog_title", "description", "img_url", "createdAt"],
+      });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This blog"), ResponseCodes.notFound);
       }
@@ -80,14 +85,16 @@ export class BlogController {
     }
   }
 
-    // get all data
+  // get all data
   public async getAllBlog(req: Request, res: Response) {
     try {
       const { page = 1, size = 10, s } = req.query;
-      
+
       const { limit, offset } = getPagination(parseInt(page as string, 10), parseInt(size as string, 10));
 
-      const Dataobj: { status: Status; blog_title?: FindOperator<string> } = { status: Status.ACTIVE };
+      const Dataobj: { status: Status; blog_title?: FindOperator<string> } = {
+        status: Status.ACTIVE,
+      };
       if (s) {
         Dataobj.blog_title = ILike(`%${s}%`);
       }
@@ -103,11 +110,9 @@ export class BlogController {
 
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Blog"), ResponseCodes.success, response);
     } catch (error) {
-      console.log(error);    
       return RoutesHandler.sendError(req, res, false, error.message || "Internal server error", ResponseCodes.serverError);
     }
   }
-
 
   // delete data
   public async removeBlog(req: Request, res: Response) {

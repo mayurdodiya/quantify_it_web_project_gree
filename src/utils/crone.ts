@@ -5,6 +5,9 @@ import { generateToken } from "./auth.token";
 import { AppDataSource } from "../config/database.config";
 import { Token } from "../entities/token.entity";
 import { Repository } from "typeorm";
+import logger from "./winston";
+import token from "../config/variables/token.json";
+const tokenConfigurations = token;
 
 export class DataCleanupScheduler {
   private tokenRepo: Repository<Token>;
@@ -15,7 +18,6 @@ export class DataCleanupScheduler {
 
   start() {
     cron.schedule("0 0 * * *", () => this.cleanupData());
-    console.log("Cron job started.");
   }
 
   async cleanupData() {
@@ -24,17 +26,18 @@ export class DataCleanupScheduler {
 
       let token;
       if (oldData.length === 0) {
-        token = generateToken(process.env.TOKEN_SECRETE_KEY_2, Role.ADMIN);
+        token = generateToken(tokenConfigurations.TOKEN_SECRETE_KEY_2, Role.ADMIN);
         const tokenData = this.tokenRepo.create({ token });
         await this.tokenRepo.save(tokenData);
-        console.log(message.CREATE_SUCCESS("Token"));
+
+        logger.info(message.CREATE_SUCCESS("Token"));
       } else {
-        token = generateToken(process.env.TOKEN_SECRETE_KEY_2, Role.ADMIN);
+        token = generateToken(tokenConfigurations.TOKEN_SECRETE_KEY_2, Role.ADMIN);
         await this.tokenRepo.update({ id: oldData[0].id }, { token });
-        console.log(message.UPDATED_SUCCESSFULLY("Token"));
+        logger.info(message.UPDATED_SUCCESSFULLY("Token"));
       }
     } catch (error) {
-      console.error("Error occurred during cron job:", error);
+      logger.error("Error occurred during cron job: ", error);
     }
   }
 }

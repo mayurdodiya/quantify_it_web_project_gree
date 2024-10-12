@@ -6,6 +6,7 @@ import { ChatBoat } from "../../entities/chat_boat.entity";
 import { ResponseCodes } from "../../utils/response-codes";
 import { AppDataSource } from "../../config/database.config";
 import { getPagination, getPagingData } from "../../services/paginate";
+import logger from "../../utils/winston";
 
 export class ChatBoatController {
   chatBoatRepo: Repository<ChatBoat>;
@@ -22,7 +23,7 @@ export class ChatBoatController {
       chatBoatMessage.message = data.message;
       await this.chatBoatRepo.save(chatBoatMessage);
     } catch (err) {
-      console.log(err);
+      logger.error(err);
     }
   }
 
@@ -100,7 +101,6 @@ export class ChatBoatController {
 
       return RoutesHandler.sendSuccess(req, res, true, "Chat data retrieved successfully", ResponseCodes.success, response);
     } catch (error) {
-      console.error(error);
       return RoutesHandler.sendError(req, res, false, error.message || "Internal server error", ResponseCodes.serverError);
     }
   }
@@ -119,7 +119,7 @@ export class ChatBoatController {
       await this.chatBoatRepo.save(chatBoatMessage);
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS(`User chat replay`), ResponseCodes.success, undefined);
     } catch (error) {
-      console.log(error);
+      logger.error(error);
     }
   }
 }

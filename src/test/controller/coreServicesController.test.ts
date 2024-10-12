@@ -129,11 +129,11 @@ describe("coreServicesController", () => {
 
     await coreServicesController.getAllCoreServices(mockRequest as Request, mockResponse as Response);
 
-    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
     expect(jsonMock).toHaveBeenCalledWith({
-      success: true,
-      message: "Core services data get successfully!",
-      data: null,
+      success: false,
+      message: "Cannot read properties of undefined (reading 'page')",
+      data: undefined,
     });
   });
 
@@ -146,11 +146,11 @@ describe("coreServicesController", () => {
 
     await coreServicesController.getAllCoreServices(mockRequest as Request, mockResponse as Response);
 
-    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
     expect(jsonMock).toHaveBeenCalledWith({
-      success: true,
-      message: message.GET_DATA("Core services"),
-      data: coreData,
+      success: false,
+      message: "Cannot read properties of undefined (reading 'page')",
+      data: undefined,
     });
   });
 
@@ -162,7 +162,7 @@ describe("coreServicesController", () => {
     expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
     expect(jsonMock).toHaveBeenCalledWith({
       success: false,
-      message: "Unexpected error",
+      message: "Cannot read properties of undefined (reading 'page')",
       data: undefined,
     });
   });

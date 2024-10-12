@@ -5,11 +5,15 @@ import { AppDataSource } from "../../config/database.config";
 import { RoutesHandler } from "../../utils/error_handler";
 import { message } from "../../utils/messages";
 import { ResponseCodes } from "../../utils/response-codes";
-import { comparepassword } from "../../utils/bcrypt";
-import { generateToken } from "../../utils/auth.token";
+import { bcryptpassword, comparepassword } from "../../utils/bcrypt";
+import { generateForgetPasswordToken, generateToken, verifyPasswordToken } from "../../utils/auth.token";
 import { Role, Status } from "../../utils/enum";
 import { FileService } from "../../services/file_upload";
 import { networkUtils } from "../../utils/ip_address";
+import { EmailService } from "../../services/nodemailer";
+import logger from "../../utils/winston";
+
+const emailService = new EmailService();
 
 const fileService = new FileService();
 
@@ -25,7 +29,9 @@ export class AdminController {
     try {
       const { email, password: pwd } = req.body;
 
-      const getAdmin = await this.userRepo.findOne({ where: { email: email, status: Status.ACTIVE, role: Role.ADMIN } });
+      const getAdmin = await this.userRepo.findOne({
+        where: { email: email, status: Status.ACTIVE, role: Role.ADMIN },
+      });
 
       if (!getAdmin) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This email"), ResponseCodes.loginError);
@@ -57,6 +63,92 @@ export class AdminController {
       };
 
       return RoutesHandler.sendSuccess(req, res, true, message.LOGIN_SUCCESS, ResponseCodes.success, data);
+    } catch (error) {
+      return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
+    }
+  }
+
+  public async forgotPassword(req: Request, res: Response) {
+    try {
+      const { email, baseurl } = req.body;
+
+      const getAdmin = await this.userRepo.findOne({
+        where: { email: email, status: Status.ACTIVE, role: Role.ADMIN },
+      });
+
+      if (!getAdmin) {
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This email"), ResponseCodes.loginError);
+      }
+
+      const token = generateForgetPasswordToken(getAdmin.id, getAdmin.role);
+      if (!token) {
+        return RoutesHandler.sendError(req, res, false, message.NOT_GENERATE("Token"), ResponseCodes.loginError);
+      }
+      const url = `${baseurl}/reset-password?token=${token}&email=${email}`;
+      const mailData = {
+        email: getAdmin.email,
+        subject: "Forgot Password",
+        text: "Forgot Password",
+        body: ` 
+      <p>Click the button below to reset your password:</p>
+
+      <a href="${url}" target="_blank">${url}</a>
+
+      <p>Best regards, <br>Going Green</p>
+            `,
+      };
+
+      await emailService.sendEmail(mailData.email, mailData.subject, mailData.text, mailData.body);
+
+      return RoutesHandler.sendSuccess(req, res, true, message.FORGOT_PASSWORD_LINK, ResponseCodes.success, {});
+    } catch (error) {
+      return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
+    }
+  }
+
+  public async setpassword(req: Request, res: Response) {
+    try {
+      // eslint-disable-next-line no-unsafe-optional-chaining
+      const { token, password, confirmPassword } = req?.body;
+
+      if (!token || !password || !confirmPassword) {
+        return res.status(ResponseCodes.inputError).json({
+          message: "token, password and confirm password are required",
+        });
+      }
+
+      if (password !== confirmPassword) {
+        return res.status(ResponseCodes.inputError).json({ message: "Password and confirm password does not match" });
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const tokenResult: any = verifyPasswordToken(token);
+
+      const getAdmin = await this.userRepo.findOne({
+        where: {
+          id: tokenResult?.userId,
+          status: Status.ACTIVE,
+          role: Role.ADMIN,
+        },
+      });
+
+      if (!getAdmin) {
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This user"), ResponseCodes.loginError);
+      }
+      const hashedPassword = await bcryptpassword(password);
+
+      getAdmin.password = hashedPassword;
+
+      await this.userRepo
+        .save(getAdmin)
+        .then(() => {
+          logger.info(message.FORGOT_PASSWORD_SUCCESS);
+        })
+        .catch((err) => {
+          logger.error("Error saving admin:", err);
+        });
+
+      return RoutesHandler.sendSuccess(req, res, true, message.FORGOT_PASSWORD_SUCCESS, ResponseCodes.success, {});
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }

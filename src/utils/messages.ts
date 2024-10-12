@@ -20,8 +20,14 @@ const message = {
 
   LOGIN_SUCCESS: `Welcome back, You have successfully logged in!`,
 
+  FORGOT_PASSWORD_LINK: `Please check your email to reset your password!`,
+
+  FORGOT_PASSWORD_SUCCESS: `Your password has been updated successfully!`,
+
   NO_TOKEN: `No token provided!`,
+
   BAD_REQUEST: `Unauthorized!`,
+
   TOKEN_EXPIRED: `Unauthorized! Access Token was expired!`,
 
   UPLOAD_SUCCESS: (str: string) => `${str} upload successfully!`,

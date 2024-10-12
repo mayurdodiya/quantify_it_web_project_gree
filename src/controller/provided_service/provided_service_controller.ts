@@ -18,7 +18,23 @@ export class ProvidedServiceController {
   // add data
   public addProvidedService = async (req: Request, res: Response) => {
     try {
-      const { card_img_url, service_type, service_name, service_name_title, description, service_benifits, work_planning_title, work_planning_description, work_planning_img_url, business_solutions_title, business_solutions_description, business_solutions_img_url, completed_works, client_ratings, bussiness_reports_percentage } = req.body;
+      const {
+        card_img_url,
+        service_type,
+        service_name,
+        service_name_title,
+        description,
+        service_benifits,
+        work_planning_title,
+        work_planning_description,
+        work_planning_img_url,
+        business_solutions_title,
+        business_solutions_description,
+        business_solutions_img_url,
+        completed_works,
+        client_ratings,
+        bussiness_reports_percentage,
+      } = req.body;
 
       const serviceNameExist = await this.providedServiceRepo.findOne({
         where: { service_type: service_type, service_name: service_name },
@@ -58,7 +74,23 @@ export class ProvidedServiceController {
   // edit data
   public async updateProvidedService(req: Request, res: Response) {
     try {
-      const { card_img_url, service_type, service_name, service_name_title, description, service_benifits, work_planning_title, work_planning_description, work_planning_img_url, business_solutions_title, business_solutions_description, business_solutions_img_url, completed_works, client_ratings, bussiness_reports_percentage } = req.body;
+      const {
+        card_img_url,
+        service_type,
+        service_name,
+        service_name_title,
+        description,
+        service_benifits,
+        work_planning_title,
+        work_planning_description,
+        work_planning_img_url,
+        business_solutions_title,
+        business_solutions_description,
+        business_solutions_img_url,
+        completed_works,
+        client_ratings,
+        bussiness_reports_percentage,
+      } = req.body;
 
       const dataId = req.params.id;
       const getData = await this.providedServiceRepo.findOne({
@@ -111,7 +143,25 @@ export class ProvidedServiceController {
       const dataId = req.params.id;
       const data = await this.providedServiceRepo.findOne({
         where: { id: dataId, status: Status.ACTIVE },
-        select: ["id", "card_img_url", "service_type", "service_name", "service_name_title", "description", "service_benifits", "work_planning_title", "work_planning_description", "work_planning_img_url", "business_solutions_title", "business_solutions_description", "business_solutions_img_url", "completed_works", "client_ratings", "bussiness_reports_percentage", "createdAt"],
+        select: [
+          "id",
+          "card_img_url",
+          "service_type",
+          "service_name",
+          "service_name_title",
+          "description",
+          "service_benifits",
+          "work_planning_title",
+          "work_planning_description",
+          "work_planning_img_url",
+          "business_solutions_title",
+          "business_solutions_description",
+          "business_solutions_img_url",
+          "completed_works",
+          "client_ratings",
+          "bussiness_reports_percentage",
+          "createdAt",
+        ],
       });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This service provide data"), ResponseCodes.notFound);
@@ -129,7 +179,11 @@ export class ProvidedServiceController {
 
       const { limit, offset } = getPagination(parseInt(page as string, 10), parseInt(size as string, 10));
 
-      const Dataobj: { service_type?: FindOperator<string>; service_name?: FindOperator<string>; status: Status } = { status: Status.ACTIVE };
+      const Dataobj: {
+        service_type?: FindOperator<string>;
+        service_name?: FindOperator<string>;
+        status: Status;
+      } = { status: Status.ACTIVE };
       if (s) {
         Dataobj.service_type = ILike(`%${s}%`);
       }
@@ -144,7 +198,6 @@ export class ProvidedServiceController {
 
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Service provide data"), ResponseCodes.success, response);
     } catch (error) {
-      console.log(error);
       return RoutesHandler.sendError(req, res, false, error.message || "Internal server error", ResponseCodes.serverError);
     }
   }
