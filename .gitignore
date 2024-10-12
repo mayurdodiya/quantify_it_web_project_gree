@@ -9,6 +9,7 @@
 /.env.prod
 /uploads
 /src/config/variables
+/src/config/keys/ca.pem
 # Logs
 logs
 *.log
