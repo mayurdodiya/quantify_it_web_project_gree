@@ -18,23 +18,7 @@ export class ProvidedServiceController {
   // add data
   public addProvidedService = async (req: Request, res: Response) => {
     try {
-      const {
-        card_img_url,
-        service_type,
-        service_name,
-        service_name_title,
-        description,
-        service_benifits,
-        work_planning_title,
-        work_planning_description,
-        work_planning_img_url,
-        business_solutions_title,
-        business_solutions_description,
-        business_solutions_img_url,
-        completed_works,
-        client_ratings,
-        bussiness_reports_percentage,
-      } = req.body;
+      const { card_img_url, service_type, service_name, service_name_title, description, service_benifits, work_planning_title, work_planning_description, work_planning_img_url, business_solutions_title, business_solutions_description, business_solutions_img_url, completed_works, client_ratings, bussiness_reports_percentage } = req.body;
 
       const serviceNameExist = await this.providedServiceRepo.findOne({
         where: { service_type: service_type, service_name: service_name },
@@ -74,23 +58,7 @@ export class ProvidedServiceController {
   // edit data
   public async updateProvidedService(req: Request, res: Response) {
     try {
-      const {
-        card_img_url,
-        service_type,
-        service_name,
-        service_name_title,
-        description,
-        service_benifits,
-        work_planning_title,
-        work_planning_description,
-        work_planning_img_url,
-        business_solutions_title,
-        business_solutions_description,
-        business_solutions_img_url,
-        completed_works,
-        client_ratings,
-        bussiness_reports_percentage,
-      } = req.body;
+      const { card_img_url, service_type, service_name, service_name_title, description, service_benifits, work_planning_title, work_planning_description, work_planning_img_url, business_solutions_title, business_solutions_description, business_solutions_img_url, completed_works, client_ratings, bussiness_reports_percentage } = req.body;
 
       const dataId = req.params.id;
       const getData = await this.providedServiceRepo.findOne({
@@ -143,25 +111,7 @@ export class ProvidedServiceController {
       const dataId = req.params.id;
       const data = await this.providedServiceRepo.findOne({
         where: { id: dataId, status: Status.ACTIVE },
-        select: [
-          "id",
-          "card_img_url",
-          "service_type",
-          "service_name",
-          "service_name_title",
-          "description",
-          "service_benifits",
-          "work_planning_title",
-          "work_planning_description",
-          "work_planning_img_url",
-          "business_solutions_title",
-          "business_solutions_description",
-          "business_solutions_img_url",
-          "completed_works",
-          "client_ratings",
-          "bussiness_reports_percentage",
-          "createdAt",
-        ],
+        select: ["id", "card_img_url", "service_type", "service_name", "service_name_title", "description", "service_benifits", "work_planning_title", "work_planning_description", "work_planning_img_url", "business_solutions_title", "business_solutions_description", "business_solutions_img_url", "completed_works", "client_ratings", "bussiness_reports_percentage", "createdAt"],
       });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This service provide data"), ResponseCodes.notFound);
@@ -190,6 +140,7 @@ export class ProvidedServiceController {
 
       const [data, totalItems] = await this.providedServiceRepo.findAndCount({
         where: Dataobj,
+        select: ["id", "card_img_url", "service_type", "service_name", "service_name_title"],
         skip: offset,
         take: limit,
       });

@@ -11,7 +11,8 @@ import { getPagination, getPagingData } from "../../services/paginate";
 interface SubServicesItem {
   sub_service_name: string;
   description_title: string;
-  description: string;
+  description_sub_title: string;
+  description_services: string[];
 }
 
 export class SubServicesController {
@@ -27,9 +28,7 @@ export class SubServicesController {
   public addSubServices = async (req: Request, res: Response) => {
     try {
       const { sub_service_name, core_service_id } = req.body;
-      const getData = await this.subServicesRepo.findOne({
-        where: { sub_service_name: sub_service_name },
-      });
+      const getData = await this.subServicesRepo.findOne({ where: { sub_service_name: sub_service_name } });
       if (getData) {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This sub services"), ResponseCodes.alreadyExist);
       }
@@ -44,7 +43,8 @@ export class SubServicesController {
           core_service: coreServ,
           sub_service_name: item.sub_service_name,
           description_title: item.description_title,
-          description: item.description,
+          description_sub_title: item.description_sub_title,
+          description_services: item.description_services,
         });
         return createdData;
       });
@@ -63,7 +63,7 @@ export class SubServicesController {
   // edit data
   public async updateSubServices(req: Request, res: Response) {
     try {
-      const { sub_service_name, description_title, description, img_logo_url } = req.body;
+      const { sub_service_name, description_title, description_sub_title, description_services, img_logo_url } = req.body;
       const dataId = req.params.id;
       const getData = await this.subServicesRepo.findOne({
         where: { id: dataId },
@@ -79,7 +79,9 @@ export class SubServicesController {
       }
       getData.sub_service_name = sub_service_name;
       getData.description_title = description_title;
-      getData.description = description;
+      getData.description_sub_title = description_sub_title;
+      getData.description_title = description_title;
+      getData.description_services = description_services;
       getData.img_logo_url = img_logo_url;
 
       const dataAdd = await this.subServicesRepo.save(getData);
@@ -98,7 +100,7 @@ export class SubServicesController {
       const dataId = req.params.id;
       const data = await this.subServicesRepo.findOne({
         where: { id: dataId },
-        select: ["id", "core_service_id", "sub_service_name", "description_title", "description"],
+        select: ["id", "core_service_id", "sub_service_name", "description_title", "description_sub_title", "description_services"],
       });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This sub services"), ResponseCodes.notFound);
@@ -125,7 +127,7 @@ export class SubServicesController {
 
       const [data, totalItems] = await this.subServicesRepo.findAndCount({
         where: query,
-        select: ["id", "core_service_id", "sub_service_name", "description_title", "description", "createdAt"],
+        select: ["id", "core_service_id", "sub_service_name", "description_title", "description_sub_title", "description_services"],
         skip: offset,
         take: limit,
       });
@@ -160,7 +162,7 @@ export class SubServicesController {
 
       const [data, totalItems] = await this.subServicesRepo.findAndCount({
         where: { core_service_id: id, ...query },
-        select: ["id", "core_service_id", "sub_service_name", "description_title", "description", "createdAt"],
+        select: ["id", "core_service_id", "sub_service_name", "description_title", "description_sub_title", "description_services"],
         skip: offset,
         take: limit,
       });

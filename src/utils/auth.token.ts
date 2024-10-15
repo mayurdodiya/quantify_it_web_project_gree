@@ -77,6 +77,28 @@ export const verifyAdminToken = async (req: Request, res: Response, next: NextFu
   }
 };
 
+// verify sub admin token
+export const verifySubAdminToken = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = req.headers["x-access-token"] as string;
+
+    if (!token) {
+      return RoutesHandler.sendError(req, res, false, message.NO_TOKEN, ResponseCodes.tokenError);
+    }
+
+    const sKey = tokenConfigurations.TOKEN_SECRETE_KEY as string;
+    const decoded = jwt.verify(token, sKey) as JwtPayload;
+
+    if (decoded.role !== Role.SUBADMIN) {
+      return RoutesHandler.sendError(req, res, false, message.BAD_REQUEST, ResponseCodes.tokenError);
+    }
+    return next();
+  } catch (error) {
+    logger.error("token not match ", error.message);
+    return RoutesHandler.sendError(req, res, false, message.TOKEN_EXPIRED, ResponseCodes.tokenError);
+  }
+};
+
 export const verifyGlobalToken = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const token2 = req.headers["authorization"] as string;

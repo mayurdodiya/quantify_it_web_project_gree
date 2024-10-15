@@ -1,4 +1,4 @@
-import { Not, Repository } from "typeorm";
+import { FindOperator, ILike, Not, Raw, Repository } from "typeorm";
 import { AppDataSource } from "../../config/database.config";
 import { RoutesHandler } from "../../utils/error_handler";
 import { ResponseCodes } from "../../utils/response-codes";
@@ -17,7 +17,7 @@ export class PortfolioController {
   // add data
   public addPortfolio = async (req: Request, res: Response) => {
     try {
-      const { type, title, sub_title, img_url, description, live_url } = req.body;
+      const { portfolio_type_id, title, sub_title, img_url, description, live_url } = req.body;
       const getData = await this.portfolioRepo.findOne({
         where: { title: title },
       });
@@ -27,12 +27,12 @@ export class PortfolioController {
 
       const portfolio = new Portfolio();
 
-      portfolio.type = type;
       portfolio.title = title;
       portfolio.sub_title = sub_title;
-      portfolio.img_url = img_url || null;
-      portfolio.description = description || null;
-      portfolio.live_url = live_url || null;
+      portfolio.img_url = img_url;
+      portfolio.description = description;
+      portfolio.live_url = live_url;
+      portfolio.portfolio_type = portfolio_type_id;
 
       const data = await this.portfolioRepo.save(portfolio);
       if (!data) {
@@ -47,24 +47,18 @@ export class PortfolioController {
   // edit data
   public async updatePortfolio(req: Request, res: Response) {
     try {
-      const { title, sub_title, description, img_url, live_url } = req.body;
-      const type = req.body.type?.toLocaleLowerCase();
-
       const dataId = req.params.id;
-      const getData = await this.portfolioRepo.findOne({
-        where: { id: dataId },
-      });
+      const { title, sub_title, description, img_url, live_url } = req.body;
+
+      const getData = await this.portfolioRepo.findOne({ where: { id: dataId }, relations: ["portfolio_type"] });
       if (!getData) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This portfolio"), ResponseCodes.notFound);
       }
 
-      const isExist = await this.portfolioRepo.findOne({
-        where: { type: type, title: title, id: Not(dataId) },
-      });
+      const isExist = await this.portfolioRepo.findOne({ where: { title: title, id: Not(dataId) } });
       if (isExist) {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This portfolio"), ResponseCodes.alreadyExist);
       }
-      getData.type = type || getData.type;
       getData.title = title || getData.title;
       getData.sub_title = sub_title || getData.sub_title;
       getData.description = description || getData.description;
@@ -87,7 +81,7 @@ export class PortfolioController {
       const dataId = req.params.id;
       const data = await this.portfolioRepo.findOne({
         where: { id: dataId },
-        select: ["id", "type", "title", "sub_title", "img_url", "live_url", "description", "createdAt"],
+        select: ["id", "title", "sub_title", "img_url", "live_url", "description", "createdAt"],
       });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This portfolio"), ResponseCodes.notFound);
@@ -101,17 +95,39 @@ export class PortfolioController {
   // get all data
   public async getAllPortfolio(req: Request, res: Response) {
     try {
-      const { type = "", page = 1, size = 10 } = req.query;
+      const { type = "", page = 1, size = 10, s = "" } = req.query;
       const pageData: number = parseInt(page as string, 10);
       const sizeData: number = parseInt(size as string, 10);
 
       const { limit, offset } = getPagination(pageData, sizeData);
 
-      const whereCondition = type ? { where: { type: type as string } } : {};
+      let searchConditions: Array<{ [key: string]: any }> = [];
+      if (s) {
+        searchConditions = [
+        { title: ILike(`%${s}%`) }, 
+        { sub_title: ILike(`%${s}%`) }, 
+        { description: Raw((alias) => `CAST(${alias} AS TEXT) ILIKE '%${s}%'`) }];
+      }
+
+      let whereCondition: any = {};
+
+      if (type) {
+        whereCondition.portfolio_type = { id: type as string };
+      }
+
+      let whereQuery;
+      if (searchConditions.length > 0) {
+        whereQuery = searchConditions.map((condition) => ({
+          ...whereCondition,
+          ...condition,
+        }));
+      } else {
+        whereQuery = whereCondition;
+      }
 
       const [data, totalItems] = await this.portfolioRepo.findAndCount({
-        ...whereCondition,
-        select: ["id", "title", "type", "sub_title", "img_url", "live_url", "description"],
+        where: whereQuery,
+        select: ["id", "title", "sub_title", "img_url", "live_url", "description", "createdAt"],
         skip: offset,
         take: limit,
       });

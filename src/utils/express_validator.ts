@@ -53,6 +53,32 @@ const updateVisionExpertiesValidation = [
   },
 ];
 
+
+const addWhoWeAreValidation = [
+  check("title").notEmpty().withMessage("Title is required"),
+  check("description").notEmpty().withMessage("Description is required").isArray().withMessage("Description must be an array!"),
+  check("who_we_are_img_url_1").notEmpty().withMessage("who_we_are_img_url_1 is required"),
+  check("who_we_are_img_url_2").notEmpty().withMessage("who_we_are_img_url_1 is required"),
+  check("total_experience").notEmpty().withMessage("total_experience is required"),
+  check("talented_it_professionals").notEmpty().withMessage("talented_it_professionals is required"),
+  check("successfull_projects").notEmpty().withMessage("successfull_projects is required"),
+  check("served_country").notEmpty().withMessage("served_country is required"),
+
+  (req: Request, res: Response, next: NextFunction) => {
+    validationHandler(req, res, next);
+  },
+];
+
+const updateWhoWeAreValidation = [
+  check("description").optional().isArray().withMessage("Description must be an array!"),
+
+  (req: Request, res: Response, next: NextFunction) => {
+    validationHandler(req, res, next);
+  },
+];
+
+
+
 const addCoreServiceValidation = [
   check("service_type").notEmpty().withMessage("service type is required"),
   check("img_url").notEmpty().withMessage("img url is required"),
@@ -90,7 +116,7 @@ const addTechExpertiesValidation = [
 ];
 
 const addPortfolioValidation = [
-  check("type").notEmpty().withMessage("Type is required"),
+  check("portfolio_type_id").notEmpty().withMessage("Portfolio type is required"),
   check("title").notEmpty().withMessage("Title is required"),
   check("sub_title").notEmpty().withMessage("Sub title is required"),
   check("img_url").notEmpty().withMessage("img url is required"),
@@ -109,6 +135,14 @@ const updatePortfolioValidation = [
   },
 ];
 
+const addPortfolioTypeValidation = [
+  check("type_name").notEmpty().withMessage("Type name is required"),
+
+  (req: Request, res: Response, next: NextFunction) => {
+    validationHandler(req, res, next);
+  },
+];
+
 const addTrustedClientsValidation = [
   check("client_name").notEmpty().withMessage("Client name is required"),
   check("his_profession").notEmpty().withMessage("Profession is required"),
@@ -120,6 +154,25 @@ const addTrustedClientsValidation = [
 ];
 
 const updateTrustedClientsValidation = [
+  check("description").optional().isArray().withMessage("Description is must in array!"),
+
+  (req: Request, res: Response, next: NextFunction) => {
+    validationHandler(req, res, next);
+  },
+];
+
+const addServicesClientsValidation = [
+  check("client_name").notEmpty().withMessage("Client name is required"),
+  check("his_profession").notEmpty().withMessage("Profession is required"),
+  check("rating").notEmpty().withMessage("Rating is required"),
+  check("description").notEmpty().withMessage("Description is required").isArray().withMessage("Description is must in array!"),
+
+  (req: Request, res: Response, next: NextFunction) => {
+    validationHandler(req, res, next);
+  },
+];
+
+const updateServicesClientsValidation = [
   check("description").optional().isArray().withMessage("Description is must in array!"),
 
   (req: Request, res: Response, next: NextFunction) => {
@@ -440,6 +493,13 @@ const emailValidation = [
   },
 ];
 
+const changeStatusValidation = [
+  check("status").notEmpty().withMessage("Status is required").isBoolean().withMessage("Status must be a boolean"),
+  (req: Request, res: Response, next: NextFunction) => {
+    validationHandler(req, res, next);
+  },
+];
+
 const addUserValidation = [
   check("first_name").notEmpty().withMessage("First name is required"),
   check("last_name").notEmpty().withMessage("Last name is required"),
@@ -460,4 +520,4 @@ const imgValidation = [
   },
 ];
 
-export { addBannerValidation, addVisionExpertiesValidation, updateVisionExpertiesValidation, addCoreServiceValidation, addSubServiceValidation, updateSubServiceValidation, addTechExpertiesValidation, addPortfolioValidation, updatePortfolioValidation, addTrustedClientsValidation, updateTrustedClientsValidation, addblogValidation, updateblogValidation, addQuestionAnsValidation, addAboutUsValidation, updateAboutUsValidation, addCertificationValidation, updateHowWeWorkValidation, updateCertificationValidation, addHowWeWorkValidation, addEmployeeDetailsValidation, updateEmployeeDetailsValidation, addprovidedServiceValidation, updateprovidedServiceValidation, addfeaturedServicesValidation, updatefeaturedServicesValidation, addOurContactDetailsValidation, updateOurContactDetailsValidation, addMarketingValidation, addContactUsValidation, addPolicyAndTermsValidation, updatePolicyAndTermsValidation, policyAndTermsQueryValidation, portfolioQueryValidation, pageAndSizeQueryValidation, updateBannerValidation, loginValidation, imgValidation, emailValidation, addUserValidation };
+export { addBannerValidation, addVisionExpertiesValidation, updateVisionExpertiesValidation,addWhoWeAreValidation,updateWhoWeAreValidation, addCoreServiceValidation, addSubServiceValidation, updateSubServiceValidation, addTechExpertiesValidation, addPortfolioValidation, updatePortfolioValidation, addPortfolioTypeValidation, addTrustedClientsValidation, updateTrustedClientsValidation, addServicesClientsValidation, updateServicesClientsValidation, addblogValidation, updateblogValidation, addQuestionAnsValidation, addAboutUsValidation, updateAboutUsValidation, addCertificationValidation, updateHowWeWorkValidation, updateCertificationValidation, addHowWeWorkValidation, addEmployeeDetailsValidation, updateEmployeeDetailsValidation, addprovidedServiceValidation, updateprovidedServiceValidation, addfeaturedServicesValidation, updatefeaturedServicesValidation, addOurContactDetailsValidation, updateOurContactDetailsValidation, addMarketingValidation, addContactUsValidation, addPolicyAndTermsValidation, updatePolicyAndTermsValidation, policyAndTermsQueryValidation, portfolioQueryValidation, pageAndSizeQueryValidation, updateBannerValidation, loginValidation, imgValidation, emailValidation, addUserValidation, changeStatusValidation };

@@ -117,6 +117,10 @@ import logger from "../utils/winston";
 import DB from "../config/variables/database.json";
 import path from "path";
 import fs from "fs";
+import { Permission } from "../entities/permission.entity";
+import { ServiceClients } from "../entities/service_clients.entity";
+import { PortfolioType } from "../entities/portfolio_type.entity";
+import { WhoWeAre } from "../entities/who_we_are.entity";
 
 const databaseConfigurations = DB;
 
@@ -136,34 +140,7 @@ export const AppDataSource = new DataSource({
   database: database,
   synchronize: true,
   logging: false,
-  ssl: {
-    rejectUnauthorized: true,
-    ca: fs.readFileSync(caPath),
-  },
-  entities: [
-    Banner,
-    User,
-    VisionExperties,
-    CoreServices,
-    SubServices,
-    TechnologicalExperties,
-    Portfolio,
-    TrustedClients,
-    Blog,
-    QuestionAns,
-    AboutUs,
-    CertificationDetails,
-    HowWeWork,
-    EmployeeDetails,
-    ProvidedService,
-    FeaturedServices,
-    OurContactDetails,
-    Marketing,
-    ContactUs,
-    PolicyAndTerms,
-    ChatBoat,
-    Token,
-  ],
+  entities: [Banner, User, VisionExperties, CoreServices, SubServices, TechnologicalExperties, Portfolio, TrustedClients, Blog, QuestionAns, AboutUs, CertificationDetails, HowWeWork, EmployeeDetails, ProvidedService, FeaturedServices, OurContactDetails, Marketing, ContactUs, PolicyAndTerms, ChatBoat, Token, Permission, ServiceClients, PortfolioType, WhoWeAre],
 });
 
 (async () => {

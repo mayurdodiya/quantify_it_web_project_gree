@@ -1,9 +1,8 @@
-import { type } from "os";
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToOne, JoinColumn } from "typeorm";
-import { PortfolioType } from "./portfolio_type.entity";
+import { Status } from "../utils/enum";
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from "typeorm";
 
-@Entity("portfolio")
-export class Portfolio {
+@Entity("service_clients")
+export class ServiceClients {
   toObject() {
     throw new Error("Method not implemented.");
   }
@@ -11,19 +10,22 @@ export class Portfolio {
   id: string;
 
   @Column({ nullable: false })
-  title: string;
+  client_name: string;
 
-  @Column({ nullable: false })
-  sub_title: string;
+  @Column({ default: null })
+  his_profession: string;
 
   @Column({ default: null })
   img_url: string;
 
-  @Column({ default: null })
-  live_url: string;
-
   @Column({ type: "jsonb", default: null })
   description: string;
+
+  @Column({ default: null })
+  rating: string;
+
+  @Column({ default: Status.ACTIVE })
+  status: Status;
 
   @CreateDateColumn({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP" })
   createdAt: Date;
@@ -33,9 +35,4 @@ export class Portfolio {
 
   @DeleteDateColumn({ default: null, type: "timestamptz" })
   deletedAt: Date;
-
-  //relation
-  @ManyToOne(() => PortfolioType, (portfolio_type) => portfolio_type.portfolio)
-  @JoinColumn({ name: "portfolio_type_id" })
-  portfolio_type: PortfolioType;
 }

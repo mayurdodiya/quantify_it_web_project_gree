@@ -99,20 +99,12 @@ export class AboutUsService {
 
       const aboutUsData = new AboutUs();
 
-      aboutUsData.title = title;
-      aboutUsData.description = description;
-      aboutUsData.who_we_are_img_url_1 = who_we_are_img_url_1;
-      aboutUsData.who_we_are_img_url_2 = who_we_are_img_url_2;
       aboutUsData.our_vision = our_vision;
       aboutUsData.our_mission = our_mission;
       aboutUsData.vision_mission_img_url = vision_mission_img_url;
       aboutUsData.works_about_title = works_about_title;
       aboutUsData.works_about_description = works_about_description;
       aboutUsData.works_about_img_url = works_about_img_url;
-      aboutUsData.total_experience = total_experience;
-      aboutUsData.talented_it_professionals = talented_it_professionals;
-      aboutUsData.successfull_projects = successfull_projects;
-      aboutUsData.served_country = served_country;
 
       await this.aboutUsRepo
         .save(aboutUsData)

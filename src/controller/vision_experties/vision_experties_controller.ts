@@ -1,5 +1,5 @@
 import { VisionExperties } from "../../entities/vision_experties.entity";
-import {  Not, Repository } from "typeorm";
+import { Not, Repository } from "typeorm";
 import { AppDataSource } from "../../config/database.config";
 import { RoutesHandler } from "../../utils/error_handler";
 import { ResponseCodes } from "../../utils/response-codes";
@@ -45,20 +45,20 @@ export class VisionExpertiesController {
   public async updateVisionExperties(req: Request, res: Response) {
     try {
       const { title, description, img_url } = req.body;
-
       const dataId = req.params.id;
-      const getData = await this.visionExpertiesRepo.findOne({
-        where: { id: dataId },
-      });
+
+      const getData = await this.visionExpertiesRepo.findOne({ where: { id: dataId } });
       if (!getData) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This experties"), ResponseCodes.notFound);
       }
-      const isExist = await this.visionExpertiesRepo.findOne({
-        where: { title: title, id: Not(dataId) },
-      });
-      if (isExist) {
-        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This experties"), ResponseCodes.alreadyExist);
+
+      if (req.body.title) {
+        const isExist = await this.visionExpertiesRepo.findOne({ where: { title: title, id: Not(dataId) } });
+        if (isExist) {
+          return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This experties"), ResponseCodes.alreadyExist);
+        }
       }
+
       getData.title = title || getData.title;
       getData.description = description || getData.description;
       getData.img_url = img_url || getData.img_url;
@@ -67,6 +67,7 @@ export class VisionExpertiesController {
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("Experties"), ResponseCodes.saveError);
       }
+
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Experties"), ResponseCodes.success, undefined);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);

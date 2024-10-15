@@ -18,8 +18,11 @@ export class SubServices {
   @Column({ nullable: true })
   description_title: string;
 
-  @Column({ type: "jsonb", nullable: true })
-  description: string;
+  @Column({ nullable: true })
+  description_sub_title: string;
+
+  @Column({ type: "jsonb", default: [] })
+  description_services: string[];
 
   @Column({ default: null })
   img_logo_url: string;
@@ -27,11 +30,7 @@ export class SubServices {
   @CreateDateColumn({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP" })
   createdAt: Date;
 
-  @UpdateDateColumn({
-    type: "timestamptz",
-    default: () => "CURRENT_TIMESTAMP",
-    onUpdate: "CURRENT_TIMESTAMP",
-  })
+  @UpdateDateColumn({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP", onUpdate: "CURRENT_TIMESTAMP" })
   updatedAt: Date;
 
   @DeleteDateColumn({ default: null, type: "timestamptz" })

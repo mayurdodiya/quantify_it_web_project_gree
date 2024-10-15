@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { User } from "../../entities/user.entity";
-import { Repository } from "typeorm";
+import { FindOperator, ILike, Repository } from "typeorm";
 import { AppDataSource } from "../../config/database.config";
 import { RoutesHandler } from "../../utils/error_handler";
 import { message } from "../../utils/messages";
@@ -12,16 +12,19 @@ import { FileService } from "../../services/file_upload";
 import { networkUtils } from "../../utils/ip_address";
 import { EmailService } from "../../services/nodemailer";
 import logger from "../../utils/winston";
+import { getPagination, getPagingData } from "../../services/paginate";
+import { Permission } from "../../entities/permission.entity";
 
 const emailService = new EmailService();
-
 const fileService = new FileService();
 
 export class AdminController {
   private userRepo: Repository<User>;
+  private permissionRepo: Repository<Permission>;
 
   constructor() {
     this.userRepo = AppDataSource.getRepository(User);
+    this.permissionRepo = AppDataSource.getRepository(Permission);
   }
 
   // login admin
@@ -68,6 +71,7 @@ export class AdminController {
     }
   }
 
+  // forgot password
   public async forgotPassword(req: Request, res: Response) {
     try {
       const { email, baseurl } = req.body;
@@ -106,18 +110,19 @@ export class AdminController {
     }
   }
 
+  // set password
   public async setpassword(req: Request, res: Response) {
     try {
       // eslint-disable-next-line no-unsafe-optional-chaining
-      const { token, password, confirmPassword } = req?.body;
+      const { token, password, confirm_password } = req?.body;
 
-      if (!token || !password || !confirmPassword) {
+      if (!token || !password || !confirm_password) {
         return res.status(ResponseCodes.inputError).json({
           message: "token, password and confirm password are required",
         });
       }
 
-      if (password !== confirmPassword) {
+      if (password !== confirm_password) {
         return res.status(ResponseCodes.inputError).json({ message: "Password and confirm password does not match" });
       }
 
@@ -162,24 +167,176 @@ export class AdminController {
       if (isExist) {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("Email"), ResponseCodes.insertError);
       }
-      
+
+      const queryRunner = AppDataSource.createQueryRunner();
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+
+      const hashedPassword = await bcryptpassword(password);
+
       const user = new User();
       user.first_name = first_name;
       user.last_name = last_name;
       user.email = email;
       user.phone_no = phone_no;
-      user.password = password;
+      user.password = hashedPassword;
       user.location = location;
       user.role = Role.SUBADMIN;
       user.status = Status.ACTIVE;
 
-      const data = await this.userRepo.save(user);
-      if (!data) {
+      const userPermission = new Permission();
+      userPermission.user = user;
+
+      try {
+        await queryRunner.manager.save(user);
+        await queryRunner.manager.save(userPermission);
+
+        await queryRunner.commitTransaction();
+        // const mailData = {
+        //   email: email,
+        //   subject: "Login Id Password",
+        //   text: "Login Id Password",
+        //   body: `
+        // <p>Dear ${first_name + last_name},</p>
+        // <br>
+        // <p>Your profile has been added successfully by admin, your password is ${password}, do not share to anyone!</p>
+
+        // <p>Best regards, <br>Going Green</p>
+        // `,
+        // };
+        // var xyz = await emailService.sendEmail(mailData.email, mailData.subject, mailData.text, mailData.body);
+
+        return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Sub admin"), ResponseCodes.createSuccess, undefined);
+      } catch (err) {
+        await queryRunner.rollbackTransaction();
         return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("Sub admin"), ResponseCodes.insertError);
       }
-      return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Sub admin"), ResponseCodes.createSuccess, undefined);
     } catch (error) {
       console.log(error);
+      return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
+    }
+  }
+
+  // get data
+  public async getSubAdmin(req: Request, res: Response) {
+    try {
+      const dataId = req.params.id as string;
+      const data = await this.userRepo.findOne({
+        where: { id: dataId, role: Role.SUBADMIN },
+        select: ["id", "first_name", "last_name", "email", "phone_no", "location", "status", "role", "createdAt"],
+      });
+      if (!data) {
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This sub admin"), ResponseCodes.notFound);
+      }
+      return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Sub admin"), ResponseCodes.success, data);
+    } catch (error) {
+      return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
+    }
+  }
+
+  // get all subadmin
+  public async getAllSubAdmin(req: Request, res: Response) {
+    try {
+      const { page = 1, size = 10, s } = req.query;
+
+      const { limit, offset } = getPagination(parseInt(page as string, 10), parseInt(size as string, 10));
+
+      const Dataobj: [{ first_name?: FindOperator<string>; role: Role.SUBADMIN }, { last_name?: FindOperator<string>; role: Role.SUBADMIN }, { email?: FindOperator<string>; role: Role.SUBADMIN }, { phone_no?: FindOperator<string>; role: Role.SUBADMIN }] = [{ role: Role.SUBADMIN }, { role: Role.SUBADMIN }, { role: Role.SUBADMIN }, { role: Role.SUBADMIN }];
+      if (s) {
+        Dataobj.push({ first_name: ILike(`%${s}%`), role: Role.SUBADMIN });
+        Dataobj.push({ last_name: ILike(`%${s}%`), role: Role.SUBADMIN });
+        Dataobj.push({ email: ILike(`%${s}%`), role: Role.SUBADMIN });
+        Dataobj.push({ phone_no: ILike(`%${s}%`), role: Role.SUBADMIN });
+      }
+
+      const [data, totalItems] = await this.userRepo.findAndCount({
+        where: Dataobj,
+        select: ["id", "first_name", "last_name", "email", "phone_no", "location", "status", "role", "createdAt"],
+        skip: offset,
+        take: limit,
+      });
+
+      const response = getPagingData({ count: totalItems, rows: data }, parseInt(page as string, 10), limit);
+
+      return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Sub admin"), ResponseCodes.success, response);
+    } catch (error) {
+      return RoutesHandler.sendError(req, res, false, error.message || "Internal server error", ResponseCodes.serverError);
+    }
+  }
+
+  // remove subadmin by id
+  public async removeSubAdmin(req: Request, res: Response) {
+    try {
+      const dataId = req.params.id as string;
+      const getData = await this.userRepo.findOne({ where: { id: dataId, role: Role.SUBADMIN } });
+      if (!getData) {
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This sub admin"), ResponseCodes.notFound);
+      }
+
+      const queryRunner = AppDataSource.createQueryRunner();
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+      try {
+        await queryRunner.manager.softDelete(User, { id: dataId });
+        await queryRunner.manager.softDelete(Permission, { user: { id: dataId } });
+
+        await queryRunner.commitTransaction();
+        return RoutesHandler.sendSuccess(req, res, true, message.DELETE_SUCCESS("Sub admin"), ResponseCodes.success, undefined);
+      } catch (err) {
+        await queryRunner.rollbackTransaction();
+        return RoutesHandler.sendError(req, res, false, message.DELETE_FAILED("sub admin"), ResponseCodes.saveError);
+      }
+    } catch (error) {
+      return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
+    }
+  }
+
+  // active inactive sub admin status
+  public async changeSubAdminPermission(req: Request, res: Response) {
+    try {
+      const dataId = req.params.id as string;
+
+      const isExist = await this.userRepo.findOne({ where: { id: dataId, role: Role.SUBADMIN } });
+      if (!isExist) {
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This sub admin"), ResponseCodes.notFound);
+      }
+      var permisionData = await this.permissionRepo.findOne({ where: { user: { id: dataId } } });
+
+      if (permisionData) {
+        Object.assign(permisionData, req.body);
+
+        const data = await this.permissionRepo.save(permisionData);
+        if (!data) {
+          return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("Sub admin status"), ResponseCodes.saveError);
+        }
+
+        return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Sub admin status"), ResponseCodes.success, undefined);
+      } else {
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This sub admin permission data"), ResponseCodes.notFound);
+      }
+    } catch (error) {
+      return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
+    }
+  }
+
+  // active inactive sub admin status
+  public async changeSubAdminStatus(req: Request, res: Response) {
+    try {
+      const dataId = req.params.id as string;
+
+      const isExist = await this.userRepo.findOne({ where: { id: dataId, role: Role.SUBADMIN } });
+      if (!isExist) {
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This sub admin"), ResponseCodes.notFound);
+      }
+
+      isExist.status = req.body.status;
+      const data = await this.userRepo.save(isExist);
+      if (!data) {
+        return RoutesHandler.sendError(req, res, false, message.UPDATE_FAILED("Sub admin status"), ResponseCodes.saveError);
+      }
+
+      return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Sub admin status"), ResponseCodes.success, undefined);
+    } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }

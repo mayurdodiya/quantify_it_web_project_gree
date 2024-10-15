@@ -5,7 +5,7 @@ import { Server } from "socket.io";
 import { v4 as uuidv4 } from "uuid";
 import logger from "./utils/winston";
 import method from "./utils/chatboat_question_ans";
-import { PORT } from "./config/variables/common.json";
+import { PORT, ADMIN_CHATBOAT_ID } from "./config/variables/common.json";
 import { ChatBoatController } from "./controller/chat_boat/chat_boat_controller";
 
 const server = http.createServer(app);
@@ -13,7 +13,7 @@ const io = new Server(server);
 
 io.on("connection", (socketIo) => {
   let userId = "";
-  const adminId = process.env.ADMIN_CHATBOAT_ID;
+  const adminId = ADMIN_CHATBOAT_ID;
   let chatId = "";
   logger.info("user connected");
 

@@ -1,5 +1,6 @@
 import { Role, Status } from "../utils/enum";
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, OneToOne } from "typeorm";
+import { Permission } from "./permission.entity";
 
 @Entity("user")
 export class User {
@@ -41,4 +42,8 @@ export class User {
 
   @DeleteDateColumn({ default: null, type: "timestamptz" })
   deletedAt: Date;
+
+  // relation
+  @OneToOne(() => Permission, (permission) => permission.user)
+  permission: Permission;
 }

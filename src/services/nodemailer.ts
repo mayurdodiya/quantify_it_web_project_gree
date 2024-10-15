@@ -2,6 +2,7 @@ import nodemailer from "nodemailer";
 import smtpTransport from "nodemailer-smtp-transport";
 import logger from "../utils/winston";
 import nodemailers from "../config/variables/nodemailer.json";
+import { MAIL_USER } from "../config/variables/nodemailer.json";
 
 const mailConfigurations = nodemailers;
 export class EmailService {
@@ -22,7 +23,7 @@ export class EmailService {
           clientSecret: mailConfigurations.MAIL_CLIENT_SECRET,
           refreshToken: mailConfigurations.MAIL_REFRESH_TOKEN,
         },
-      })
+      }),
     );
   }
 
@@ -30,11 +31,11 @@ export class EmailService {
     to: string,
     subject: string,
     text: string,
-    html: string
+    html: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any> {
     const mailConfigurations = {
-      from: process.env.MAIL_USER,
+      from: MAIL_USER,
       to,
       subject,
       text,

@@ -4,19 +4,19 @@ const message = {
   REQUIRED: (str: string) => `${str} required!`,
 
   GET_DATA: (str: string) => `${str} data get successfully!`,
+  NOT_MATCH: (str: string) => `${str} not match!`,
 
   CREATE_SUCCESS: (str: string) => `${str} added successfully!`,
   CREATE_FAIL: (str: string) => `Failed to add ${str} Please try again!`,
+  ADD_ONCE: (str: string) => `${str} can only be added once. You cannot add it multiple times!`,
+  SUBMIT_FORM: `Your form has been successfully submitted. Thank you for your submission!`,
+  NOT_GENERATE: (str: string) => `${str} not generated!`,
 
   UPDATED_SUCCESSFULLY: (str: string) => `${str} has been updated successfully!`,
   UPDATE_FAILED: (str: string) => `Failed to update ${str}. Please try again!`,
 
   DELETE_SUCCESS: (str: string) => `${str} data deleted successfully!`,
-  ADD_ONCE: (str: string) => `${str} can only be added once. You cannot add it multiple times!`,
-  SUBMIT_FORM: `Your form has been successfully submitted. Thank you for your submission!`,
-
-  NOT_MATCH: (str: string) => `${str} not match!`,
-  NOT_GENERATE: (str: string) => `${str} not generated!`,
+  DELETE_FAILED: (str: string) => `Failed to delete ${str} data. Please try again!`,
 
   LOGIN_SUCCESS: `Welcome back, You have successfully logged in!`,
 

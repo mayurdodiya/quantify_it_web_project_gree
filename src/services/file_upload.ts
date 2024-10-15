@@ -2,9 +2,11 @@ import fs from "fs";
 import multer from "multer";
 import B2 from "backblaze-b2";
 import logger from "../utils/winston";
+import bucket from "../config/variables/bucket.json";
+const bucketConfigurations = bucket;
 
-const applicationKeyId: string = process.env.BACKBLAZE_APPLICATION_KEY_ID || "your_default_key_id";
-const applicationKey: string = process.env.BACKBLAZE_APPLICATION_KEY || "your_default_key";
+const applicationKeyId: string = bucketConfigurations.BACKBLAZE_APPLICATION_KEY_ID || "your_default_key_id";
+const applicationKey: string = bucketConfigurations.BACKBLAZE_APPLICATION_KEY || "your_default_key";
 
 const b2 = new B2({
   applicationKeyId,
@@ -76,7 +78,7 @@ export class FileService {
     await b2.authorize();
     try {
       const data = await b2.getUploadUrl({
-        bucketId: process.env.BLACKBLAZE_BUCKETID,
+        bucketId: bucketConfigurations.BLACKBLAZE_BUCKETID,
       });
       const fileBuffer = await this.streamToBuffer(fs.createReadStream(file.path));
       const filename = fileName || file.originalname;
@@ -90,7 +92,7 @@ export class FileService {
       });
 
       return {
-        fileName: `${process.env.BACKBLAZE_ACCESS_URL}${response.data.fileName}`,
+        fileName: `${bucketConfigurations.BACKBLAZE_ACCESS_URL}${response.data.fileName}`,
         fileId: response.data.fileId,
       };
     } catch (error) {
@@ -108,7 +110,7 @@ export class FileService {
     await b2.authorize();
     try {
       const fileList = await b2.listFileNames({
-        bucketId: process.env.BLACKBLAZE_BUCKETID as string,
+        bucketId: bucketConfigurations.BLACKBLAZE_BUCKETID as string,
         prefix: folderName,
         startFileName: "",
         maxFileCount: 1000,
@@ -123,7 +125,7 @@ export class FileService {
       }
 
       const data = await b2.getUploadUrl({
-        bucketId: process.env.BLACKBLAZE_BUCKETID,
+        bucketId: bucketConfigurations.BLACKBLAZE_BUCKETID,
       });
       const [base64Header, base64Data] = file.split(";base64,");
       const extension = base64Header.split("/")[1];
@@ -139,7 +141,7 @@ export class FileService {
       });
 
       return {
-        fileName: `${process.env.BACKBLAZE_ACCESS_URL}${response.data.fileName}`,
+        fileName: `${bucketConfigurations.BACKBLAZE_ACCESS_URL}${response.data.fileName}`,
         fileId: response.data.fileId,
       };
     } catch (error) {

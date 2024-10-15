@@ -7,6 +7,7 @@ import { ResponseCodes } from "../../utils/response-codes";
 import { AppDataSource } from "../../config/database.config";
 import { getPagination, getPagingData } from "../../services/paginate";
 import logger from "../../utils/winston";
+import { ADMIN_CHATBOAT_ID } from "../../config/variables/common.json";
 
 export class ChatBoatController {
   chatBoatRepo: Repository<ChatBoat>;
@@ -112,7 +113,7 @@ export class ChatBoatController {
       const chatBoatMessage = new ChatBoat();
 
       chatBoatMessage.chat_id = chat_id;
-      chatBoatMessage.sender_id = process.env.ADMIN_CHATBOAT_ID;
+      chatBoatMessage.sender_id = ADMIN_CHATBOAT_ID;
       chatBoatMessage.receiver_id = user_id;
       chatBoatMessage.message = msg;
 
