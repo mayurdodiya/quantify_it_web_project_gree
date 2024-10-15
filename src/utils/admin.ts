@@ -78,12 +78,7 @@ export class AboutUsService {
         return;
       }
 
-      const title = "Your Trusted Partner for Innovative IT Solutions and Business Success";
-      const description = [
-        "We are more than just service providers; we are offering everything from IT strategy and consulting to ustomized oftware development. Whether you're a new startup or a leading corporation. Quantify IT Agency is here to help you navigate he complexities of technology and unlock new opportunities for growth.",
-      ];
-      const who_we_are_img_url_1 = "https=//picsum.photos/200/300";
-      const who_we_are_img_url_2 = "https=//picsum.photos/200";
+      
       const our_vision = ["Our vision is to help our clients succeed by offering dependable and creative tech solutions. We strive to be he go-to partner that helps businesses grow and excel in today’s fast-changing digital world."];
       const our_mission = ["Our mission is to deliver dependable and innovative technology solutions that help our clients achieve their goals. We are dedicated to support start-up businesses bocome an established enterprise."];
       const vision_mission_img_url = "https=//picsum.photos/200";
@@ -92,10 +87,6 @@ export class AboutUsService {
         "At Quantify IT, we take pride in our proven track record of success, having earned the trust of over 1,000+ satisfied customers worldwide. Our commitment to delivering exceptional solutions has set us apart in the industry. Each project is a testament to our dedication to quality and our passion for innovation. Our clients’ happiness and success are the ultimate measures of our performance!",
       ];
       const works_about_img_url = "https=//picsum.photos/200";
-      const total_experience = "10";
-      const talented_it_professionals = "1100";
-      const successfull_projects = "1200";
-      const served_country = "32";
 
       const aboutUsData = new AboutUs();
 

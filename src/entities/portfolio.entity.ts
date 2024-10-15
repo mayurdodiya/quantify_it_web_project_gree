@@ -1,4 +1,3 @@
-import { type } from "os";
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToOne, JoinColumn } from "typeorm";
 import { PortfolioType } from "./portfolio_type.entity";
 

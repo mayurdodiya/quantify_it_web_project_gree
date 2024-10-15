@@ -208,6 +208,7 @@ export class AdminController {
 
         return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Sub admin"), ResponseCodes.createSuccess, undefined);
       } catch (err) {
+        logger.error(`addSubAdmin ${err}`);
         await queryRunner.rollbackTransaction();
         return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("Sub admin"), ResponseCodes.insertError);
       }
@@ -283,6 +284,7 @@ export class AdminController {
         await queryRunner.commitTransaction();
         return RoutesHandler.sendSuccess(req, res, true, message.DELETE_SUCCESS("Sub admin"), ResponseCodes.success, undefined);
       } catch (err) {
+        logger.error(`removeSubAdmin ${err}`);
         await queryRunner.rollbackTransaction();
         return RoutesHandler.sendError(req, res, false, message.DELETE_FAILED("sub admin"), ResponseCodes.saveError);
       }
@@ -300,7 +302,7 @@ export class AdminController {
       if (!isExist) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This sub admin"), ResponseCodes.notFound);
       }
-      var permisionData = await this.permissionRepo.findOne({ where: { user: { id: dataId } } });
+      const permisionData = await this.permissionRepo.findOne({ where: { user: { id: dataId } } });
 
       if (permisionData) {
         Object.assign(permisionData, req.body);

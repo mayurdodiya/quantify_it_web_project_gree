@@ -1,4 +1,4 @@
-import { FindOperator, ILike, Not, Repository } from "typeorm";
+import { ILike, Not, Repository } from "typeorm";
 import { AppDataSource } from "../../config/database.config";
 import { RoutesHandler } from "../../utils/error_handler";
 import { ResponseCodes } from "../../utils/response-codes";
@@ -91,7 +91,8 @@ export class PortfolioTypeController {
       const { page = 1, size = 10, s = "" } = req.query;
       const pageData: number = parseInt(page as string, 10);
       const sizeData: number = parseInt(size as string, 10);
-      var Dataobj: [{}] = [{}];
+
+      const Dataobj: object[] = [{}];
       if (s) {
         Dataobj.push({ type_name: ILike(`%${s}%`) });
       }

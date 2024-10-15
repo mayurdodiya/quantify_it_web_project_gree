@@ -115,8 +115,7 @@ import { Token } from "../entities/token.entity";
 import { DataCleanupScheduler } from "../utils/crone";
 import logger from "../utils/winston";
 import DB from "../config/variables/database.json";
-import path from "path";
-import fs from "fs";
+// import path from "path";
 import { Permission } from "../entities/permission.entity";
 import { ServiceClients } from "../entities/service_clients.entity";
 import { PortfolioType } from "../entities/portfolio_type.entity";
@@ -129,7 +128,7 @@ const database_port = parseInt(databaseConfigurations.DATABASE_PORT);
 const user_name = databaseConfigurations.USER_NAME;
 const password = databaseConfigurations.PASSWORD;
 const database = databaseConfigurations.DATABASE;
-const caPath = path.join(__dirname, "./keys/ca.pem");
+// const caPath = path.join(__dirname, "./keys/ca.pem");
 
 export const AppDataSource = new DataSource({
   type: "postgres",

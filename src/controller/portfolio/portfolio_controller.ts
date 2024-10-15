@@ -1,4 +1,4 @@
-import { FindOperator, ILike, Not, Raw, Repository } from "typeorm";
+import { ILike, Not, Raw, Repository } from "typeorm";
 import { AppDataSource } from "../../config/database.config";
 import { RoutesHandler } from "../../utils/error_handler";
 import { ResponseCodes } from "../../utils/response-codes";
@@ -101,15 +101,17 @@ export class PortfolioController {
 
       const { limit, offset } = getPagination(pageData, sizeData);
 
-      let searchConditions: Array<{ [key: string]: any }> = [];
+      let searchConditions: Array<{ [key: string]: object }> = [];
       if (s) {
-        searchConditions = [
-        { title: ILike(`%${s}%`) }, 
-        { sub_title: ILike(`%${s}%`) }, 
-        { description: Raw((alias) => `CAST(${alias} AS TEXT) ILIKE '%${s}%'`) }];
+        searchConditions = [{ title: ILike(`%${s}%`) }, { sub_title: ILike(`%${s}%`) }, { description: Raw((alias) => `CAST(${alias} AS TEXT) ILIKE '%${s}%'`) }];
       }
 
-      let whereCondition: any = {};
+      interface WhereCondition {
+        portfolio_type : {
+          id:string
+        }
+      }
+      const whereCondition: Partial<WhereCondition> = {};
 
       if (type) {
         whereCondition.portfolio_type = { id: type as string };
