@@ -111,7 +111,7 @@ export class AdminController {
   }
 
   // set password
-  public async setpassword(req: Request, res: Response) {
+  public async setPassword(req: Request, res: Response) {
     try {
       // eslint-disable-next-line no-unsafe-optional-chaining
       const { token, password, confirm_password } = req?.body;
@@ -338,6 +338,57 @@ export class AdminController {
       }
 
       return RoutesHandler.sendSuccess(req, res, true, message.UPDATED_SUCCESSFULLY("Sub admin status"), ResponseCodes.success, undefined);
+    } catch (error) {
+      return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
+    }
+  }
+
+  public async changePassword(req: Request, res: Response) {
+    try {
+      // eslint-disable-next-line no-unsafe-optional-chaining
+      const { userId, oldpassword, newPassword, confirmPassword } = req?.body;
+
+      if (!oldpassword || !newPassword || !confirmPassword) {
+        return res.status(ResponseCodes.inputError).json({
+          message: "token, password and confirm password are required",
+        });
+      }
+
+      if (newPassword !== confirmPassword) {
+        return res.status(ResponseCodes.inputError).json({ message: "Password and confirm password does not match" });
+      }
+
+      const getAdmin = await this.userRepo.findOne({
+        where: {
+          id: userId,
+          status: Status.ACTIVE,
+          role: Role.ADMIN,
+        },
+      });
+
+      if (!getAdmin) {
+        return RoutesHandler.sendError(req, res, false, message.NO_DATA("This user"), ResponseCodes.loginError);
+      }
+      const checkPass = await comparepassword(oldpassword, getAdmin.password);
+
+      if (!checkPass) {
+        return RoutesHandler.sendError(req, res, false, message.NOT_MATCH("Password"), ResponseCodes.loginError);
+      }
+
+      const hashedPassword = await bcryptpassword(newPassword);
+
+      getAdmin.password = hashedPassword;
+
+      await this.userRepo
+        .save(getAdmin)
+        .then(() => {
+          logger.info(message.CHANGE_PASSWORD_VALIDATION);
+        })
+        .catch((err) => {
+          logger.error("Error saving admin:", err);
+        });
+
+      return RoutesHandler.sendSuccess(req, res, true, message.CHANGE_PASSWORD_VALIDATION, ResponseCodes.success, {});
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
