@@ -88,6 +88,7 @@ export class WhoWeAreController {
       const data = await this.whoWeAreRepo.findOne({
         where: { id: dataId },
         select: ["id", "title", "description", "who_we_are_img_url_1", "who_we_are_img_url_2", "total_experience", "talented_it_professionals", "successfull_projects", "served_country", "createdAt"],
+        relations: ["certification_details"],
       });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This page"), ResponseCodes.notFound);
@@ -103,6 +104,7 @@ export class WhoWeAreController {
     try {
       const data = await this.whoWeAreRepo.find({
         select: ["id", "title", "description", "who_we_are_img_url_1", "who_we_are_img_url_2", "total_experience", "talented_it_professionals", "successfull_projects", "served_country", "createdAt"],
+        relations: ["certification_details"],
       });
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Page"), ResponseCodes.success, data);
     } catch (error) {

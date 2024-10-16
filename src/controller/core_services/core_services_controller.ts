@@ -23,9 +23,7 @@ export class CoreServicesController {
     try {
       const { img_url } = req.body;
       const service_type = req.body.service_type.toLocaleLowerCase();
-      const getData = await this.coreServicesRepo.findOne({
-        where: { service_type: service_type },
-      });
+      const getData = await this.coreServicesRepo.findOne({ where: { service_type: service_type } });
       if (getData) {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This core services"), ResponseCodes.alreadyExist);
       }
@@ -136,11 +134,8 @@ export class CoreServicesController {
       await queryRunner.connect();
       await queryRunner.startTransaction();
       try {
-        // execute some operations on this transaction:
         await queryRunner.manager.softDelete(CoreServices, { id: dataId });
-        await queryRunner.manager.softDelete(SubServices, {
-          core_service_id: dataId,
-        });
+        await queryRunner.manager.softDelete(SubServices, { core_service: { id: dataId } });
 
         await queryRunner.commitTransaction();
         return RoutesHandler.sendSuccess(req, res, true, message.DELETE_SUCCESS("Core services"), ResponseCodes.success, undefined);

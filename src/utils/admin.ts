@@ -78,14 +78,11 @@ export class AboutUsService {
         return;
       }
 
-      
       const our_vision = ["Our vision is to help our clients succeed by offering dependable and creative tech solutions. We strive to be he go-to partner that helps businesses grow and excel in today’s fast-changing digital world."];
       const our_mission = ["Our mission is to deliver dependable and innovative technology solutions that help our clients achieve their goals. We are dedicated to support start-up businesses bocome an established enterprise."];
       const vision_mission_img_url = "https=//picsum.photos/200";
       const works_about_title = "Trusted by 1,000+ HappyCustomers";
-      const works_about_description = [
-        "At Quantify IT, we take pride in our proven track record of success, having earned the trust of over 1,000+ satisfied customers worldwide. Our commitment to delivering exceptional solutions has set us apart in the industry. Each project is a testament to our dedication to quality and our passion for innovation. Our clients’ happiness and success are the ultimate measures of our performance!",
-      ];
+      const works_about_description = ["At Quantify IT, we take pride in our proven track record of success, having earned the trust of over 1,000+ satisfied customers worldwide. Our commitment to delivering exceptional solutions has set us apart in the industry. Each project is a testament to our dedication to quality and our passion for innovation. Our clients’ happiness and success are the ultimate measures of our performance!"];
       const works_about_img_url = "https=//picsum.photos/200";
 
       const aboutUsData = new AboutUs();

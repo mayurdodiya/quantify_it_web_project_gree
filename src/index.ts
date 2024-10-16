@@ -123,3 +123,13 @@ const initializeServer = () => {
 };
 
 initializeServer();
+
+// {
+//   "HOST": "aws-0-ap-south-1.pooler.supabase.com",
+//   "DATABASE_PORT": "6543",
+//   "USER_NAME": "postgres.vtzwwasnuycnxpgrpfuz",
+//   "PASSWORD": "Abc@123.com",
+//   "DATABASE": "postgres"
+// }
+
+  

@@ -9,8 +9,8 @@ export class SubServices {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column({ nullable: false })
-  core_service_id: string;
+  // @Column({ nullable: false })
+  // core_service_id: string;
 
   @Column({ nullable: false })
   sub_service_name: string;

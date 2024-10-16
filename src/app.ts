@@ -23,8 +23,6 @@ const setGlobalOriginHeader = (req: Request, res: Response, next: NextFunction) 
 
 app.use(setGlobalOriginHeader);
 
-
-
 app.get("/", (req: Request, res: Response) => {
   return res.sendFile(path.join(__dirname, "public", "index.html"));
 });

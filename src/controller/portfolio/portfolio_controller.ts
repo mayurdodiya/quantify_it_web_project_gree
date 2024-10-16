@@ -107,9 +107,9 @@ export class PortfolioController {
       }
 
       interface WhereCondition {
-        portfolio_type : {
-          id:string
-        }
+        portfolio_type: {
+          id: string;
+        };
       }
       const whereCondition: Partial<WhereCondition> = {};
 

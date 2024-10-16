@@ -18,7 +18,7 @@ export class CertificationDetailsController {
   // add data
   public addCertificationDetails = async (req: Request, res: Response) => {
     try {
-      const { sub_title, sub_description, logo_img_url } = req.body;
+      const { sub_title, sub_description, logo_img_url, who_we_are_id } = req.body;
       const getData = await this.certificationDetailsRepo.findOne({
         where: { sub_title: sub_title },
       });
@@ -26,13 +26,14 @@ export class CertificationDetailsController {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This certification details"), ResponseCodes.alreadyExist);
       }
 
-      const visionExp = new CertificationDetails();
+      const certiDetails = new CertificationDetails();
 
-      visionExp.sub_title = sub_title;
-      visionExp.sub_description = sub_description || null;
-      visionExp.logo_img_url = logo_img_url || null;
+      certiDetails.sub_title = sub_title;
+      certiDetails.sub_description = sub_description || null;
+      certiDetails.logo_img_url = logo_img_url || null;
+      certiDetails.who_we_are = who_we_are_id;
 
-      const data = await this.certificationDetailsRepo.save(visionExp);
+      const data = await this.certificationDetailsRepo.save(certiDetails);
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("Certification Details"), ResponseCodes.insertError);
       }

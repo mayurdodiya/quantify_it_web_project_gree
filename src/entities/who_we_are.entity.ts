@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, OneToMany } from "typeorm";
+import { CertificationDetails } from "./certification_details.entity";
 
 @Entity("who_we_are")
 export class WhoWeAre {
@@ -40,4 +41,8 @@ export class WhoWeAre {
 
   @DeleteDateColumn({ default: null, type: "timestamptz" })
   deletedAt: Date;
+
+  // relation
+  @OneToMany(()=>CertificationDetails, (certification_details)=>certification_details.who_we_are)
+  certification_details:CertificationDetails[]
 }

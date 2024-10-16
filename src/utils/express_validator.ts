@@ -53,7 +53,6 @@ const updateVisionExpertiesValidation = [
   },
 ];
 
-
 const addWhoWeAreValidation = [
   check("title").notEmpty().withMessage("Title is required"),
   check("description").notEmpty().withMessage("Description is required").isArray().withMessage("Description must be an array!"),
@@ -77,8 +76,6 @@ const updateWhoWeAreValidation = [
   },
 ];
 
-
-
 const addCoreServiceValidation = [
   check("service_type").notEmpty().withMessage("service type is required"),
   check("img_url").notEmpty().withMessage("img url is required"),
@@ -90,7 +87,7 @@ const addCoreServiceValidation = [
 
 const addSubServiceValidation = [
   check("core_service_id").notEmpty().withMessage("Core service type is required"),
-  check("sub_service_data").isArray().withMessage("sub service data must be provided as an array!"),
+  // check("sub_service_data").isArray().withMessage("sub service data must be provided as an array!"),
   check("description").optional().isArray().withMessage("Description must be an array!"),
 
   (req: Request, res: Response, next: NextFunction) => {
@@ -241,6 +238,7 @@ const updateAboutUsValidation = [
 ];
 
 const addCertificationValidation = [
+  check("who_we_are_id").notEmpty().withMessage("who_we_are_id is required"),
   check("sub_title").notEmpty().withMessage("Sub title is required"),
   check("sub_description").notEmpty().withMessage("Sub description is required").isArray().withMessage("Sub description must be an array!"),
   check("logo_img_url").notEmpty().withMessage("logo img url is required"),
@@ -520,4 +518,4 @@ const imgValidation = [
   },
 ];
 
-export { addBannerValidation, addVisionExpertiesValidation, updateVisionExpertiesValidation,addWhoWeAreValidation,updateWhoWeAreValidation, addCoreServiceValidation, addSubServiceValidation, updateSubServiceValidation, addTechExpertiesValidation, addPortfolioValidation, updatePortfolioValidation, addPortfolioTypeValidation, addTrustedClientsValidation, updateTrustedClientsValidation, addServicesClientsValidation, updateServicesClientsValidation, addblogValidation, updateblogValidation, addQuestionAnsValidation, addAboutUsValidation, updateAboutUsValidation, addCertificationValidation, updateHowWeWorkValidation, updateCertificationValidation, addHowWeWorkValidation, addEmployeeDetailsValidation, updateEmployeeDetailsValidation, addprovidedServiceValidation, updateprovidedServiceValidation, addfeaturedServicesValidation, updatefeaturedServicesValidation, addOurContactDetailsValidation, updateOurContactDetailsValidation, addMarketingValidation, addContactUsValidation, addPolicyAndTermsValidation, updatePolicyAndTermsValidation, policyAndTermsQueryValidation, portfolioQueryValidation, pageAndSizeQueryValidation, updateBannerValidation, loginValidation, imgValidation, emailValidation, addUserValidation, changeStatusValidation };
+export { addBannerValidation, addVisionExpertiesValidation, updateVisionExpertiesValidation, addWhoWeAreValidation, updateWhoWeAreValidation, addCoreServiceValidation, addSubServiceValidation, updateSubServiceValidation, addTechExpertiesValidation, addPortfolioValidation, updatePortfolioValidation, addPortfolioTypeValidation, addTrustedClientsValidation, updateTrustedClientsValidation, addServicesClientsValidation, updateServicesClientsValidation, addblogValidation, updateblogValidation, addQuestionAnsValidation, addAboutUsValidation, updateAboutUsValidation, addCertificationValidation, updateHowWeWorkValidation, updateCertificationValidation, addHowWeWorkValidation, addEmployeeDetailsValidation, updateEmployeeDetailsValidation, addprovidedServiceValidation, updateprovidedServiceValidation, addfeaturedServicesValidation, updatefeaturedServicesValidation, addOurContactDetailsValidation, updateOurContactDetailsValidation, addMarketingValidation, addContactUsValidation, addPolicyAndTermsValidation, updatePolicyAndTermsValidation, policyAndTermsQueryValidation, portfolioQueryValidation, pageAndSizeQueryValidation, updateBannerValidation, loginValidation, imgValidation, emailValidation, addUserValidation, changeStatusValidation };

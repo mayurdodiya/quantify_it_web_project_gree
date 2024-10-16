@@ -27,8 +27,10 @@ export class SubServicesController {
   // add data
   public addSubServices = async (req: Request, res: Response) => {
     try {
-      const { sub_service_name, core_service_id } = req.body;
+      const { core_service_id, sub_service_name, description_title, description_sub_title, description_services } = req.body;
+
       const getData = await this.subServicesRepo.findOne({ where: { sub_service_name: sub_service_name } });
+
       if (getData) {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This sub services"), ResponseCodes.alreadyExist);
       }
@@ -38,20 +40,16 @@ export class SubServicesController {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This core service"), ResponseCodes.notFound);
       }
 
-      const subServiceDataPromises = req.body.sub_service_data.map((item: SubServicesItem) => {
-        const createdData = this.subServicesRepo.create({
-          core_service: coreServ,
-          sub_service_name: item.sub_service_name,
-          description_title: item.description_title,
-          description_sub_title: item.description_sub_title,
-          description_services: item.description_services,
-        });
-        return createdData;
-      });
-      const data: SubServicesItem[] = await Promise.all(subServiceDataPromises);
+      const subService = new SubServices();
 
-      const dataAdd = await this.subServicesRepo.save(data);
-      if (!dataAdd) {
+      subService.sub_service_name = sub_service_name;
+      subService.description_title = description_title;
+      subService.description_sub_title = description_sub_title;
+      subService.description_services = description_services;
+      subService.core_service = core_service_id;
+      
+      var data = await this.subServicesRepo.save(subService);
+      if (!data) {
         return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("sub services"), ResponseCodes.saveError);
       }
       return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS("Sub services"), ResponseCodes.success, undefined);
@@ -100,7 +98,7 @@ export class SubServicesController {
       const dataId = req.params.id;
       const data = await this.subServicesRepo.findOne({
         where: { id: dataId },
-        select: ["id", "core_service_id", "sub_service_name", "description_title", "description_sub_title", "description_services"],
+        select: ["id", "core_service", "sub_service_name", "description_title", "description_sub_title", "description_services"],
       });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This sub services"), ResponseCodes.notFound);
@@ -127,7 +125,7 @@ export class SubServicesController {
 
       const [data, totalItems] = await this.subServicesRepo.findAndCount({
         where: query,
-        select: ["id", "core_service_id", "sub_service_name", "description_title", "description_sub_title", "description_services"],
+        select: ["id", "core_service", "sub_service_name", "description_title", "description_sub_title", "description_services"],
         skip: offset,
         take: limit,
       });
@@ -145,7 +143,7 @@ export class SubServicesController {
     try {
       const { page = 1, size = 10, s = "" } = req.query;
       const id = req.params.id;
-      const isEsixt = await this.subServicesRepo.find({ where: { core_service_id: id } });
+      const isEsixt = await this.coreServicesRepo.findOne({ where: { id: id } });
       if (!isEsixt) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This core services"), ResponseCodes.notFound);
       }
@@ -161,8 +159,8 @@ export class SubServicesController {
       }
 
       const [data, totalItems] = await this.subServicesRepo.findAndCount({
-        where: { core_service_id: id, ...query },
-        select: ["id", "core_service_id", "sub_service_name", "description_title", "description_sub_title", "description_services"],
+        where: { core_service: { id: id }, ...query },
+        select: ["id", "core_service", "sub_service_name", "description_title", "description_sub_title", "description_services"],
         skip: offset,
         take: limit,
       });

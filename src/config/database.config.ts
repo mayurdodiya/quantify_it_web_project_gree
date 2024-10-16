@@ -140,6 +140,9 @@ export const AppDataSource = new DataSource({
   synchronize: true,
   logging: false,
   entities: [Banner, User, VisionExperties, CoreServices, SubServices, TechnologicalExperties, Portfolio, TrustedClients, Blog, QuestionAns, AboutUs, CertificationDetails, HowWeWork, EmployeeDetails, ProvidedService, FeaturedServices, OurContactDetails, Marketing, ContactUs, PolicyAndTerms, ChatBoat, Token, Permission, ServiceClients, PortfolioType, WhoWeAre],
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
 
 (async () => {
