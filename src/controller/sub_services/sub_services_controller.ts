@@ -8,12 +8,12 @@ import { message } from "../../utils/messages";
 import { SubServices } from "../../entities/sub_services.entity";
 import { getPagination, getPagingData } from "../../services/paginate";
 
-interface SubServicesItem {
-  sub_service_name: string;
-  description_title: string;
-  description_sub_title: string;
-  description_services: string[];
-}
+// interface SubServicesItem {
+//   sub_service_name: string;
+//   description_title: string;
+//   description_sub_title: string;
+//   description_services: string[];
+// }
 
 export class SubServicesController {
   private subServicesRepo: Repository<SubServices>;
@@ -48,7 +48,7 @@ export class SubServicesController {
       subService.description_services = description_services;
       subService.core_service = core_service_id;
       
-      var data = await this.subServicesRepo.save(subService);
+      const data = await this.subServicesRepo.save(subService);
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("sub services"), ResponseCodes.saveError);
       }

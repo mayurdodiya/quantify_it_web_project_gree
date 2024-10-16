@@ -271,10 +271,7 @@
 
 import { BlogController } from '../../controller/blog/blog_controller';
 import { AppDataSource } from '../../config/database.config';
-import { Blog } from '../../entities/blog.entity';
 import { Request, Response } from 'express';
-import { Status } from '../../utils/enum';
-
 
 jest.mock('../../config/database.config');
 

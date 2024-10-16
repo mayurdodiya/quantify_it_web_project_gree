@@ -130,5 +130,17 @@ export class WhoWeAreController {
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
+  }  
+  
+  // get Your ideas, our experience data
+  public async getIdeasExperienceData(req: Request, res: Response) {
+    try {
+      const data = await this.whoWeAreRepo.find({
+        select: ["id", "total_experience", "talented_it_professionals", "successfull_projects", "served_country", "createdAt"],
+      });
+      return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Your ideas, our experience"), ResponseCodes.success, data);
+    } catch (error) {
+      return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
+    }
   }
 }
