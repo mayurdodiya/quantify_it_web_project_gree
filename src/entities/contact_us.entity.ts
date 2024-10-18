@@ -1,3 +1,4 @@
+import { ContactPurpose } from "../utils/enum";
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from "typeorm";
 
 @Entity("contact_us")
@@ -14,14 +15,20 @@ export class ContactUs {
   @Column({ nullable: false })
   email: string;
 
-  @Column({ type: "jsonb", nullable: false })
-  contact_purpose: string;
+  // @Column({ type: "jsonb", nullable: false })
+  // contact_purpose: string;
+
+  @Column({ type: "jsonb", nullable: false, default: ContactPurpose.OTHERS })
+  contact_purpose: ContactPurpose;
 
   @Column({ nullable: false })
   user_message: string;
 
-  @Column({ nullable: false })
-  budget: string;
+  @Column({ nullable: false, default: 0 })
+  initial_budget: string;
+
+  @Column({ nullable: false, default: 0 })
+  closing_budget: string;
 
   @CreateDateColumn({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP" })
   createdAt: Date;

@@ -25,3 +25,4 @@ routes.put("/modifysubadminstatus/:id", verifyGlobalToken, verifyAdminToken, cha
 routes.delete("/remove/:id", verifyGlobalToken, verifyAdminToken, (req: Request, res: Response) => adminController.removeSubAdmin(req, res));
 
 export default routes;
+

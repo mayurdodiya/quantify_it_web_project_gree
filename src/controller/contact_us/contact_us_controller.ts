@@ -17,7 +17,7 @@ export class ContactUsController {
   // add data
   public addContactUs = async (req: Request, res: Response) => {
     try {
-      const { full_name, email, contact_purpose, user_message, budget } = req.body;
+      const { full_name, email, contact_purpose, user_message, initial_budget, closing_budget } = req.body;
 
       const contactUsData = new ContactUs();
 
@@ -25,7 +25,8 @@ export class ContactUsController {
       contactUsData.email = email;
       contactUsData.contact_purpose = contact_purpose;
       contactUsData.user_message = user_message;
-      contactUsData.budget = budget;
+      contactUsData.initial_budget = initial_budget;
+      contactUsData.closing_budget = closing_budget;
 
       const data = await this.contactUsRepo.save(contactUsData);
 
@@ -44,7 +45,7 @@ export class ContactUsController {
       const dataId = req.params.id;
       const data = await this.contactUsRepo.findOne({
         where: { id: dataId },
-        select: ["id", "full_name", "email", "contact_purpose", "user_message", "budget", "createdAt", "updatedAt"],
+        select: ["id", "full_name", "email", "contact_purpose", "user_message", "initial_budget", "closing_budget", "createdAt", "updatedAt"],
       });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This Contact us data"), ResponseCodes.notFound);
@@ -71,7 +72,7 @@ export class ContactUsController {
 
       const [data, totalItems] = await this.contactUsRepo.findAndCount({
         where: DataObj,
-        select: ["id", "full_name", "email", "contact_purpose", "user_message", "budget", "createdAt"],
+        select: ["id", "full_name", "email", "contact_purpose", "user_message", "initial_budget", "closing_budget", "createdAt", "updatedAt"],
         skip: offset,
         take: limit,
       });

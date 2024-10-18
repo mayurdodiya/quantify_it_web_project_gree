@@ -26,3 +26,10 @@ export enum Role {
   USER,
   SUBADMIN,
 }
+
+export enum ContactPurpose {
+  WEB_DESIGN,
+  DEVELOPMENT,
+  MOBILE_APP_DESIGN,
+  OTHERS,
+}

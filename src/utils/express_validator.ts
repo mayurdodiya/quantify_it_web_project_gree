@@ -402,12 +402,21 @@ const addContactUsValidation = [
   check("full_name").notEmpty().withMessage("Full name is required"),
   check("email").notEmpty().withMessage("Email is required"),
   check("contact_purpose").notEmpty().withMessage("Contact purpose is required"),
-  check("budget")
+  check("initial_budget")
     .notEmpty()
-    .withMessage("Budget is required")
+    .withMessage("initial_budget is required")
     .custom((value) => {
       if (typeof value !== "string") {
-        throw new Error("Budget value must be in string format!");
+        throw new Error("initial_budget value must be in string format!");
+      }
+      return true;
+    }),
+  check("closing_budget")
+    .notEmpty()
+    .withMessage("closing_budget is required")
+    .custom((value) => {
+      if (typeof value !== "string") {
+        throw new Error("closing_budget value must be in string format!");
       }
       return true;
     }),
