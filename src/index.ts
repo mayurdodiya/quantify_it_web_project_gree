@@ -9,7 +9,12 @@ import { PORT, ADMIN_CHATBOAT_ID } from "./config/variables/common.json";
 import { ChatBoatController } from "./controller/chat_boat/chat_boat_controller";
 
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: "GET, POST, PATCH, DELETE",
+  },
+});
 
 // io.on("connection", (socketIo) => {
 //   let userId = "";
@@ -127,6 +132,7 @@ io.on("connection", (socketIo) => {
     const id = `id-${uuidv4()}`;
     io.emit("serGenretedId", id);
   });
+
   socketIo.on("htmlMyIdIs", (myId) => {
     userId = myId;
     chatId = userId;
@@ -146,7 +152,7 @@ io.on("connection", (socketIo) => {
             chatBoatController.chatCreate({ chatId: chatId, message: method.answer1, senderId: adminId, receiverId: userId });
           })
           .catch((err) => {
-            console.log(err);
+            logger.error(err);
           });
 
         break;
@@ -161,7 +167,7 @@ io.on("connection", (socketIo) => {
             chatBoatController.chatCreate({ chatId: userId, message: method.answer2, senderId: adminId, receiverId: userId });
           })
           .catch((err) => {
-            console.log(err);
+            logger.error(err);
           });
         break;
     }
@@ -169,6 +175,7 @@ io.on("connection", (socketIo) => {
     if (data.message != method.question1 && data.message != method.question2 && data.message != method.question3 && data.message != method.question4 && data.message != method.question5) {
       userId = data.senderId;
       chatId = data.chatId;
+
       io.emit("serMsgEvent", { message: data.message, senderId: data.senderId, receiverId: data.receiverId });
 
       chatBoatController.chatCreate({ message: data.message, chatId: chatId, senderId: data.senderId, receiverId: data.receiverId });
@@ -191,3 +198,4 @@ initializeServer();
 //   "PASSWORD": "Abc@123.com",
 //   "DATABASE": "postgres"
 // }
+

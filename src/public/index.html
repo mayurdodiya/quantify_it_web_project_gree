@@ -37,11 +37,19 @@
       var myLocalId = localStorage.getItem("name");
 
       socket.on("serMsgEvent", (data) => {
-        // msg for admin browser
+        console.log(data, '-----------------------------datadatadata 77777');
+        
         if (data.senderId == "id-admin-123") {
           var newPTag = document.createElement("p");
           newPTag.innerText = data.message;
+          // frontend side thi only je userid local storage ma save hoy temaj msg jay te manage krvu
           listDiv.appendChild(newPTag);
+
+          // if (data.receiverId == myLocalId) {
+          //   var newPTag = document.createElement("p");
+          //   newPTag.innerText = data.message;
+          //   listDiv.appendChild(newPTag);
+          // }
         } else {
           if (myLocalId === data.senderId) {
             var newPTag = document.createElement("p");
@@ -58,9 +66,12 @@
       var userInputId = "";
       function addUserId(params) {
         var userInput = document.getElementById("addUserInput");
+
         var userInputDataId = userInput.value;
         userInputId = userInputDataId;
+        // myLocalId = userInputDataId;
       }
+
       function createConnection(params) {
         const message = textInput.value;
 
