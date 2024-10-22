@@ -7,7 +7,19 @@ import { ResponseCodes } from "../../utils/response-codes";
 import { AppDataSource } from "../../config/database.config";
 import { getPagination, getPagingData } from "../../services/paginate";
 import logger from "../../utils/winston";
-import { ADMIN_CHATBOAT_ID } from "../../config/variables/common.json";
+import { ADMIN_CHAT_BOAT_ID } from "./../../config/variables/admin.json";
+
+interface Message {
+  sender_id: string;
+  receiver_id: string;
+  message: string;
+  createdAt: Date; // Use Date type for createdAt
+}
+
+interface GroupedChat {
+  chat_id: string;
+  messages: Message[];
+}
 
 export class ChatBoatController {
   chatBoatRepo: Repository<ChatBoat>;
@@ -100,9 +112,44 @@ export class ChatBoatController {
 
       const response = getPagingData(alldata, pageData, limit);
 
-      return RoutesHandler.sendSuccess(req, res, true, "Chat data retrieved successfully", ResponseCodes.success, response);
+      return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Chat"), ResponseCodes.success, response);
     } catch (error) {
-      return RoutesHandler.sendError(req, res, false, error.message || "Internal server error", ResponseCodes.serverError);
+      return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
+    }
+  }
+
+  // get new user msg to admin
+  public async getAllUserLastMSG(req: Request, res: Response) {
+    try {
+      const receiverId = ADMIN_CHAT_BOAT_ID;
+
+      const chats = await this.chatBoatRepo.find();
+
+      const groupedChats = chats.reduce<Record<string, GroupedChat>>((acc, chat) => {
+        if (!acc[chat.chat_id] || new Date(chat.createdAt) > new Date(acc[chat.chat_id].messages[0].createdAt)) {
+          acc[chat.chat_id] = {
+            chat_id: chat.chat_id,
+            messages: [
+              {
+                sender_id: chat.sender_id,
+                receiver_id: chat.receiver_id,
+                message: chat.message,
+                createdAt: chat.createdAt,
+              },
+            ],
+          };
+        }
+        return acc;
+      }, {});
+
+      const response = Object.values(groupedChats).filter((chat) => {
+        const lastMessage = chat.messages[0];
+        return lastMessage.receiver_id === receiverId && lastMessage.sender_id !== receiverId;
+      });
+
+      return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA(`Chat`), ResponseCodes.success, response);
+    } catch (error) {
+      return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }
   }
 
@@ -113,7 +160,7 @@ export class ChatBoatController {
       const chatBoatMessage = new ChatBoat();
 
       chatBoatMessage.chat_id = chat_id;
-      chatBoatMessage.sender_id = ADMIN_CHATBOAT_ID;
+      chatBoatMessage.sender_id = ADMIN_CHAT_BOAT_ID;
       chatBoatMessage.receiver_id = user_id;
       chatBoatMessage.message = msg;
 

@@ -5,8 +5,9 @@ import { Server } from "socket.io";
 import { v4 as uuidv4 } from "uuid";
 import logger from "./utils/winston";
 import method from "./utils/chatboat_question_ans";
-import { PORT, ADMIN_CHATBOAT_ID } from "./config/variables/common.json";
+import { PORT } from "./config/variables/common.json";
 import { ChatBoatController } from "./controller/chat_boat/chat_boat_controller";
+import { ADMIN_CHAT_BOAT_ID } from "./config/variables/admin.json";
 
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -124,7 +125,7 @@ const io = new Server(server, {
 // socket.io
 io.on("connection", (socketIo) => {
   let userId = "";
-  const adminId = ADMIN_CHATBOAT_ID; // gree admin id
+  const adminId = ADMIN_CHAT_BOAT_ID; // gree admin id
   let chatId = "";
 
   // chat open and ide check and generate
