@@ -48,7 +48,7 @@ export class ChatBoatController {
       const getChat = await this.chatBoatRepo.find({
         where: { chat_id: chatId },
         order: { createdAt: "ASC" },
-        select: ["id", "chat_id", "message", "sender_id", "receiver_id", "createdAt"],
+        select: ["chat_id", "message", "sender_id", "receiver_id", "createdAt"],
       });
 
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA(`User chat`), ResponseCodes.success, getChat);
