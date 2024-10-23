@@ -130,8 +130,15 @@ export class PortfolioController {
       const [data, totalItems] = await this.portfolioRepo.findAndCount({
         where: whereQuery,
         select: ["id", "title", "sub_title", "img_url", "live_url", "description", "createdAt"],
+        relations: ["portfolio_type"],
         skip: offset,
         take: limit,
+      });
+
+      data.map((item) => {
+        delete item.portfolio_type.createdAt;
+        delete item.portfolio_type.updatedAt;
+        delete item.portfolio_type.deletedAt;
       });
 
       const response = getPagingData({ count: totalItems, rows: data }, pageData, limit);

@@ -48,18 +48,16 @@ export class FeaturedServicesController {
       const { title, description, logo_img_url } = req.body;
 
       const dataId = req.params.id;
-      const getData = await this.featuredServicesRepo.findOne({
-        where: { id: dataId },
-      });
+      const getData = await this.featuredServicesRepo.findOne({ where: { id: dataId } });
       if (!getData) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This featured service"), ResponseCodes.notFound);
       }
 
-      const isExist = await this.featuredServicesRepo.findOne({
-        where: { title: title, id: Not(dataId) },
-      });
-      if (isExist) {
-        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This featured service"), ResponseCodes.alreadyExist);
+      if (title) {
+        const isExist = await this.featuredServicesRepo.findOne({ where: { title: title, id: Not(dataId) } });
+        if (isExist) {
+          return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This featured service"), ResponseCodes.alreadyExist);
+        }
       }
 
       getData.title = title || getData.title;

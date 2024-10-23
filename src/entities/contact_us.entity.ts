@@ -15,9 +15,6 @@ export class ContactUs {
   @Column({ nullable: false })
   email: string;
 
-  // @Column({ type: "jsonb", nullable: false })
-  // contact_purpose: string;
-
   @Column({ type: "jsonb", nullable: false, default: ContactPurpose.OTHERS })
   contact_purpose: ContactPurpose;
 

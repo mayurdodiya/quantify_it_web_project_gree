@@ -22,6 +22,9 @@ export class ProvidedService {
   @Column({ nullable: false })
   service_name_title: string;
 
+  @Column({ default: null })
+  view_details_img_url: string;
+
   @Column({ type: "jsonb", nullable: false })
   description: string[];
 

@@ -55,12 +55,13 @@ export class HowWeWorkController {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This work data"), ResponseCodes.notFound);
       }
 
-      const isExist = await this.howWeWorkRepo.findOne({
-        where: { title: title, id: Not(dataId) },
-      });
-      if (isExist) {
-        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This work data"), ResponseCodes.alreadyExist);
+      if (title) {
+        const isExist = await this.howWeWorkRepo.findOne({ where: { title: title, id: Not(dataId) } });
+        if (isExist) {
+          return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This work data"), ResponseCodes.alreadyExist);
+        }
       }
+
       getData.title = title || getData.title;
       getData.description = description || getData.description;
       getData.logo_img_url = logo_img_url || getData.logo_img_url;

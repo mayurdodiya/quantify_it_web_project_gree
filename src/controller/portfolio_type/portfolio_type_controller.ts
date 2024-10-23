@@ -42,7 +42,7 @@ export class PortfolioTypeController {
   public async updatePortfolioType(req: Request, res: Response) {
     try {
       const { type_name } = req.body;
-      const typeName = type_name?.toLocaleLowerCase();
+      const typeName = type_name;
 
       const dataId = req.params.id;
       const getData = await this.portfolioTypeRepo.findOne({

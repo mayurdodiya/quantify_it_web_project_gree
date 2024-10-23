@@ -9,7 +9,7 @@ const chatBoatController = new ChatBoatController();
 routes.get("/get", verifyAdminToken, pageAndSizeQueryValidation, (req: Request, res: Response) => chatBoatController.getAllUserChat(req, res));
 routes.post("/replay", (req: Request, res: Response) => chatBoatController.addreplayToUser(req, res));
 
-routes.get("/lastmsg",verifyAdminToken, (req: Request, res: Response) => chatBoatController.getAllUserLastMSG(req, res));
-routes.get("/get/:id", verifyAdminToken, (req: Request, res: Response) => chatBoatController.getUserChatById(req, res));
+routes.get("/lastmsg", verifyAdminToken, (req: Request, res: Response) => chatBoatController.getAllUserLastMSG(req, res));
+routes.get("/get/:id", (req: Request, res: Response) => chatBoatController.getUserChatById(req, res));
 
 export default routes;
