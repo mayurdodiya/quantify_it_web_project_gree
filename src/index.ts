@@ -178,7 +178,8 @@ io.on("connection", (socketIo) => {
       chatId = data.chatId;
 
       const sendmsg = await chatBoatController.chatCreate({ message: data.message, image_url: data.image_url ? data.image_url : [], chatId: chatId, senderId: data.senderId, receiverId: data.receiverId });
-      if (sendmsg == true) {
+
+      if (sendmsg) {
         socketIo.broadcast.emit("serMsgEvent", { message: data.message, image_url: data.image_url, senderId: data.senderId, receiverId: data.receiverId });
       }
     }
