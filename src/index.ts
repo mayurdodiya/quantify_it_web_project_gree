@@ -140,7 +140,7 @@ io.on("connection", (socketIo) => {
   });
 
   const chatBoatController = new ChatBoatController();
-  socketIo.on("htmlMyEve", (data) => {
+  socketIo.on("htmlMyEve", async (data) => {
     switch (data.message) {
       case method.question1:
         userId = data.senderId;
@@ -177,9 +177,10 @@ io.on("connection", (socketIo) => {
       userId = data.senderId;
       chatId = data.chatId;
 
-      io.emit("serMsgEvent", { message: data.message, senderId: data.senderId, receiverId: data.receiverId });
-
-      chatBoatController.chatCreate({ message: data.message, chatId: chatId, senderId: data.senderId, receiverId: data.receiverId });
+      var sendmsg = await chatBoatController.chatCreate({ message: data.message, chatId: chatId, senderId: data.senderId, receiverId: data.receiverId });
+      if (sendmsg == true) {
+        io.emit("serMsgEvent", { message: data.message, senderId: data.senderId, receiverId: data.receiverId });
+      }
     }
   });
 });
@@ -199,4 +200,3 @@ initializeServer();
 //   "PASSWORD": "Abc@123.com",
 //   "DATABASE": "postgres"
 // }
-

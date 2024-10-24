@@ -34,7 +34,13 @@ export class ChatBoatController {
       chatBoatMessage.sender_id = data.senderId;
       chatBoatMessage.receiver_id = data.receiverId;
       chatBoatMessage.message = data.message;
-      await this.chatBoatRepo.save(chatBoatMessage);
+
+      const addMsg = await this.chatBoatRepo.save(chatBoatMessage);
+      if (!addMsg) {
+        return false;
+      }
+
+      return true;
     } catch (err) {
       logger.error(err);
     }
