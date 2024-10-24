@@ -131,7 +131,7 @@ io.on("connection", (socketIo) => {
   // chat open and ide check and generate
   socketIo.on("genIdFlag", () => {
     const id = `id-${uuidv4()}`;
-    io.emit("serGenretedId", id);
+    socketIo.broadcast.emit("serGenretedId", id);
   });
 
   socketIo.on("htmlMyIdIs", (myId) => {
@@ -144,12 +144,12 @@ io.on("connection", (socketIo) => {
     switch (data.message) {
       case method.question1:
         userId = data.senderId;
-        io.emit("serMsgEvent", { message: method.question1, senderId: userId, receiverId: adminId });
+        socketIo.broadcast.emit("serMsgEvent", { message: method.question1, senderId: userId, receiverId: adminId });
         chatBoatController
           .chatCreate({ chatId: chatId, message: method.question1, senderId: userId, receiverId: adminId })
 
           .then(() => {
-            io.emit("serMsgEvent", { message: method.answer1, senderId: adminId, receiverId: userId });
+            socketIo.broadcast.emit("serMsgEvent", { message: method.answer1, senderId: adminId, receiverId: userId });
             chatBoatController.chatCreate({ chatId: chatId, message: method.answer1, senderId: adminId, receiverId: userId });
           })
           .catch((err) => {
@@ -160,11 +160,11 @@ io.on("connection", (socketIo) => {
       case method.question2:
         userId = data.senderId;
 
-        io.emit("serMsgEvent", { message: method.question2, senderId: userId, receiverId: adminId });
+        socketIo.broadcast.emit("serMsgEvent", { message: method.question2, senderId: userId, receiverId: adminId });
         chatBoatController
           .chatCreate({ chatId: userId, message: method.question2, senderId: userId, receiverId: adminId })
           .then(() => {
-            io.emit("serMsgEvent", { message: method.answer2, senderId: adminId, receiverId: userId });
+            socketIo.broadcast.emit("serMsgEvent", { message: method.answer2, senderId: adminId, receiverId: userId });
             chatBoatController.chatCreate({ chatId: userId, message: method.answer2, senderId: adminId, receiverId: userId });
           })
           .catch((err) => {
@@ -177,9 +177,9 @@ io.on("connection", (socketIo) => {
       userId = data.senderId;
       chatId = data.chatId;
 
-      const sendmsg = await chatBoatController.chatCreate({ message: data.message, chatId: chatId, senderId: data.senderId, receiverId: data.receiverId });
+      const sendmsg = await chatBoatController.chatCreate({ message: data.message, image_url: data.image_url ? data.image_url : [], chatId: chatId, senderId: data.senderId, receiverId: data.receiverId });
       if (sendmsg == true) {
-        io.emit("serMsgEvent", { message: data.message, senderId: data.senderId, receiverId: data.receiverId });
+        socketIo.broadcast.emit("serMsgEvent", { message: data.message, image_url: data.image_url, senderId: data.senderId, receiverId: data.receiverId });
       }
     }
   });

@@ -17,8 +17,8 @@ export enum BussinessStage {
 }
 
 export enum DocumentType {
-  PRIVACY_POLICY,
   TERMS_CONDITION,
+  PRIVACY_POLICY,
 }
 
 export enum Role {

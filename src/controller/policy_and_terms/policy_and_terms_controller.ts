@@ -28,7 +28,7 @@ export class PolicyAndTermsController {
 
       const termsData = new PolicyAndTerms();
 
-      termsData.document_type = document_type === DocumentType.PRIVACY_POLICY ? DocumentType.PRIVACY_POLICY : document_type === DocumentType.TERMS_CONDITION ? DocumentType.TERMS_CONDITION : null;
+      termsData.document_type = document_type === DocumentType.PRIVACY_POLICY ? DocumentType.PRIVACY_POLICY : document_type === DocumentType.TERMS_CONDITION ? DocumentType.TERMS_CONDITION : 0;
       termsData.subject = subject;
       termsData.explanation = explanation;
 
@@ -46,11 +46,13 @@ export class PolicyAndTermsController {
   public async updatePolicyAndTerms(req: Request, res: Response) {
     try {
       const { subject, explanation } = req.body;
-      const document_type = req.body.document_type.toLocaleLowerCase();
+      // const document_type = req.body.document_type as string;
+      const docType = req.body.document_type;
+      // const docType = Number(document_type);
 
       const dataId = req.params.id;
       const getData = await this.policyAndTermsRepo.findOne({
-        where: { id: dataId, document_type: document_type },
+        where: { id: dataId, document_type: docType },
       });
       if (!getData) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This data"), ResponseCodes.notFound);
@@ -58,7 +60,7 @@ export class PolicyAndTermsController {
 
       const isExist = await this.policyAndTermsRepo.findOne({
         where: {
-          document_type: document_type,
+          document_type: docType,
           subject: subject,
           id: Not(dataId),
         },
@@ -67,7 +69,7 @@ export class PolicyAndTermsController {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This data"), ResponseCodes.alreadyExist);
       }
 
-      getData.document_type = document_type || getData.document_type;
+      getData.document_type = docType || getData.document_type;
       getData.subject = subject || getData.subject;
       getData.explanation = explanation || getData.explanation;
 
@@ -124,6 +126,7 @@ export class PolicyAndTermsController {
       const [data, totalItems] = await this.policyAndTermsRepo.findAndCount({
         where: query,
         select: ["id", "document_type", "subject", "explanation", "createdAt", "updatedAt"],
+        order: { createdAt: "ASC" },
         skip: offset,
         take: limit,
       });
