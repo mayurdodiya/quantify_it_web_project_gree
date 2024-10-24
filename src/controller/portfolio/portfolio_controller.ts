@@ -55,10 +55,13 @@ export class PortfolioController {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This portfolio"), ResponseCodes.notFound);
       }
 
-      const isExist = await this.portfolioRepo.findOne({ where: { title: title, id: Not(dataId) } });
-      if (isExist) {
-        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This portfolio"), ResponseCodes.alreadyExist);
+      if (title) {
+        const isExist = await this.portfolioRepo.findOne({ where: { title: title, id: Not(dataId) } });
+        if (isExist) {
+          return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This portfolio"), ResponseCodes.alreadyExist);
+        }
       }
+
       getData.title = title || getData.title;
       getData.sub_title = sub_title || getData.sub_title;
       getData.description = description || getData.description;

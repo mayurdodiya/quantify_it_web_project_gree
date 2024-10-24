@@ -8,18 +8,9 @@ import { AppDataSource } from "../../config/database.config";
 import { getPagination, getPagingData } from "../../services/paginate";
 import logger from "../../utils/winston";
 import { ADMIN_CHAT_BOAT_ID } from "./../../config/variables/admin.json";
+// import { redisClient } from "../../config/redis.config";
 
-interface Message {
-  sender_id: string;
-  receiver_id: string;
-  message: string;
-  createdAt: Date; // Use Date type for createdAt
-}
 
-interface GroupedChat {
-  chat_id: string;
-  messages: Message[];
-}
 
 export class ChatBoatController {
   chatBoatRepo: Repository<ChatBoat>;
@@ -34,6 +25,7 @@ export class ChatBoatController {
       chatBoatMessage.sender_id = data.senderId;
       chatBoatMessage.receiver_id = data.receiverId;
       chatBoatMessage.message = data.message;
+      chatBoatMessage.image_url = data.image_url;
 
       const addMsg = await this.chatBoatRepo.save(chatBoatMessage);
       if (!addMsg) {
@@ -54,7 +46,7 @@ export class ChatBoatController {
       const getChat = await this.chatBoatRepo.find({
         where: { chat_id: chatId },
         order: { createdAt: "ASC" },
-        select: ["chat_id", "message", "sender_id", "receiver_id", "createdAt"],
+        select: ["chat_id", "message", "image_url", "sender_id", "receiver_id", "createdAt"],
       });
 
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA(`User chat`), ResponseCodes.success, getChat);
@@ -66,6 +58,11 @@ export class ChatBoatController {
   // get user chat
   public async getAllUserChat(req: Request, res: Response) {
     try {
+      // const cachedChats = await redisClient.get("all_user_chats");
+
+      // if (cachedChats) {
+      //   return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Chat"), ResponseCodes.success, JSON.parse(cachedChats));
+      // }
       const { page = 1, size = 10, s = "" } = req.query;
 
       const pageData = parseInt(page as string, 10);
@@ -90,6 +87,7 @@ export class ChatBoatController {
                   'sender_id', chat_boat.sender_id,
                   'receiver_id', chat_boat.receiver_id,
                   'message', chat_boat.message,
+                  'image_url', chat_boat.image_url,
                   'createdAt', chat_boat."createdAt"
               )
           ) AS messages
@@ -117,6 +115,7 @@ export class ChatBoatController {
       };
 
       const response = getPagingData(alldata, pageData, limit);
+      // await redisClient.setEx("all_user_chats", 3600, JSON.stringify(response));
 
       return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Chat"), ResponseCodes.success, response);
     } catch (error) {
@@ -124,36 +123,39 @@ export class ChatBoatController {
     }
   }
 
-  // get new user msg to admin
+  // get last msg
   public async getAllUserLastMSG(req: Request, res: Response) {
     try {
-      const receiverId = ADMIN_CHAT_BOAT_ID;
+      const chats = await this.chatBoatRepo.createQueryBuilder("chat").select("chat.chat_id", "chat_id").addSelect("chat.sender_id", "sender_id").addSelect("chat.receiver_id", "receiver_id").addSelect("chat.message", "message").addSelect("chat.image_url", "image_url").addSelect("chat.createdAt", "createdAt").where('chat.createdAt IN (SELECT MAX(inner_chat."createdAt") FROM chat_boat AS inner_chat WHERE inner_chat.chat_id = chat.chat_id GROUP BY inner_chat.chat_id)').getRawMany(); // Get the last message per chat_id
 
-      const chats = await this.chatBoatRepo.find();
-
-      const groupedChats = chats.reduce<Record<string, GroupedChat>>((acc, chat) => {
-        if (!acc[chat.chat_id] || new Date(chat.createdAt) > new Date(acc[chat.chat_id].messages[0].createdAt)) {
-          acc[chat.chat_id] = {
+      const result = chats.reduce((acc, chat) => {
+        const chatEntry = acc.find((entry) => entry.chat_id === chat.chat_id);
+        if (chatEntry) {
+          chatEntry.messages.push({
+            sender_id: chat.sender_id,
+            receiver_id: chat.receiver_id,
+            message: chat.message,
+            image_url: chat.image_url,
+            createdAt: chat.createdAt,
+          });
+        } else {
+          acc.push({
             chat_id: chat.chat_id,
             messages: [
               {
                 sender_id: chat.sender_id,
                 receiver_id: chat.receiver_id,
                 message: chat.message,
+                image_url: chat.image_url,
                 createdAt: chat.createdAt,
               },
             ],
-          };
+          });
         }
         return acc;
-      }, {});
+      }, []);
 
-      const response = Object.values(groupedChats).filter((chat) => {
-        const lastMessage = chat.messages[0];
-        return lastMessage.receiver_id === receiverId && lastMessage.sender_id !== receiverId;
-      });
-
-      return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA(`Chat`), ResponseCodes.success, response);
+      return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA(`Chat`), ResponseCodes.success, result);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);
     }

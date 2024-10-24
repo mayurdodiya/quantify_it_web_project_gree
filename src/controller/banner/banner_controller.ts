@@ -74,7 +74,6 @@ export class BannerController {
       // if (cachedBanners) {
       //   return RoutesHandler.sendSuccess(req, res, true, message.GET_DATA("Banner"), ResponseCodes.success, JSON.parse(cachedBanners));
       // }
-
       const banner = await this.bannerRepo.find({ select: ["id", "banner_name", "pc_img_url", "mobile_img_url", "title", "description", "createdAt"] });
 
       // await redisClient.setEx("banners", 3600, JSON.stringify(banner));

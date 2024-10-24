@@ -20,6 +20,9 @@ export class ChatBoat {
   @Column({ type: "jsonb", default: null })
   message: string;
 
+  @Column({ type: "jsonb", default: [] })
+  image_url: string;
+
   @CreateDateColumn({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP" })
   createdAt: Date;
 
