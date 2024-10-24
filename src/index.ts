@@ -177,7 +177,7 @@ io.on("connection", (socketIo) => {
       userId = data.senderId;
       chatId = data.chatId;
 
-      var sendmsg = await chatBoatController.chatCreate({ message: data.message, chatId: chatId, senderId: data.senderId, receiverId: data.receiverId });
+      const sendmsg = await chatBoatController.chatCreate({ message: data.message, chatId: chatId, senderId: data.senderId, receiverId: data.receiverId });
       if (sendmsg == true) {
         io.emit("serMsgEvent", { message: data.message, senderId: data.senderId, receiverId: data.receiverId });
       }
