@@ -10,8 +10,6 @@ import logger from "../../utils/winston";
 import { ADMIN_CHAT_BOAT_ID } from "./../../config/variables/admin.json";
 // import { redisClient } from "../../config/redis.config";
 
-
-
 export class ChatBoatController {
   chatBoatRepo: Repository<ChatBoat>;
   constructor() {
@@ -28,11 +26,12 @@ export class ChatBoatController {
       chatBoatMessage.image_url = data.image_url;
 
       const addMsg = await this.chatBoatRepo.save(chatBoatMessage);
-      if (!addMsg) {
-        return false;
-      }
+      // if (!addMsg) {
+      //   return false;
+      // }
 
-      return true;
+      // return true;
+      return addMsg;
     } catch (err) {
       logger.error(err);
     }

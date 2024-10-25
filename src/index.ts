@@ -128,7 +128,7 @@ io.on("connection", (socketIo) => {
   const adminId = ADMIN_CHAT_BOAT_ID; // gree admin id
   let chatId = "";
 
-  // chat open and ide check and generate
+  // chat open and id check and generate
   socketIo.on("genIdFlag", () => {
     const id = `id-${uuidv4()}`;
     socketIo.broadcast.emit("serGenretedId", id);

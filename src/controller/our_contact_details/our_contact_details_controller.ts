@@ -75,7 +75,7 @@ export class OurContactDetailsController {
   public async getOurContactDetails(req: Request, res: Response) {
     try {
       const data = await this.ourContactDetailsRepo.find({
-        select: ["id", "phone_no", "email", "address"],
+        select: ["id", "phone_no", "email", "address", "location"],
       });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This our contact details"), ResponseCodes.notFound);
