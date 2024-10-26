@@ -6,6 +6,7 @@ import { pageAndSizeQueryValidation } from "../utils/express_validator";
 const routes = Router();
 const chatBoatController = new ChatBoatController();
 
+routes.post("/create", (req: Request, res: Response) => chatBoatController.sendMsg(req, res));
 routes.get("/get", verifyAdminToken, pageAndSizeQueryValidation, (req: Request, res: Response) => chatBoatController.getAllUserChat(req, res));
 routes.post("/replay", (req: Request, res: Response) => chatBoatController.addreplayToUser(req, res));
 

@@ -8,7 +8,6 @@ import { AppDataSource } from "../../config/database.config";
 import { getPagination, getPagingData } from "../../services/paginate";
 import logger from "../../utils/winston";
 import { ADMIN_CHAT_BOAT_ID } from "./../../config/variables/admin.json";
-// import { redisClient } from "../../config/redis.config";
 
 export class ChatBoatController {
   chatBoatRepo: Repository<ChatBoat>;
@@ -26,14 +25,29 @@ export class ChatBoatController {
       chatBoatMessage.image_url = data.image_url;
 
       const addMsg = await this.chatBoatRepo.save(chatBoatMessage);
-      // if (!addMsg) {
-      //   return false;
-      // }
 
-      // return true;
       return addMsg;
     } catch (err) {
       logger.error(err);
+    }
+  }
+
+  public async sendMsg(req: Request, res: Response) {
+    const data = req.body;
+
+    try {
+      const chatBoatMessage = new ChatBoat();
+      chatBoatMessage.chat_id = data.chatId;
+      chatBoatMessage.sender_id = data.senderId;
+      chatBoatMessage.receiver_id = data.receiverId;
+      chatBoatMessage.message = data.message;
+      chatBoatMessage.image_url = data.image_url;
+
+      const addMsg = await this.chatBoatRepo.save(chatBoatMessage);
+
+      return RoutesHandler.sendSuccess(req, res, true, message.CREATE_SUCCESS(`chat`), ResponseCodes.success, addMsg);
+    } catch (err) {
+      return RoutesHandler.sendError(req, res, false, err.message, ResponseCodes.serverError);
     }
   }
 

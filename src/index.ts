@@ -1,13 +1,14 @@
 import http from "http";
 import app from "./app";
-// import "./config/redis.config";
 import { Server } from "socket.io";
 import { v4 as uuidv4 } from "uuid";
 import logger from "./utils/winston";
-import method from "./utils/chatboat_question_ans";
+// import method from "./utils/chatboat_question_ans";
 import { PORT } from "./config/variables/common.json";
-import { ChatBoatController } from "./controller/chat_boat/chat_boat_controller";
-import { ADMIN_CHAT_BOAT_ID } from "./config/variables/admin.json";
+// import { ADMIN_CHAT_BOAT_ID } from "./config/variables/admin.json";
+// import { ChatBoatController } from "./controller/chat_boat/chat_boat_controller";
+
+// const chatBoatController = new ChatBoatController();
 
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -17,178 +18,75 @@ const io = new Server(server, {
   },
 });
 
-// io.on("connection", (socketIo) => {
-//   let userId = "";
-//   const adminId = ADMIN_CHATBOAT_ID;
-//   let chatId = "";
-//   logger.info("user connected");
-
-//   socketIo.on("genIdFlag", () => {
-//     const id = `id-${uuidv4()}`;
-//     io.emit("serGenretedId", id);
-//   });
-
-//   socketIo.on("htmlMyIdIs", (myId) => {
-//     userId = myId;
-//     chatId = userId;
-//   });
-
-//   const chatBoatController = new ChatBoatController();
-
-//   socketIo.on("htmlMyEve", (data) => {
-//     switch (data.message) {
-//       case method.question1:
-//         userId = data.senderId;
-//         io.emit("serMsgEvent", {
-//           message: method.question1,
-//           senderId: userId,
-//           receiverId: adminId,
-//         });
-//         chatBoatController
-//           .chatCreate({
-//             chatId: chatId,
-//             message: method.question1,
-//             senderId: userId,
-//             receiverId: adminId,
-//           })
-//           .then(() => {
-//             io.emit("serMsgEvent", {
-//               message: method.answer1,
-//               senderId: adminId,
-//               receiverId: userId,
-//             });
-//             chatBoatController.chatCreate({
-//               chatId: chatId,
-//               message: method.answer1,
-//               senderId: adminId,
-//               receiverId: userId,
-//             });
-//           })
-//           .catch((error) => {
-//             logger.error(error);
-//           });
-//         break;
-//       case method.question2:
-//         userId = data.senderId;
-//         io.emit("serMsgEvent", {
-//           message: method.question2,
-//           senderId: userId,
-//           receiverId: adminId,
-//         });
-//         chatBoatController
-//           .chatCreate({
-//             chatId: userId,
-//             message: method.question2,
-//             senderId: userId,
-//             receiverId: adminId,
-//           })
-//           .then(() => {
-//             io.emit("serMsgEvent", {
-//               message: method.answer2,
-//               senderId: adminId,
-//               receiverId: userId,
-//             });
-//             chatBoatController.chatCreate({
-//               chatId: userId,
-//               message: method.answer2,
-//               senderId: adminId,
-//               receiverId: userId,
-//             });
-//           })
-//           .catch((error) => {
-//             logger.error(error);
-//           });
-//         break;
-//       default:
-//         userId = data.senderId;
-//         chatId = data.chatId;
-//         io.emit("serMsgEvent", {
-//           message: data.message,
-//           senderId: data.senderId,
-//           receiverId: data.receiverId,
-//         });
-//         chatBoatController.chatCreate({
-//           message: data.message,
-//           chatId: chatId,
-//           senderId: data.senderId,
-//           receiverId: data.receiverId,
-//         });
-//         break;
-//     }
-//   });
-
-//   socketIo.on("disconnect", async () => {
-//     logger.info("user disconnect");
-//   });
-// });
-
-// socket.io
+const userSockets = {};
 
 io.on("connection", (socketIo) => {
-  logger.info("user connected", socketIo.id);
-
-  let userId = "";
-  const adminId = ADMIN_CHAT_BOAT_ID;
-  let chatId = "";
-
-  socketIo.on("genIdFlag", () => {
-    const id = `id-${uuidv4()}`;
-    socketIo.broadcast.emit("serGenretedId", id);
+  socketIo.on("registerUser", (userId) => {
+    userSockets[userId] = socketIo.id;
   });
 
-  socketIo.on("htmlMyIdIs", (myId) => {
-    userId = myId;
-    chatId = userId;
-  });
-
-  const chatBoatController = new ChatBoatController();
-  socketIo.on("htmlMyEve", async (data) => {
-    switch (data.message) {
-      case method.question1:
-        userId = data.senderId;
-        socketIo.broadcast.emit("serMsgEvent", { message: method.question1, senderId: userId, receiverId: adminId });
-        chatBoatController
-          .chatCreate({ chatId: chatId, message: method.question1, senderId: userId, receiverId: adminId })
-
-          .then(() => {
-            socketIo.broadcast.emit("serMsgEvent", { message: method.answer1, senderId: adminId, receiverId: userId });
-            chatBoatController.chatCreate({ chatId: chatId, message: method.answer1, senderId: adminId, receiverId: userId });
-          })
-          .catch((err) => {
-            logger.error(err);
-          });
-
+  socketIo.on("disconnect", () => {
+    for (const [userId, socketId] of Object.entries(userSockets)) {
+      if (socketId === socketIo.id) {
+        delete userSockets[userId];
         break;
-      case method.question2:
-        userId = data.senderId;
-
-        socketIo.broadcast.emit("serMsgEvent", { message: method.question2, senderId: userId, receiverId: adminId });
-        chatBoatController
-          .chatCreate({ chatId: userId, message: method.question2, senderId: userId, receiverId: adminId })
-          .then(() => {
-            socketIo.broadcast.emit("serMsgEvent", { message: method.answer2, senderId: adminId, receiverId: userId });
-            chatBoatController.chatCreate({ chatId: userId, message: method.answer2, senderId: adminId, receiverId: userId });
-          })
-          .catch((err) => {
-            logger.error(err);
-          });
-        break;
-    }
-
-    if (data.message != method.question1 && data.message != method.question2 && data.message != method.question3 && data.message != method.question4 && data.message != method.question5) {
-      userId = data.senderId;
-      chatId = data.chatId;
-
-      const sendmsg = await chatBoatController.chatCreate({ message: data.message, image_url: data.image_url ? data.image_url : [], chatId: chatId, senderId: data.senderId, receiverId: data.receiverId });
-
-      if (sendmsg) {
-        socketIo.broadcast.emit("serMsgEvent", { message: data.message, image_url: data.image_url, senderId: data.senderId, receiverId: data.receiverId });
       }
     }
   });
 
-  socketIo.on("disconnect", async () => {
-    logger.info("user disconnect");
+  // let userId = "";
+  // let chatId = "";
+  // const adminId = ADMIN_CHAT_BOAT_ID;
+
+  socketIo.on("genIdFlag", () => {
+    const id = `id-${uuidv4()}`;
+    socketIo.emit("serGenretedId", id);
+  });
+
+  // socketIo.on("htmlMyIdIs", (myId) => {
+  // userId = myId;
+  // chatId = userId;
+  // });
+
+  socketIo.on("htmlMyEve", async (data) => {
+    const receiverId = data.receiver_id;
+
+    // switch (data.message) {
+    //   case method.question1:
+    //     socketIo.to(userSockets[receiverId]).emit("serMsgEvent", { message: method.question1, senderId: userId, receiverId: adminId });
+    //     chatBoatController
+    //       .chatCreate({ chatId: chatId, message: method.question1, senderId: userId, receiverId: adminId })
+    //       .then(() => {
+    //         socketIo.to(userSockets[userId]).emit("serMsgEvent", { message: method.answer1, senderId: adminId, receiverId: userId });
+    //         chatBoatController.chatCreate({ chatId: chatId, message: method.answer1, senderId: adminId, receiverId: userId });
+    //       })
+    //       .catch((err) => logger.error(err));
+    //     break;
+
+    //   case method.question2:
+    //     socketIo.to(userSockets[receiverId]).emit("serMsgEvent", { message: method.question2, senderId: userId, receiverId: adminId });
+    //     chatBoatController
+    //       .chatCreate({ chatId: userId, message: method.question2, senderId: userId, receiverId: adminId })
+    //       .then(() => {
+    //         socketIo.to(userSockets[userId]).emit("serMsgEvent", { message: method.answer2, senderId: adminId, receiverId: userId });
+    //         chatBoatController.chatCreate({ chatId: userId, message: method.answer2, senderId: adminId, receiverId: userId });
+    //       })
+    //       .catch((err) => logger.error(err));
+    //     break;
+
+    //   // default:
+    //   //   chatId = data.chatId;
+    //   // const sendmsg = await chatBoatController.chatCreate({ message: data.message, image_url: data.image_url || [], chatId: chatId, senderId: userId, receiverId: receiverId });
+
+    //   // console.log(sendmsg, "------------------- sendmsg");
+
+    //   // if (sendmsg) {
+    //   // socketIo.broadcast.to(userSockets[receiverId]).emit("serMsgEvent", data);
+    //   // }
+    //   // break;
+    // }
+
+    await socketIo.broadcast.to(userSockets[receiverId]).emit("serMsgEvent", data);
   });
 });
 
@@ -199,11 +97,3 @@ const initializeServer = () => {
 };
 
 initializeServer();
-
-// {
-//   "HOST": "aws-0-ap-south-1.pooler.supabase.com",
-//   "DATABASE_PORT": "6543",
-//   "USER_NAME": "postgres.vtzwwasnuycnxpgrpfuz",
-//   "PASSWORD": "Abc@123.com",
-//   "DATABASE": "postgres"
-// }
