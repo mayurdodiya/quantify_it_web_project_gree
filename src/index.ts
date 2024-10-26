@@ -123,12 +123,14 @@ const io = new Server(server, {
 // });
 
 // socket.io
+
 io.on("connection", (socketIo) => {
+  logger.info("user connected", socketIo.id);
+
   let userId = "";
-  const adminId = ADMIN_CHAT_BOAT_ID; // gree admin id
+  const adminId = ADMIN_CHAT_BOAT_ID;
   let chatId = "";
 
-  // chat open and id check and generate
   socketIo.on("genIdFlag", () => {
     const id = `id-${uuidv4()}`;
     socketIo.broadcast.emit("serGenretedId", id);
@@ -183,6 +185,10 @@ io.on("connection", (socketIo) => {
         socketIo.broadcast.emit("serMsgEvent", { message: data.message, image_url: data.image_url, senderId: data.senderId, receiverId: data.receiverId });
       }
     }
+  });
+
+  socketIo.on("disconnect", async () => {
+    logger.info("user disconnect");
   });
 });
 
