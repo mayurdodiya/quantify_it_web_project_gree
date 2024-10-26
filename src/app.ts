@@ -8,7 +8,8 @@ import express, { NextFunction, Request, Response } from "express";
 
 const app = express();
 
-app.use(cors({ origin: "*" }));
+app.use(cors({ origin: ["*","https://quantifyitagency.com","https://admin.quantifyitagency.com","http://localhost:3000","http://localhost:3004"] }));
+
 app.use(bodyparser.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("tiny"));

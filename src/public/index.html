@@ -36,22 +36,36 @@
 
       var myLocalId = localStorage.getItem("name");
 
-      socket.on("serMsgEvent", (data) => {
-        console.log(data, '-----------------------------datadatadata 77777');
+      var userInputId = "";
+      function addUserId(params) {
+        var userInput = document.getElementById("addUserInput");
+
+        var userInputDataId = userInput.value;
+        userInputId = userInputDataId;
         
+        console.log(userInputId,'----------------------- userInputId');
+        
+        // myLocalId = userInputDataId;
+      }
+
+      socket.on("serMsgEvent", (data) => {
+        console.log(data, "----------------------------- datadatadata 77777");
+
         if (data.senderId == "id-admin-123") {
           var newPTag = document.createElement("p");
           newPTag.innerText = data.message;
           // frontend side thi only je userid local storage ma save hoy temaj msg jay te manage krvu
           listDiv.appendChild(newPTag);
 
-          // if (data.receiverId == myLocalId) {
+          // if (data.receiverId == userInputId) {
           //   var newPTag = document.createElement("p");
           //   newPTag.innerText = data.message;
           //   listDiv.appendChild(newPTag);
           // }
         } else {
           if (myLocalId === data.senderId) {
+            console.log(data.senderId, myLocalId, "-------------------------------------------------- ccccheck");
+
             var newPTag = document.createElement("p");
             newPTag.innerText = data.message;
             listDiv.appendChild(newPTag);
@@ -63,15 +77,6 @@
         }
       });
 
-      var userInputId = "";
-      function addUserId(params) {
-        var userInput = document.getElementById("addUserInput");
-
-        var userInputDataId = userInput.value;
-        userInputId = userInputDataId;
-        // myLocalId = userInputDataId;
-      }
-
       function createConnection(params) {
         const message = textInput.value;
 
@@ -80,6 +85,7 @@
           if (myUserId == "id-admin-123") {
             socket.emit("htmlMyEve", { message: message, senderId: "id-admin-123", receiverId: userInputId, chatId: userInputId });
           } else {
+            console.log(message, myUserId, "-----------------123456789");
             socket.emit("htmlMyEve", { message: message, senderId: myUserId, receiverId: "id-admin-123", chatId: myUserId });
           }
         }
