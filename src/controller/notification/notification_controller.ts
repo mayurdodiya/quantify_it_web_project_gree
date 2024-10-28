@@ -75,7 +75,7 @@ export class NotificationController {
     try {
       const type: boolean = req.query.type === "true" ? true : false;
       let data: Notification[] = [];
-      
+
       if (req.query.type != "") {
         const obj: { is_read: boolean } = { is_read: false };
         if (type) {

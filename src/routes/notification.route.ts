@@ -11,3 +11,4 @@ routes.get("/get/:id", verifyAdminToken, (req: Request, res: Response) => notifi
 routes.get("/get", verifyAdminToken, (req: Request, res: Response) => notificationController.getAllNotification(req, res));
 
 export default routes;
+    

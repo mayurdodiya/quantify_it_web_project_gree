@@ -33,6 +33,7 @@ import { Permission } from "../entities/permission.entity";
 import { ServiceClients } from "../entities/service_clients.entity";
 import { PortfolioType } from "../entities/portfolio_type.entity";
 import { WhoWeAre } from "../entities/who_we_are.entity";
+import { Notification } from "../entities/notification.entity";
 
 const databaseConfigurations = DB;
 
@@ -52,7 +53,7 @@ export const AppDataSource = new DataSource({
   database: database,
   synchronize: true,
   logging: false,
-  entities: [Banner, User, VisionExperties, CoreServices, SubServices, TechnologicalExperties, Portfolio, TrustedClients, Blog, QuestionAns, AboutUs, CertificationDetails, HowWeWork, EmployeeDetails, ProvidedService, FeaturedServices, OurContactDetails, Marketing, ContactUs, PolicyAndTerms, ChatBoat, Token, Permission, ServiceClients, PortfolioType, WhoWeAre],
+  entities: [Banner, User, VisionExperties, CoreServices, SubServices, TechnologicalExperties, Portfolio, TrustedClients, Blog, QuestionAns, AboutUs, CertificationDetails, HowWeWork, EmployeeDetails, ProvidedService, FeaturedServices, OurContactDetails, Marketing, ContactUs, PolicyAndTerms, ChatBoat, Token, Permission, ServiceClients, PortfolioType, WhoWeAre, Notification],
   ssl: {
     rejectUnauthorized: true,
     ca: fs.readFileSync(caPath),
