@@ -10,7 +10,7 @@ import logger from "../../utils/winston";
 import { ADMIN_CHAT_BOAT_ID } from "./../../config/variables/admin.json";
 import method from "../../utils/chatboat_question_ans";
 import { NotificationController } from "./../notification/notification_controller";
-// import { networkUtils } from "../../utils/ip_address";
+import { networkUtils } from "../../utils/ip_address";
 const notificationController = new NotificationController();
 
 export class ChatBoatController {
@@ -42,8 +42,8 @@ export class ChatBoatController {
 
     try {
       // add ip address
-      // const userIp = (req.headers["x-forwarded-for"] as string) || req.connection.remoteAddress;
-      // const ipAddress = networkUtils.getMappedIp(userIp);
+      const userIp = (req.headers["x-forwarded-for"] as string) || req.connection.remoteAddress;
+      const ipAddress = networkUtils.getMappedIp(userIp);
 
       const chatBoatMessage = new ChatBoat();
       chatBoatMessage.chat_id = data.chatId;
@@ -51,13 +51,13 @@ export class ChatBoatController {
       chatBoatMessage.receiver_id = data.receiverId;
       chatBoatMessage.message = data.message;
       chatBoatMessage.image_url = data.image_url;
-      chatBoatMessage.user_ip_address = data.ipAddress;
+      chatBoatMessage.user_ip_address = ipAddress;
 
       const addMsg = await this.chatBoatRepo.save(chatBoatMessage);
 
       // send notification to admin
       if (data.receiverId == ADMIN_CHAT_BOAT_ID) {
-        await notificationController.addNotification(data.senderId, data.receiverId, data.message, data.image_url);
+        await notificationController.addNotification(data.senderId, data.receiverId, data.message, data.image_url, ipAddress);
       }
 
       const defaultQuestions = method;
@@ -179,6 +179,7 @@ export class ChatBoatController {
         .addSelect("chat.message", "message")
         .addSelect("chat.image_url", "image_url")
         .addSelect("chat.isRead", "isRead")
+        .addSelect("chat.user_ip_address", "user_ip_address")
         .addSelect("chat.createdAt", "createdAt")
         // .where(
         //   'chat.createdAt IN (SELECT MAX(inner_chat."createdAt") FROM chat_boat AS inner_chat WHERE inner_chat.chat_id = chat.chat_id GROUP BY inner_chat.chat_id)',
@@ -195,6 +196,7 @@ export class ChatBoatController {
           chatEntry.messages.message = chat.message;
           chatEntry.messages.image_url = chat.image_url;
           chatEntry.messages.isRead = chat.isRead;
+          chatEntry.messages.user_ip_address = chat.user_ip_address;
           chatEntry.messages.createdAt = chat.createdAt;
 
           // chatEntry.messages.push({
@@ -215,6 +217,7 @@ export class ChatBoatController {
                 message: chat.message,
                 image_url: chat.image_url,
                 isRead: chat.isRead,
+                user_ip_address: chat.user_ip_address,
                 createdAt: chat.createdAt,
               },
             ],

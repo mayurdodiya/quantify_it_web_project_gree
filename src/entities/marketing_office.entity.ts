@@ -1,30 +1,21 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from "typeorm";
 
-@Entity("notification")
-export class Notification {
+@Entity("marketing_office")
+export class MarketingOffice {
   toObject() {
     throw new Error("Method not implemented.");
   }
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column({ nullable: true })
-  user_ip_address: string;
-
   @Column({ nullable: false })
-  sender_id: string;
-
-  @Column({ nullable: false })
-  receiver_id: string;
+  office_name: string;
 
   @Column({ type: "jsonb", default: null })
-  message: string;
+  address: string;
 
-  @Column({ type: "jsonb", default: [] })
-  image_url: string;
-
-  @Column({ nullable: false, type: "boolean", default: false })
-  is_read: boolean;
+  @Column({ default: null })
+  img_url: string;
 
   @CreateDateColumn({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP" })
   createdAt: Date;

@@ -176,6 +176,15 @@ const updateServicesClientsValidation = [
     validationHandler(req, res, next);
   },
 ];
+const addMarketingOfficeValidation = [
+  check("office_name").notEmpty().withMessage("Office name is required"),
+  check("address").notEmpty().withMessage("Address is required"),
+  check("img_url").notEmpty().withMessage("Img url is required"),
+
+  (req: Request, res: Response, next: NextFunction) => {
+    validationHandler(req, res, next);
+  },
+];
 
 const addblogValidation = [
   check("blog_title").notEmpty().withMessage("Blog title is required"),
@@ -556,4 +565,4 @@ const imgValidation = [
   },
 ];
 
-export { addBannerValidation, addVisionExpertiesValidation, updateVisionExpertiesValidation, addWhoWeAreValidation, updateWhoWeAreValidation, addCoreServiceValidation, addSubServiceValidation, updateSubServiceValidation, addTechExpertiesValidation, addPortfolioValidation, updatePortfolioValidation, addPortfolioTypeValidation, addTrustedClientsValidation, updateTrustedClientsValidation, addServicesClientsValidation, updateServicesClientsValidation, addblogValidation, updateblogValidation, addQuestionAnsValidation, addAboutUsValidation, updateAboutUsValidation, addCertificationValidation, updateHowWeWorkValidation, updateCertificationValidation, addHowWeWorkValidation, addEmployeeDetailsValidation, updateEmployeeDetailsValidation, addprovidedServiceValidation, updateprovidedServiceValidation, addfeaturedServicesValidation, updatefeaturedServicesValidation, addOurContactDetailsValidation, updateOurContactDetailsValidation, addMarketingValidation, addContactUsValidation, addPolicyAndTermsValidation, updatePolicyAndTermsValidation, policyAndTermsQueryValidation, portfolioQueryValidation, pageAndSizeQueryValidation, updateBannerValidation, loginValidation, imgValidation, emailValidation, addUserValidation, changeStatusValidation, changePasswordValidation, serPassValidation,changeStatusNotificationValidation };
+export { addBannerValidation, addVisionExpertiesValidation, updateVisionExpertiesValidation, addWhoWeAreValidation, updateWhoWeAreValidation, addCoreServiceValidation, addSubServiceValidation, updateSubServiceValidation, addTechExpertiesValidation, addPortfolioValidation, updatePortfolioValidation, addPortfolioTypeValidation, addTrustedClientsValidation, updateTrustedClientsValidation, addServicesClientsValidation, updateServicesClientsValidation, addblogValidation, updateblogValidation, addQuestionAnsValidation, addAboutUsValidation, updateAboutUsValidation, addCertificationValidation, updateHowWeWorkValidation, updateCertificationValidation, addHowWeWorkValidation, addEmployeeDetailsValidation, updateEmployeeDetailsValidation, addprovidedServiceValidation, updateprovidedServiceValidation, addfeaturedServicesValidation, updatefeaturedServicesValidation, addOurContactDetailsValidation, updateOurContactDetailsValidation, addMarketingValidation, addContactUsValidation, addPolicyAndTermsValidation, updatePolicyAndTermsValidation, policyAndTermsQueryValidation, portfolioQueryValidation, pageAndSizeQueryValidation, updateBannerValidation, loginValidation, imgValidation, emailValidation, addUserValidation, changeStatusValidation, changePasswordValidation, serPassValidation, changeStatusNotificationValidation, addMarketingOfficeValidation };

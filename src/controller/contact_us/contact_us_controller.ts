@@ -80,6 +80,7 @@ export class ContactUsController {
 
       const [data, totalItems] = await this.contactUsRepo.findAndCount({
         where: DataObj,
+        order: { createdAt: "DESC" },
         select: ["id", "full_name", "email", "contact_purpose", "user_message", "initial_budget", "closing_budget", "createdAt", "updatedAt"],
         skip: offset,
         take: limit,

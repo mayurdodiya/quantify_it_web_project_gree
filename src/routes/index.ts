@@ -26,6 +26,7 @@ import subAdminRoute from "./sub_admin.route";
 import portfolioTypeRoute from "./portfolio_type.route";
 import whoWeAreRoute from "./who_we_are.route";
 import notificationRoute from "./notification.route";
+import marketingOfficeRoute from ".//marketing_offices.route";
 import { verifyGlobalToken } from "../utils/auth.token";
 
 const Routes = express.Router();
@@ -57,5 +58,6 @@ Routes.use("/chat", verifyGlobalToken, chatBoatRoute);
 Routes.use("/token", tokenRoute);
 Routes.use("/subadmin", subAdminRoute);
 Routes.use("/notification", notificationRoute);
+Routes.use("/marketingoffice", marketingOfficeRoute);
 
 export default Routes;

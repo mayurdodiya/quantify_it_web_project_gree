@@ -15,7 +15,7 @@ export class NotificationController {
   }
 
   // add only admin notification
-  public addNotification = async (sender_id: string, receiver_id: string, message: string, image_url: string) => {
+  public addNotification = async (sender_id: string, receiver_id: string, message: string, image_url: string, user_ip_address: string) => {
     try {
       const notificationData = new Notification();
 
@@ -23,6 +23,7 @@ export class NotificationController {
       notificationData.receiver_id = receiver_id;
       notificationData.message = message ? message : null;
       notificationData.image_url = image_url ? image_url : null;
+      notificationData.user_ip_address = user_ip_address ? user_ip_address : null;
 
       await this.notificationRepo.save(notificationData);
     } catch (error) {
@@ -59,7 +60,7 @@ export class NotificationController {
       const dataId = req.params.id as string;
       const data = await this.notificationRepo.findOne({
         where: { id: dataId },
-        select: ["id", "sender_id", "receiver_id", "message", "image_url", "is_read"],
+        select: ["id", "sender_id", "receiver_id", "message", "image_url", "is_read", "user_ip_address"],
       });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This notification"), ResponseCodes.notFound);
@@ -84,7 +85,7 @@ export class NotificationController {
         data = await this.notificationRepo.find({
           where: obj,
           order: { createdAt: "DESC" },
-          select: ["id", "sender_id", "receiver_id", "message", "image_url", "is_read"],
+          select: ["id", "sender_id", "receiver_id", "message", "image_url", "is_read", "user_ip_address"],
         });
 
         if (!data) {
@@ -94,7 +95,7 @@ export class NotificationController {
         data = await this.notificationRepo.find({
           // where: obj,
           order: { createdAt: "DESC" },
-          select: ["id", "sender_id", "receiver_id", "message", "image_url", "is_read"],
+          select: ["id", "sender_id", "receiver_id", "message", "image_url", "is_read", "user_ip_address"],
         });
 
         if (!data) {

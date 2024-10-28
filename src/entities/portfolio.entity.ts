@@ -22,7 +22,16 @@ export class Portfolio {
   live_url: string;
 
   @Column({ type: "jsonb", default: null })
+  description_title: string;
+
+  @Column({ type: "jsonb", default: null })
   description: string;
+
+  @Column({ type: "jsonb", default: null })
+  technology: string;
+
+  @Column({ type: "jsonb", default: null })
+  project_features: string;
 
   @CreateDateColumn({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP" })
   createdAt: Date;

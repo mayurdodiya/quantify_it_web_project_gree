@@ -17,7 +17,7 @@ export class PortfolioController {
   // add data
   public addPortfolio = async (req: Request, res: Response) => {
     try {
-      const { portfolio_type_id, title, sub_title, img_url, description, live_url } = req.body;
+      const { portfolio_type_id, title, sub_title, img_url, description, live_url, description_title, project_features, technology } = req.body;
       const getData = await this.portfolioRepo.findOne({
         where: { title: title },
       });
@@ -30,7 +30,10 @@ export class PortfolioController {
       portfolio.title = title;
       portfolio.sub_title = sub_title;
       portfolio.img_url = img_url;
+      portfolio.description_title = description_title;
       portfolio.description = description;
+      portfolio.technology = technology;
+      portfolio.project_features = project_features;
       portfolio.live_url = live_url;
       portfolio.portfolio_type = portfolio_type_id;
 
@@ -48,7 +51,7 @@ export class PortfolioController {
   public async updatePortfolio(req: Request, res: Response) {
     try {
       const dataId = req.params.id;
-      const { title, sub_title, description, img_url, live_url } = req.body;
+      const { title, sub_title, description, img_url, live_url, project_features, description_title, technology } = req.body;
 
       const getData = await this.portfolioRepo.findOne({ where: { id: dataId }, relations: ["portfolio_type"] });
       if (!getData) {
@@ -64,7 +67,10 @@ export class PortfolioController {
 
       getData.title = title || getData.title;
       getData.sub_title = sub_title || getData.sub_title;
+      getData.description_title = description_title || getData.description_title;
       getData.description = description || getData.description;
+      getData.technology = technology || getData.technology;
+      getData.project_features = getData.project_features || project_features;
       getData.img_url = img_url || getData.img_url;
       getData.live_url = live_url || getData.live_url;
 
@@ -84,7 +90,7 @@ export class PortfolioController {
       const dataId = req.params.id;
       const data = await this.portfolioRepo.findOne({
         where: { id: dataId },
-        select: ["id", "title", "sub_title", "img_url", "live_url", "description", "createdAt"],
+        select: ["id", "title", "sub_title", "img_url", "live_url", "description", "description_title", "technology", "project_features", "createdAt"],
       });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This portfolio"), ResponseCodes.notFound);
@@ -132,7 +138,7 @@ export class PortfolioController {
 
       const [data, totalItems] = await this.portfolioRepo.findAndCount({
         where: whereQuery,
-        select: ["id", "title", "sub_title", "img_url", "live_url", "description", "createdAt"],
+        select: ["id", "title", "sub_title", "img_url", "live_url", "description", "description_title", "technology", "project_features", "createdAt"],
         relations: ["portfolio_type"],
         skip: offset,
         take: limit,
