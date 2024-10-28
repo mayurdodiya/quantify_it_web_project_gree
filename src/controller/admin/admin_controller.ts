@@ -10,10 +10,10 @@ import { generateForgetPasswordToken, generateToken, verifyPasswordToken } from 
 import { Role, Status } from "../../utils/enum";
 import { FileService } from "../../services/file_upload";
 import { networkUtils } from "../../utils/ip_address";
-import { EmailService } from "../../services/nodemailer";
 import logger from "../../utils/winston";
 import { getPagination, getPagingData } from "../../services/paginate";
 import { Permission } from "../../entities/permission.entity";
+import { EmailService } from "../../services/nodemailer";
 
 const emailService = new EmailService();
 const fileService = new FileService();

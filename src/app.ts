@@ -28,18 +28,14 @@ app.get("/", (req: Request, res: Response) => {
   return res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// app.post("/sendmail", async (req, res) => {
-//   try {
-//     await emailService.sendEmail("mailtesttrainer1@mailinator.com", "Test Mail", "This is a test...", "<p>Test mail.....</p>");
+// Handlebars setup
+import { engine } from "express-handlebars";
 
-//     res.status(200).json({ success: true, message: "Email sent successfully" });
-//   } catch (error) {
-//     res.status(500).json({
-//       success: false,
-//       message: "Failed to send email",
-//       error: error.message,
-//     });
-//   }
-// });
+// app.engine("handlebars", engine());
+app.engine("handlebars", engine({ extname: ".handlebars", defaultLayout: false }));
+app.set("view engine", "handlebars");
+app.set("public", path.join(__dirname, "public"));
+
+
 
 export default app;

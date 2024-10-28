@@ -24,6 +24,7 @@ import { Token } from "./../entities/token.entity";
 import { TrustedClients } from "./../entities/trusted_clients.entity";
 import { VisionExperties } from "./../entities/vision_experties.entity";
 import { User } from "./../entities/user.entity";
+import { Notification } from "./../entities/notification.entity";
 
 export class DataCleanup {
   start() {
@@ -39,7 +40,7 @@ export class DataCleanup {
       const sixMonthsAgo = new Date();
       sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
-      const repositories = [AboutUs, Banner, Blog, CertificationDetails, ChatBoat, ContactUs, CoreServices, EmployeeDetails, FeaturedServices, HowWeWork, Marketing, OurContactDetails, PolicyAndTerms, Portfolio, ProvidedService, QuestionAns, SubServices, TechnologicalExperties, Token, TrustedClients, User, VisionExperties];
+      const repositories = [AboutUs, Banner, Blog, CertificationDetails, ChatBoat, ContactUs, CoreServices, EmployeeDetails, FeaturedServices, HowWeWork, Marketing, OurContactDetails, PolicyAndTerms, Portfolio, ProvidedService, QuestionAns, SubServices, TechnologicalExperties, Token, TrustedClients, User, VisionExperties, Notification];
 
       for (const entity of repositories) {
         await AppDataSource.getRepository(entity).delete({

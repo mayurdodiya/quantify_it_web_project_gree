@@ -59,25 +59,19 @@ export class ProvidedServiceController {
   // edit data
   public async updateProvidedService(req: Request, res: Response) {
     try {
-      const { card_img_url, service_type, service_name, service_name_title,view_details_img_url, description, service_benifits, work_planning_title, work_planning_description, work_planning_img_url, business_solutions_title, business_solutions_description, business_solutions_img_url, completed_works, client_ratings, bussiness_reports_percentage } = req.body;
+      const { card_img_url, service_type, service_name, service_name_title, view_details_img_url, description, service_benifits, work_planning_title, work_planning_description, work_planning_img_url, business_solutions_title, business_solutions_description, business_solutions_img_url, completed_works, client_ratings, bussiness_reports_percentage } = req.body;
 
       const dataId = req.params.id;
-      const getData = await this.providedServiceRepo.findOne({
-        where: { id: dataId },
-      });
+      const getData = await this.providedServiceRepo.findOne({ where: { id: dataId } });
       if (!getData) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This service provide data"), ResponseCodes.notFound);
       }
 
-      const isExist = await this.providedServiceRepo.findOne({
-        where: {
-          service_type: service_type,
-          service_name: service_name,
-          id: Not(dataId),
-        },
-      });
-      if (isExist) {
-        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This service provide data"), ResponseCodes.alreadyExist);
+      if (service_type && service_name) {
+        const isExist = await this.providedServiceRepo.findOne({ where: { service_type: service_type, service_name: service_name, id: Not(dataId) } });
+        if (isExist) {
+          return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This service provide data"), ResponseCodes.alreadyExist);
+        }
       }
 
       getData.card_img_url = card_img_url || getData.card_img_url;
@@ -113,7 +107,7 @@ export class ProvidedServiceController {
       const dataId = req.params.id;
       const data = await this.providedServiceRepo.findOne({
         where: { id: dataId, status: Status.ACTIVE },
-        select: ["id", "card_img_url", "service_type", "service_name", "service_name_title","view_details_img_url", "description", "service_benifits", "work_planning_title", "work_planning_description", "work_planning_img_url", "business_solutions_title", "business_solutions_description", "business_solutions_img_url", "completed_works", "client_ratings", "bussiness_reports_percentage", "createdAt"],
+        select: ["id", "card_img_url", "service_type", "service_name", "service_name_title", "view_details_img_url", "description", "service_benifits", "work_planning_title", "work_planning_description", "work_planning_img_url", "business_solutions_title", "business_solutions_description", "business_solutions_img_url", "completed_works", "client_ratings", "bussiness_reports_percentage", "createdAt"],
       });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This service provide data"), ResponseCodes.notFound);

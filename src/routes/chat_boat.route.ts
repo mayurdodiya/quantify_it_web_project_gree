@@ -13,4 +13,5 @@ routes.post("/replay", (req: Request, res: Response) => chatBoatController.addre
 routes.get("/lastmsg", verifyAdminToken, (req: Request, res: Response) => chatBoatController.getAllUserLastMSG(req, res));
 routes.get("/get/:id", (req: Request, res: Response) => chatBoatController.getUserChatById(req, res));
 
+routes.put("/markasread", verifyAdminToken, (req: Request, res: Response) => chatBoatController.markAsRead(req, res));
 export default routes;

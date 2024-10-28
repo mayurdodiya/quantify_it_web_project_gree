@@ -6,6 +6,9 @@ import { ResponseCodes } from "../../utils/response-codes";
 import { AppDataSource } from "../../config/database.config";
 import { ContactUs } from "../../entities/contact_us.entity";
 import { getPagination } from "../../services/paginate";
+import { EmailService } from "../../services/nodemailer";
+import emailTmplateServices from "../../services/handlebars.services";
+const emailService = new EmailService();
 
 export class ContactUsController {
   private contactUsRepo: Repository<ContactUs>;
@@ -33,6 +36,11 @@ export class ContactUsController {
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("contact us data"), ResponseCodes.insertError);
       }
+
+      // email services
+      const context = await emailTmplateServices.getInTouchFormHandleBar(email, full_name);
+      emailService.sendEmail(context.email, context.subject, context.text, context.htmlContent);
+
       return RoutesHandler.sendSuccess(req, res, true, message.SUBMIT_FORM, ResponseCodes.success, undefined);
     } catch (error) {
       return RoutesHandler.sendError(req, res, false, error.message, ResponseCodes.serverError);

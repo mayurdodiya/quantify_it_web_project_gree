@@ -51,7 +51,7 @@ export const AppDataSource = new DataSource({
   username: user_name,
   password: password,
   database: database,
-  synchronize: true,
+  synchronize: false,
   logging: false,
   entities: [Banner, User, VisionExperties, CoreServices, SubServices, TechnologicalExperties, Portfolio, TrustedClients, Blog, QuestionAns, AboutUs, CertificationDetails, HowWeWork, EmployeeDetails, ProvidedService, FeaturedServices, OurContactDetails, Marketing, ContactUs, PolicyAndTerms, ChatBoat, Token, Permission, ServiceClients, PortfolioType, WhoWeAre, Notification],
   ssl: {

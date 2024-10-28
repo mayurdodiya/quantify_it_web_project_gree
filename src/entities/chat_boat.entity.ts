@@ -8,6 +8,9 @@ export class ChatBoat {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
+  @Column({ nullable: true })
+  user_ip_address: string;
+
   @Column({ nullable: false })
   chat_id: string;
 
@@ -22,6 +25,9 @@ export class ChatBoat {
 
   @Column({ type: "jsonb", default: [] })
   image_url: string;
+
+  @Column({ nullable: false, type: "boolean", default: false })
+  isRead: boolean;
 
   @CreateDateColumn({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP" })
   createdAt: Date;

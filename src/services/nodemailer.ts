@@ -23,7 +23,7 @@ export class EmailService {
           clientSecret: mailConfigurations.MAIL_CLIENT_SECRET,
           refreshToken: mailConfigurations.MAIL_REFRESH_TOKEN,
         },
-      }),
+      })
     );
   }
 
@@ -31,7 +31,7 @@ export class EmailService {
     to: string,
     subject: string,
     text: string,
-    html: string,
+    html: string
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any> {
     const mailConfigurations = {
