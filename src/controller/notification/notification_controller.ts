@@ -74,7 +74,7 @@ export class NotificationController {
   public async getAllNotification(req: Request, res: Response) {
     try {
       const type: boolean = req.query.type === "true" ? true : false;
-      var data: Notification[] = [];
+      let data: Notification[] = [];
       
       if (req.query.type != "") {
         const obj: { is_read: boolean } = { is_read: false };
