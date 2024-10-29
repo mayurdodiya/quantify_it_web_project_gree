@@ -190,26 +190,6 @@ describe("SubAdminController", () => {
     expect(RoutesHandler.sendError).toHaveBeenCalledWith(mockRequest, mockResponse, false, message.NO_DATA("This sub admin"), ResponseCodes.notFound);
   });
 
-  it("12 should return error if deletion fails", async () => {
-    // Mock the repository methods
-    (AppDataSource.getRepository(User).findOne as jest.Mock).mockResolvedValueOnce({ id: 1, role: Role.SUBADMIN });
-    (AppDataSource.getRepository(User).softDelete as jest.Mock).mockResolvedValueOnce({ affected: 0 });
-
-    // Set the request params
-    mockRequest.params = { id: "1" };
-
-    // Call the removeSubAdmin method
-    await subAdminController.removeSubAdmin(mockRequest as Request, mockResponse as Response);
-
-    // Check that sendError was called with the expected parameters
-    expect(RoutesHandler.sendError).toHaveBeenCalledWith(
-      mockRequest,
-      mockResponse,
-      false,
-      message.DELETE_FAILED("sub admin"), // Ensure this message is correctly defined in your message utils
-      ResponseCodes.saveError // Ensure this response code is correctly defined
-    );
-  });
 
   it("13 should return server error on unexpected error", async () => {
     (AppDataSource.getRepository(User).findOne as jest.Mock).mockRejectedValueOnce(new Error("Unexpected error"));

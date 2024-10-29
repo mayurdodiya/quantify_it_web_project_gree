@@ -42,7 +42,7 @@ describe("BannerController", () => {
     } as unknown as Response;
   });
 
-  //create
+  //add
   it("should return an error if banner already exists", async () => {
     (AppDataSource.getRepository(Banner).findOne as jest.Mock).mockResolvedValueOnce({ id: 1 });
 

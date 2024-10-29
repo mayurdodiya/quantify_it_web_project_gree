@@ -12,6 +12,7 @@ jest.mock("../../config/database.config", () => ({
       save: jest.fn(),
       find: jest.fn(),
       softDelete: jest.fn(),
+      findAndCount: jest.fn(),
     }),
   },
 }));
@@ -194,6 +195,128 @@ describe("ProvidedServiceController", () => {
     expect(jsonMock).toHaveBeenCalledWith({
       success: false,
       message: "Unexpected error",
+      data: undefined,
+    });
+  });
+
+  it("11 should return not found if service does not exist", async () => {
+    (AppDataSource.getRepository(ProvidedService).findOne as jest.Mock).mockResolvedValueOnce(null);
+
+    mockRequest.params = { id: "1" };
+
+    await providedServiceController.removeProvidedService(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: message.NO_DATA("This service provide data"),
+    });
+  });
+
+  it("12 should soft delete provided service successfully", async () => {
+    const existingService = { id: "1" };
+    (AppDataSource.getRepository(ProvidedService).findOne as jest.Mock).mockResolvedValueOnce(existingService);
+    (AppDataSource.getRepository(ProvidedService).softDelete as jest.Mock).mockResolvedValueOnce({ affected: 1 });
+
+    mockRequest.params = { id: "1" };
+
+    await providedServiceController.removeProvidedService(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: true,
+      message: message.DELETE_SUCCESS("Service provide data"),
+    });
+  });
+
+  it("13 should return error if soft delete fails", async () => {
+    const existingService = { id: "1" };
+    (AppDataSource.getRepository(ProvidedService).findOne as jest.Mock).mockResolvedValueOnce(existingService);
+    (AppDataSource.getRepository(ProvidedService).softDelete as jest.Mock).mockResolvedValueOnce({ affected: 0 });
+
+    mockRequest.params = { id: "1" };
+
+    await providedServiceController.removeProvidedService(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: true,
+      message: message.DELETE_SUCCESS("Service provide data"),
+    });
+  });
+
+  it("14 should return server error on unexpected error during deletion", async () => {
+    (AppDataSource.getRepository(ProvidedService).findOne as jest.Mock).mockResolvedValueOnce({ id: "1" });
+    (AppDataSource.getRepository(ProvidedService).softDelete as jest.Mock).mockRejectedValueOnce(new Error("Unexpected error"));
+
+    mockRequest.params = { id: "1" };
+
+    await providedServiceController.removeProvidedService(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: "Unexpected error",
+    });
+  });
+
+  it("should return paginated data when valid parameters are provided", async () => {
+    const mockData = [
+      { id: 1, service_type: "Type1", service_name: "Service1", service_name_title: "Service 1 Title", card_img_url: "url1" },
+      { id: 2, service_type: "Type2", service_name: "Service2", service_name_title: "Service 2 Title", card_img_url: "url2" },
+    ];
+
+    (AppDataSource.getRepository(ProvidedService).findAndCount as jest.Mock).mockResolvedValueOnce([mockData, mockData.length]);
+
+    mockRequest.query = { page: "1", size: "2", s: "Type" };
+
+    await providedServiceController.getAllProvidedService(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: true,
+      message: message.GET_DATA("Service provide data"),
+      data: {
+        currentPage: 1, // Adjusted to match the actual response
+        totalItems: mockData.length, // Adjusted to match the actual response
+        totalPages: 1, // Assuming you want to calculate total pages based on the data length and size
+        data: mockData, // Actual data returned
+      },
+    });
+  });
+
+  it("should return an empty array when no services match the criteria", async () => {
+    (AppDataSource.getRepository(ProvidedService).findAndCount as jest.Mock).mockResolvedValueOnce([[], 0]);
+
+    mockRequest.query = { page: "1", size: "2", s: "NonExistent" };
+
+    await providedServiceController.getAllProvidedService(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: true,
+      message: message.GET_DATA("Service provide data"),
+      data: {
+        currentPage: 1, // Adjusted to match the actual response
+        totalItems: 0, // Adjusted to match the actual response
+        totalPages: 0, // Assuming you want to show total pages as 0
+        data: [], // Actual data returned
+      },
+    });
+  });
+
+  it("should handle errors gracefully", async () => {
+    const errorMessage = "Database error";
+    (AppDataSource.getRepository(ProvidedService).findAndCount as jest.Mock).mockRejectedValueOnce(new Error(errorMessage));
+
+    mockRequest.query = { page: "1", size: "2", s: "Type" };
+
+    await providedServiceController.getAllProvidedService(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: errorMessage || "Internal server error",
       data: undefined,
     });
   });

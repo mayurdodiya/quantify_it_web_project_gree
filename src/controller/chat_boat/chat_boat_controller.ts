@@ -18,6 +18,7 @@ export class ChatBoatController {
   constructor() {
     this.chatBoatRepo = AppDataSource.getRepository(ChatBoat);
   }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async chatCreate(data: any) {
     try {
@@ -29,7 +30,6 @@ export class ChatBoatController {
       chatBoatMessage.image_url = data.image_url;
 
       const addMsg = await this.chatBoatRepo.save(chatBoatMessage);
-      // NotificationController.
 
       return addMsg;
     } catch (err) {
@@ -37,6 +37,7 @@ export class ChatBoatController {
     }
   }
 
+  // send msg
   public async sendMsg(req: Request, res: Response) {
     const data = req.body;
 
@@ -264,6 +265,7 @@ export class ChatBoatController {
     }
   }
 
+  // mark as read
   public async markAsRead(req: Request, res: Response) {
     try {
       const { chat_id, senderId, receiverId } = req.body;

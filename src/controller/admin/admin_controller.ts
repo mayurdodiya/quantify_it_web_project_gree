@@ -343,6 +343,7 @@ export class AdminController {
     }
   }
 
+  // change password
   public async changePassword(req: Request, res: Response) {
     try {
       // eslint-disable-next-line no-unsafe-optional-chaining
@@ -409,6 +410,7 @@ export class AdminController {
     }
   }
 
+  // ip address
   public async ipAddress(req: Request, res: Response) {
     try {
       const userIp = (req.headers["x-forwarded-for"] as string) || req.connection.remoteAddress;
@@ -421,3 +423,11 @@ export class AdminController {
     }
   }
 }
+
+
+//getSubAdmin
+//getAllSubAdmin
+//removeSubAdmin
+//changeSubAdminPermission
+//changePassword
+//ipAddress

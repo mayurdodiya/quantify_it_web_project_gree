@@ -42,7 +42,7 @@ describe("certificationDetailsController", () => {
     } as unknown as Response;
   });
 
-  //create
+  // add
   it("should return an error if certification details already exists", async () => {
     (AppDataSource.getRepository(CertificationDetails).findOne as jest.Mock).mockResolvedValueOnce({ id: 1 });
 
@@ -88,7 +88,7 @@ describe("certificationDetailsController", () => {
     });
   });
 
-  //edit
+  // edit
   it("5 should return not found if certification details does not exist", async () => {
     (AppDataSource.getRepository(CertificationDetails).findOne as jest.Mock).mockResolvedValueOnce(null);
 
@@ -123,7 +123,7 @@ describe("certificationDetailsController", () => {
     });
   });
 
-  //find
+  // find
   it("should return not found if certification details does not exist", async () => {
     (AppDataSource.getRepository(CertificationDetails).find as jest.Mock).mockResolvedValueOnce(null);
 
@@ -167,7 +167,7 @@ describe("certificationDetailsController", () => {
     });
   });
 
-  //findOne
+  // findOne
   it("should return certification details data if found", async () => {
     const certificationData = {
       id: 1,
@@ -215,7 +215,7 @@ describe("certificationDetailsController", () => {
     });
   });
 
-  //delete
+  // delete
   it("should return success if certification details is soft deleted", async () => {
     (AppDataSource.getRepository(CertificationDetails).softDelete as jest.Mock).mockResolvedValueOnce({ affected: 1 });
 

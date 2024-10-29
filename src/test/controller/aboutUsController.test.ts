@@ -42,8 +42,7 @@ describe("AboutUsController", () => {
     } as unknown as Response;
   });
 
-  //--------------------------------------------------------------------------------------------------------
-
+  // add
   it("should return an error if service already exists", async () => {
     (AppDataSource.getRepository(AboutUs).findOne as jest.Mock).mockResolvedValueOnce({ id: 1 });
 
@@ -62,9 +61,6 @@ describe("AboutUsController", () => {
     });
   });
 
-  //--------------------------------------------------------------------------------------------------------
-
-  // create post
   it("should save new service and return success", async () => {
     (AppDataSource.getRepository(AboutUs).findOne as jest.Mock).mockResolvedValueOnce(null);
 
@@ -88,9 +84,6 @@ describe("AboutUsController", () => {
     });
   });
 
-  //--------------------------------------------------------------------------------------------------------
-
-  // create post
   it("should return server error on failure", async () => {
     (AppDataSource.getRepository(AboutUs).findOne as jest.Mock).mockRejectedValueOnce(new Error("Server error"));
 
@@ -104,8 +97,7 @@ describe("AboutUsController", () => {
     });
   });
 
-  //--------------------------------------------------------------------------------------------------------
-
+  // update
   it("should return not found if service does not exist", async () => {
     (AppDataSource.getRepository(AboutUs).findOne as jest.Mock).mockResolvedValueOnce(null);
 
@@ -120,8 +112,6 @@ describe("AboutUsController", () => {
       data: undefined,
     });
   });
-
-  //--------------------------------------------------------------------------------------------------------
 
   it("should update the service and return save error", async () => {
     const existingService = {
@@ -147,8 +137,6 @@ describe("AboutUsController", () => {
     });
   });
 
-  //---------------------------------------------------------------------------------------------------------
-
   //find
   it("12 should return contact data if found", async () => {
     const contactData = {
@@ -166,7 +154,6 @@ describe("AboutUsController", () => {
       data: contactData,
     });
   });
-  //---------------------------------------------------------------------------------------------------------
 
   it("13 should return not found if contact does not exist", async () => {
     (AppDataSource.getRepository(AboutUs).findOne as jest.Mock).mockResolvedValueOnce(null);
@@ -180,7 +167,6 @@ describe("AboutUsController", () => {
       data: undefined,
     });
   });
-  //---------------------------------------------------------------------------------------------------------
 
   it("14 should return server error on unexpected error", async () => {
     (AppDataSource.getRepository(AboutUs).findOne as jest.Mock).mockRejectedValueOnce(new Error("Unexpected error"));

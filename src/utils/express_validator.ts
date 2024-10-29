@@ -513,7 +513,7 @@ const emailValidation = [
 const serPassValidation = [
   check("token").notEmpty().withMessage("token is required"),
   check("password").notEmpty().withMessage("password is required"),
-  check("confirmPassword").notEmpty().withMessage("Confirm Password is required"),
+  check("confirm_password").notEmpty().withMessage("Confirm Password is required"),
 
   (req: Request, res: Response, next: NextFunction) => {
     validationHandler(req, res, next);

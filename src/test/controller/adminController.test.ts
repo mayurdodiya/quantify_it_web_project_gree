@@ -1,9 +1,9 @@
-import { Role } from "../../utils/enum";
+import { Role, Status } from "../../utils/enum";
 import { Request, Response } from "express";
 import { message } from "../../utils/messages";
 import { User } from "../../entities/user.entity";
-import { comparepassword } from "../../utils/bcrypt";
-import { generateToken } from "../../utils/auth.token";
+import { bcryptpassword, comparepassword } from "../../utils/bcrypt";
+import { generateForgetPasswordToken, generateToken } from "../../utils/auth.token";
 import { FileService } from "../../services/file_upload";
 import { ResponseCodes } from "../../utils/response-codes";
 import { AppDataSource } from "../../config/database.config";
@@ -13,6 +13,7 @@ const fileService = new FileService();
 
 jest.mock("../../config/database.config", () => ({
   AppDataSource: {
+    createQueryRunner: jest.fn(),
     getRepository: jest.fn().mockReturnValue({
       findOne: jest.fn(),
       save: jest.fn(),
@@ -180,7 +181,7 @@ describe("AdminController", () => {
       } as Express.Multer.File;
 
       (fileService.uploadFile as jest.Mock).mockRejectedValueOnce(new Error("Upload error"));
-      
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await adminController.uploadImage(mockRequest as any, mockResponse as Response);
 
@@ -188,6 +189,265 @@ describe("AdminController", () => {
       expect(jsonMock).toHaveBeenCalledWith({
         success: true,
         message: message.UPLOAD_SUCCESS("Image"),
+        data: undefined,
+      });
+    });
+  });
+
+  describe("forgotPassword", () => {
+    it("should return error if admin email is not found", async () => {
+      (AppDataSource.getRepository(User).findOne as jest.Mock).mockResolvedValueOnce(null);
+
+      mockRequest.body = { email: "nonexistent@example.com", baseurl: "http://example.com" };
+
+      await adminController.forgotPassword(mockRequest as Request, mockResponse as Response);
+
+      expect(statusMock).toHaveBeenCalledWith(ResponseCodes.loginError);
+      expect(jsonMock).toHaveBeenCalledWith({
+        success: false,
+        message: message.NO_DATA("This email"),
+        data: undefined,
+      });
+    });
+
+    it("should return error if token generation fails", async () => {
+      const mockAdmin = { id: 1, email: "admin@example.com", role: Role.ADMIN, status: Status.ACTIVE };
+      (AppDataSource.getRepository(User).findOne as jest.Mock).mockResolvedValueOnce(mockAdmin);
+      (generateForgetPasswordToken as jest.Mock).mockReturnValueOnce(null);
+
+      mockRequest.body = { email: "admin@example.com", baseurl: "http://example.com" };
+
+      await adminController.forgotPassword(mockRequest as Request, mockResponse as Response);
+
+      expect(statusMock).toHaveBeenCalledWith(ResponseCodes.loginError);
+      expect(jsonMock).toHaveBeenCalledWith({
+        success: false,
+        message: message.NOT_GENERATE("Token"),
+        data: undefined,
+      });
+    });
+
+    // it("should send reset password email successfully", async () => {
+    //   const mockAdmin = { id: 1, email: "admin@example.com", role: Role.ADMIN, status: Status.ACTIVE };
+    //   (AppDataSource.getRepository(User).findOne as jest.Mock).mockResolvedValueOnce(mockAdmin);
+    //   (generateForgetPasswordToken as jest.Mock).mockReturnValueOnce("generatedToken");
+    //   (emailService.sendEmail as jest.Mock).mockResolvedValueOnce({}); // Mock successful email send
+
+    //   mockRequest.body = { email: "admin@example.com", baseurl: "http://example.com" };
+
+    //   await adminController.forgotPassword(mockRequest as Request, mockResponse as Response);
+
+    //   expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
+    //   expect(jsonMock).toHaveBeenCalledWith({
+    //     success: true,
+    //     message: message.FORGOT_PASSWORD_LINK,
+    //     data: {},
+    //   });
+    // });
+
+    // it("should return error if email sending fails", async () => {
+    //   const mockAdmin = { id: 1, email: "admin@example.com", role: Role.ADMIN, status: Status.ACTIVE };
+    //   (AppDataSource.getRepository(User).findOne as jest.Mock).mockResolvedValueOnce(mockAdmin);
+    //   (generateForgetPasswordToken as jest.Mock).mockReturnValueOnce("generatedToken");
+    //   (emailService.sendEmail as jest.Mock).mockRejectedValueOnce(new Error("Email sending error"));
+
+    //   mockRequest.body = { email: "admin@example.com", baseurl: "http://example.com" };
+
+    //   await adminController.forgotPassword(mockRequest as Request, mockResponse as Response);
+
+    //   expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
+    //   expect(jsonMock).toHaveBeenCalledWith({
+    //     success: false,
+    //     message: "Email sending error",
+    //     data: undefined,
+    //   });
+    // });
+  });
+
+  describe("setPassword", () => {
+    it("should return an error if required fields are missing", async () => {
+      mockRequest.body = { token: "someToken" }; // Missing password and confirm_password
+
+      await adminController.setPassword(mockRequest as Request, mockResponse as Response);
+
+      expect(statusMock).toHaveBeenCalledWith(ResponseCodes.inputError);
+      expect(jsonMock).toHaveBeenCalledWith({
+        message: "token, password and confirm password are required",
+      });
+    });
+
+    it("should return an error if passwords do not match", async () => {
+      mockRequest.body = { token: "someToken", password: "newPassword", confirm_password: "differentPassword" };
+
+      await adminController.setPassword(mockRequest as Request, mockResponse as Response);
+
+      expect(statusMock).toHaveBeenCalledWith(ResponseCodes.inputError);
+      expect(jsonMock).toHaveBeenCalledWith({
+        message: "Password and confirm password does not match",
+      });
+    });
+
+    // it("should return an error if user is not found", async () => {
+    //   const mockTokenResult = { userId: 1 };
+    //   (verifyPasswordToken as jest.Mock).mockReturnValueOnce(mockTokenResult);
+    //   (AppDataSource.getRepository(User).findOne as jest.Mock).mockResolvedValueOnce(null); // User not found
+
+    //   mockRequest.body = { token: "someToken", password: "newPassword", confirm_password: "newPassword" };
+
+    //   await adminController.setPassword(mockRequest as Request, mockResponse as Response);
+
+    //   expect(RoutesHandler.sendError).toHaveBeenCalledWith(mockRequest, mockResponse, false, expect.any(String), ResponseCodes.loginError);
+    // });
+
+    // it("should successfully set the password", async () => {
+    //   const mockAdmin = { id: 1, email: "admin@example.com", role: Role.ADMIN, status: Status.ACTIVE };
+    //   const mockTokenResult = { userId: 1 };
+
+    //   (verifyPasswordToken as jest.Mock).mockReturnValueOnce(mockTokenResult);
+    //   (AppDataSource.getRepository(User).findOne as jest.Mock).mockResolvedValueOnce(mockAdmin); // User found
+    //   (bcryptpassword as jest.Mock).mockResolvedValueOnce("hashedPassword"); // Mock password hashing
+
+    //   mockRequest.body = { token: "someToken", password: "newPassword", confirm_password: "newPassword" };
+
+    //   await adminController.setPassword(mockRequest as Request, mockResponse as Response);
+
+    //   expect(AppDataSource.getRepository(User).save).toHaveBeenCalledWith({
+    //     ...mockAdmin,
+    //     password: "hashedPassword",
+    //   });
+    //   expect(RoutesHandler.sendSuccess).toHaveBeenCalledWith(mockRequest, mockResponse, true, expect.any(String), ResponseCodes.success, {});
+    // });
+
+    // it("should handle errors during password saving", async () => {
+    //   const mockAdmin = { id: 1, email: "admin@example.com", role: Role.ADMIN, status: Status.ACTIVE };
+    //   const mockTokenResult = { userId: 1 };
+
+    //   (verifyPasswordToken as jest.Mock).mockReturnValueOnce(mockTokenResult);
+    //   (AppDataSource.getRepository(User).findOne as jest.Mock).mockResolvedValueOnce(mockAdmin); // User found
+    //   (bcryptpassword as jest.Mock).mockResolvedValueOnce("hashedPassword"); // Mock password hashing
+    //   (AppDataSource.getRepository(User).save as jest.Mock).mockRejectedValueOnce(new Error("Save failed")); // Simulate error
+
+    //   mockRequest.body = { token: "someToken", password: "newPassword", confirm_password: "newPassword" };
+
+    //   await adminController.setPassword(mockRequest as Request, mockResponse as Response);
+
+    //   expect(RoutesHandler.sendError).toHaveBeenCalledWith(mockRequest, mockResponse, false, "Save failed", ResponseCodes.serverError);
+    // });
+  });
+
+  describe("addSubAdmin", () => {
+    it("should return an error if the email already exists", async () => {
+      (AppDataSource.getRepository(User).findOne as jest.Mock).mockResolvedValueOnce({ id: 1, email: "admin@example.com" });
+
+      mockRequest.body = {
+        first_name: "Test",
+        last_name: "User",
+        email: "admin@example.com",
+        phone_no: "1234567890",
+        password: "password",
+        location: "Location",
+      };
+
+      await adminController.addSubAdmin(mockRequest as Request, mockResponse as Response);
+
+      expect(statusMock).toHaveBeenCalledWith(ResponseCodes.insertError);
+      expect(jsonMock).toHaveBeenCalledWith({
+        success: false,
+        message: message.DATA_EXIST("Email"),
+        data: undefined,
+      });
+    });
+
+    it("should successfully add a new sub admin", async () => {
+      (AppDataSource.getRepository(User).findOne as jest.Mock).mockResolvedValueOnce(null);
+      (bcryptpassword as jest.Mock).mockResolvedValueOnce("hashedPassword");
+
+      const mockQueryRunner = {
+        connect: jest.fn(),
+        startTransaction: jest.fn(),
+        manager: {
+          save: jest.fn().mockResolvedValueOnce(undefined), // Mock user save
+        },
+        commitTransaction: jest.fn(),
+        rollbackTransaction: jest.fn(),
+      };
+      (AppDataSource.createQueryRunner as jest.Mock).mockReturnValueOnce(mockQueryRunner);
+
+      mockRequest.body = {
+        first_name: "Test",
+        last_name: "User",
+        email: "admin@example.com",
+        phone_no: "1234567890",
+        password: "password",
+        location: "Location",
+      };
+
+      await adminController.addSubAdmin(mockRequest as Request, mockResponse as Response);
+
+      expect(mockQueryRunner.connect).toHaveBeenCalled();
+      expect(mockQueryRunner.startTransaction).toHaveBeenCalled();
+      expect(mockQueryRunner.commitTransaction).toHaveBeenCalled();
+      expect(statusMock).toHaveBeenCalledWith(ResponseCodes.createSuccess);
+      expect(jsonMock).toHaveBeenCalledWith({
+        success: true,
+        message: message.CREATE_SUCCESS("Sub admin"),
+        data: undefined,
+      });
+    });
+
+    it("should return an error if saving the user fails", async () => {
+      (AppDataSource.getRepository(User).findOne as jest.Mock).mockResolvedValueOnce(null);
+      (bcryptpassword as jest.Mock).mockResolvedValueOnce("hashedPassword");
+
+      const mockQueryRunner = {
+        connect: jest.fn(),
+        startTransaction: jest.fn(),
+        manager: {
+          save: jest.fn().mockRejectedValueOnce(new Error("Save failed")), // Simulate error
+        },
+        commitTransaction: jest.fn(),
+        rollbackTransaction: jest.fn(),
+      };
+      (AppDataSource.createQueryRunner as jest.Mock).mockReturnValueOnce(mockQueryRunner);
+
+      mockRequest.body = {
+        first_name: "Test",
+        last_name: "User",
+        email: "admin@example.com",
+        phone_no: "1234567890",
+        password: "password",
+        location: "Location",
+      };
+
+      await adminController.addSubAdmin(mockRequest as Request, mockResponse as Response);
+
+      expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
+      expect(statusMock).toHaveBeenCalledWith(ResponseCodes.insertError);
+      expect(jsonMock).toHaveBeenCalledWith({
+        success: false,
+        message: message.CREATE_FAIL("Sub admin"),
+        data: undefined,
+      });
+    });
+
+    it("should return a server error on unexpected failure", async () => {
+      (AppDataSource.getRepository(User).findOne as jest.Mock).mockRejectedValueOnce(new Error("Unexpected error"));
+
+      mockRequest.body = {
+        first_name: "Test",
+        last_name: "User",
+        email: "admin@example.com",
+        phone_no: "1234567890",
+        password: "password",
+        location: "Location",
+      };
+
+      await adminController.addSubAdmin(mockRequest as Request, mockResponse as Response);
+
+      expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
+      expect(jsonMock).toHaveBeenCalledWith({
+        success: false,
+        message: "Unexpected error",
         data: undefined,
       });
     });

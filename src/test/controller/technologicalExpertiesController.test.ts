@@ -7,7 +7,7 @@ import { TechnologicalExpertiesController } from "../../controller/technological
 jest.mock("../../config/database.config", () => ({
   AppDataSource: {
     getRepository: jest.fn(),
-    query: jest.fn(), // Ensure query is mocked
+    query: jest.fn(),
   },
 }));
 
