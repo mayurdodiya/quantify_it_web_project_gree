@@ -70,7 +70,7 @@ export class PortfolioController {
       getData.description_title = description_title || getData.description_title;
       getData.description = description || getData.description;
       getData.technology = technology || getData.technology;
-      getData.project_features = getData.project_features || project_features;
+      getData.project_features = project_features || getData.project_features;
       getData.img_url = img_url || getData.img_url;
       getData.live_url = live_url || getData.live_url;
 
