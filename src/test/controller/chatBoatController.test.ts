@@ -74,7 +74,7 @@ describe("ChatBoatController", () => {
 
     await chatBoatController.sendMsg(mockRequest as Request, mockResponse as Response);
 
-    expect(saveMock).toHaveBeenCalledTimes(1); // Ensure save is called once
+    expect(saveMock).toHaveBeenCalledTimes(1);
     expect(jsonMock).toHaveBeenCalledWith(
       expect.objectContaining({
         success: true,

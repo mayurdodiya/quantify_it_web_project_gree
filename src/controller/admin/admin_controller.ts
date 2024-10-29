@@ -98,7 +98,7 @@ export class AdminController {
 
       <a href="${url}" target="_blank">${url}</a>
 
-      <p>Best regards, <br>Going Green</p>
+      <p>Best regards, <br>QuentifyIt Team</p>
             `,
       };
 
@@ -201,7 +201,7 @@ export class AdminController {
         // <br>
         // <p>Your profile has been added successfully by admin, your password is ${password}, do not share to anyone!</p>
 
-        // <p>Best regards, <br>Going Green</p>
+        // <p>Best regards, <br>QuentifyIt Team</p>
         // `,
         // };
         // var xyz = await emailService.sendEmail(mailData.email, mailData.subject, mailData.text, mailData.body);
@@ -423,7 +423,6 @@ export class AdminController {
     }
   }
 }
-
 
 //getSubAdmin
 //getAllSubAdmin

@@ -3,10 +3,15 @@ import { AppDataSource } from "../../config/database.config";
 import { message } from "../../utils/messages";
 import { ResponseCodes } from "../../utils/response-codes";
 import { TechnologicalExpertiesController } from "../../controller/technological_experties/technological_experties_controller";
+import { TechnologicalExperties } from "../../entities/technological_experties.entity";
 
 jest.mock("../../config/database.config", () => ({
   AppDataSource: {
-    getRepository: jest.fn(),
+    getRepository: jest.fn().mockReturnValue({
+      findOne: jest.fn(),
+      softDelete: jest.fn(),
+      save: jest.fn(),
+    }),
     query: jest.fn(),
   },
 }));
@@ -41,205 +46,222 @@ describe("TechnologicalExpertiesController", () => {
 
   //---------------------------------------------------------------------------------------------------------
 
-  // it("1 should return an error if service already exists", async () => {
-  //   (AppDataSource.getRepository(TechnologicalExperties).findOne as jest.Mock).mockResolvedValueOnce({ id: 1 });
+  it("1 should return an error if expertise already exists", async () => {
+    (AppDataSource.getRepository(TechnologicalExperties).findOne as jest.Mock).mockResolvedValueOnce({}); // Mock existing expertise
 
-  //   mockRequest.body = {};
+    mockRequest.body = {
+      experties_name: "React",
+      experties_type: "Frontend",
+    };
 
-  //   await technologicalExpertiesController.addTechnologicalExperties(mockRequest as Request, mockResponse as Response);
+    await technologicalExpertiesController.addTechnologicalExperties(mockRequest as Request, mockResponse as Response);
 
-  //   expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
-  //   expect(jsonMock).toHaveBeenCalledWith({
-  //     success: false,
-  //     message: message.DATA_EXIST("This experties"),
-  //     data: undefined,
-  //   });
-  // });
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.alreadyExist);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: message.DATA_EXIST("This experties name"),
+      data: undefined,
+    });
+  });
+
+  // ---------------------------------------------------------------------------------------------------------
+
+  it("2 should save new expertise and return success", async () => {
+    // Mocking that no expertise exists
+    (AppDataSource.getRepository(TechnologicalExperties).findOne as jest.Mock).mockResolvedValueOnce(null);
+
+    // Mocking the save operation to return a new expertise object
+    (AppDataSource.getRepository(TechnologicalExperties).save as jest.Mock).mockResolvedValueOnce({ id: 1 });
+
+    // Populate the request body with required data
+    mockRequest.body = {
+      experties_name: "React",
+      experties_type: "Frontend",
+      img_url: "react.png",
+      index: 1,
+    };
+
+    await technologicalExpertiesController.addTechnologicalExperties(mockRequest as Request, mockResponse as Response);
+
+    // Expectations for successful response
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: true,
+      message: message.CREATE_SUCCESS("Experties"),
+      data: undefined,
+    });
+  });
+
+  // ---------------------------------------------------------------------------------------------------------
+
+  it("3 should return server error on failure", async () => {
+    (AppDataSource.getRepository(TechnologicalExperties).findOne as jest.Mock).mockRejectedValueOnce(new Error("Server error"));
+
+    await technologicalExpertiesController.addTechnologicalExperties(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: "Server error",
+      data: undefined,
+    });
+  });
+
+  //---------------------------------------------------------------------------------------------------------
+
+  it("4 should return not found if service does not exist", async () => {
+    // Mocking that no expertise exists
+    (AppDataSource.getRepository(TechnologicalExperties).findOne as jest.Mock).mockResolvedValueOnce(null);
+
+    mockRequest.params = { id: "1" };
+
+    await technologicalExpertiesController.updateTechnologicalExperties(mockRequest as Request, mockResponse as Response);
+
+    // Expecting a not found response
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: message.NO_DATA("This experties"),
+      data: undefined,
+    });
+  });
+
+  //---------------------------------------------------------------------------------------------------------
+
+  it("5 should update the service and return save error", async () => {
+    const existingService = {
+      id: 1,
+      service_name: "Old Name",
+      service_type: "Old Type",
+    };
+
+    (AppDataSource.getRepository(TechnologicalExperties).findOne as jest.Mock).mockResolvedValueOnce(existingService);
+    (AppDataSource.getRepository(TechnologicalExperties).save as jest.Mock).mockRejectedValueOnce(new Error("Failed to save")); // Mock rejection
+
+    mockRequest.params = { id: "1" };
+    mockRequest.body = {
+      service_name: "New Name",
+      service_type: "New Type",
+    };
+
+    await technologicalExpertiesController.updateTechnologicalExperties(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: "Failed to save",
+      data: undefined,
+    });
+  });
+
+  //---------------------------------------------------------------------------------------------------------
+
+  it("6 should return not found if service does not exist", async () => {
+    (AppDataSource.getRepository(TechnologicalExperties).findOne as jest.Mock).mockResolvedValueOnce(null);
+
+    mockRequest.params = { id: "1" };
+
+    await technologicalExpertiesController.getTechnologicalExperties(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: message.NO_DATA("This experties"),
+      data: undefined,
+    });
+  });
+
+  //---------------------------------------------------------------------------------------------------------
+
+  it("7 should return service data if found", async () => {
+    const serviceData = {
+      id: 1,
+    };
+
+    (AppDataSource.getRepository(TechnologicalExperties).findOne as jest.Mock).mockResolvedValueOnce(serviceData);
+
+    mockRequest.params = { id: "1" };
+
+    await technologicalExpertiesController.getTechnologicalExperties(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: true,
+      message: message.GET_DATA("Experties"),
+      data: serviceData,
+    });
+  });
+
+  //---------------------------------------------------------------------------------------------------------
+
+  it("8 should return server error on unexpected error", async () => {
+    (AppDataSource.getRepository(TechnologicalExperties).findOne as jest.Mock).mockRejectedValueOnce(new Error("Unexpected error"));
+  
+    mockRequest.params = { id: "1" };
+  
+    await technologicalExpertiesController.getTechnologicalExperties(mockRequest as Request, mockResponse as Response);
+  
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: "Unexpected error",
+      data: undefined,
+    });
+  });
+  
 
   // //---------------------------------------------------------------------------------------------------------
 
-  // it("2 should save new service and return success", async () => {
-  //   (AppDataSource.getRepository(TechnologicalExperties).findOne as jest.Mock).mockResolvedValueOnce(null);
+  //findOne
+  it("9 should return contact data if found", async () => {
+    const contactData = {
+      id: 1,
+    };
 
-  //   (AppDataSource.getRepository(TechnologicalExperties).save as jest.Mock).mockResolvedValueOnce({ id: 1 });
+    (AppDataSource.getRepository(TechnologicalExperties).findOne as jest.Mock).mockResolvedValueOnce(contactData);
 
-  //   mockRequest.body = {};
+    mockRequest.params = { id: "1" };
+    await technologicalExpertiesController.getTechnologicalExperties(mockRequest as Request, mockResponse as Response);
 
-  //   await technologicalExpertiesController.addTechnologicalExperties(mockRequest as Request, mockResponse as Response);
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: true,
+      message: message.GET_DATA("Experties"),
+      data: contactData,
+    });
+  });
+  //---------------------------------------------------------------------------------------------------------
 
-  //   expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
-  //   expect(jsonMock).toHaveBeenCalledWith({
-  //     success: true,
-  //     message: message.CREATE_SUCCESS("Experties"),
-  //     data: undefined,
-  //   });
-  // });
+  it("10 should return not found if contact does not exist", async () => {
+    (AppDataSource.getRepository(TechnologicalExperties).findOne as jest.Mock).mockResolvedValueOnce(null);
 
-  // //---------------------------------------------------------------------------------------------------------
+    mockRequest.params = { id: "1" };
 
-  // it("3 should return server error on failure", async () => {
-  //   (AppDataSource.getRepository(TechnologicalExperties).findOne as jest.Mock).mockRejectedValueOnce(new Error("Server error"));
+    await technologicalExpertiesController.getTechnologicalExperties(mockRequest as Request, mockResponse as Response);
 
-  //   await technologicalExpertiesController.addTechnologicalExperties(mockRequest as Request, mockResponse as Response);
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: message.NO_DATA("This experties"),
+      data: undefined,
+    });
+  });
+  //---------------------------------------------------------------------------------------------------------
 
-  //   expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
-  //   expect(jsonMock).toHaveBeenCalledWith({
-  //     success: false,
-  //     message: "Server error",
-  //     data: undefined,
-  //   });
-  // });
+  it("11 should return server error on unexpected error", async () => {
+    (AppDataSource.getRepository(TechnologicalExperties).findOne as jest.Mock).mockRejectedValueOnce(new Error("Unexpected error"));
 
-  // //---------------------------------------------------------------------------------------------------------
+    mockRequest.params = { id: "1" };
 
-  // it("4 should return not found if service does not exist", async () => {
-  //   (AppDataSource.getRepository(TechnologicalExperties).findOne as jest.Mock).mockResolvedValueOnce(null);
+    await technologicalExpertiesController.getTechnologicalExperties(mockRequest as Request, mockResponse as Response);
 
-  //   mockRequest.params = { id: "1" };
-
-  //   await technologicalExpertiesController.updateTechnologicalExperties(mockRequest as Request, mockResponse as Response);
-
-  //   expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
-  //   expect(jsonMock).toHaveBeenCalledWith({
-  //     success: false,
-  //     message: message.NO_DATA("This experties"),
-  //     data: undefined,
-  //   });
-  // });
-
-  // //---------------------------------------------------------------------------------------------------------
-
-  // it("5 should update the service and return save error", async () => {
-  //   const existingService = {
-  //     id: 1,
-  //     service_name: "Old Name",
-  //     service_type: "Old Type",
-  //   };
-
-  //   (AppDataSource.getRepository(TechnologicalExperties).findOne as jest.Mock).mockRejectedValueOnce(existingService);
-
-  //   mockRequest.params = { id: "1" };
-  //   mockRequest.body = {
-  //     service_name: "New Name",
-  //     service_type: "New Type",
-  //   };
-
-  //   await technologicalExpertiesController.updateTechnologicalExperties(mockRequest as Request, mockResponse as Response);
-  //   expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
-  //   expect(jsonMock).toHaveBeenCalledWith({
-  //     success: false,
-  //     message: message.UPDATE_FAILED("Experties"),
-  //     data: undefined,
-  //   });
-  // });
-
-  // //---------------------------------------------------------------------------------------------------------
-
-  // it("6 should return not found if service does not exist", async () => {
-  //   (AppDataSource.getRepository(TechnologicalExperties).findOne as jest.Mock).mockResolvedValueOnce(null);
-
-  //   mockRequest.params = { id: "1" };
-
-  //   await technologicalExpertiesController.getTechnologicalExperties(mockRequest as Request, mockResponse as Response);
-
-  //   expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
-  //   expect(jsonMock).toHaveBeenCalledWith({
-  //     success: false,
-  //     message: message.NO_DATA("This experties"),
-  //     data: undefined,
-  //   });
-  // });
-
-  // //---------------------------------------------------------------------------------------------------------
-
-  // it("7 should return service data if found", async () => {
-  //   const serviceData = {
-  //     id: 1,
-  //   };
-
-  //   (AppDataSource.getRepository(TechnologicalExperties).findOne as jest.Mock).mockResolvedValueOnce(serviceData);
-
-  //   mockRequest.params = { id: "1" };
-
-  //   await technologicalExpertiesController.getTechnologicalExperties(mockRequest as Request, mockResponse as Response);
-
-  //   expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
-  //   expect(jsonMock).toHaveBeenCalledWith({
-  //     success: true,
-  //     message: message.GET_DATA("Experties"),
-  //     data: serviceData,
-  //   });
-  // });
-
-  // //---------------------------------------------------------------------------------------------------------
-
-  // it("8 should return server error on unexpected error", async () => {
-  //   (AppDataSource.getRepository(TechnologicalExperties).findOne as jest.Mock).mockRejectedValueOnce(new Error("Unexpected error"));
-
-  //   mockRequest.params = { id: "1" };
-
-  //   await technologicalExpertiesController.getTechnologicalExperties(mockRequest as Request, mockResponse as Response);
-
-  //   expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
-  //   expect(jsonMock).toHaveBeenCalledWith({
-  //     success: false,
-  //     message: "Server error",
-  //     data: undefined,
-  //   });
-  // });
-
-  // //---------------------------------------------------------------------------------------------------------
-
-  // //findOne
-  // it("9 should return contact data if found", async () => {
-  //   const contactData = {
-  //     id: 1,
-  //   };
-
-  //   (AppDataSource.getRepository(TechnologicalExperties).findOne as jest.Mock).mockResolvedValueOnce(contactData);
-
-  //   mockRequest.params = { id: "1" };
-  //   await technologicalExpertiesController.getTechnologicalExperties(mockRequest as Request, mockResponse as Response);
-
-  //   expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
-  //   expect(jsonMock).toHaveBeenCalledWith({
-  //     success: true,
-  //     message: message.GET_DATA("Experties"),
-  //     data: contactData,
-  //   });
-  // });
-  // //---------------------------------------------------------------------------------------------------------
-
-  // it("10 should return not found if contact does not exist", async () => {
-  //   (AppDataSource.getRepository(TechnologicalExperties).findOne as jest.Mock).mockResolvedValueOnce(null);
-
-  //   mockRequest.params = { id: "1" };
-
-  //   await technologicalExpertiesController.getTechnologicalExperties(mockRequest as Request, mockResponse as Response);
-
-  //   expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
-  //   expect(jsonMock).toHaveBeenCalledWith({
-  //     success: false,
-  //     message: message.NO_DATA("This experties"),
-  //     data: undefined,
-  //   });
-  // });
-  // //---------------------------------------------------------------------------------------------------------
-
-  // it("11 should return server error on unexpected error", async () => {
-  //   (AppDataSource.getRepository(TechnologicalExperties).findOne as jest.Mock).mockRejectedValueOnce(new Error("Unexpected error"));
-
-  //   mockRequest.params = { id: "1" };
-
-  //   await technologicalExpertiesController.getTechnologicalExperties(mockRequest as Request, mockResponse as Response);
-
-  //   expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
-  //   expect(jsonMock).toHaveBeenCalledWith({
-  //     success: false,
-  //     message: "Unexpected error",
-  //     data: undefined,
-  //   });
-  // });
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: "Unexpected error",
+      data: undefined,
+    });
+  });
   //---------------------------------------------------------------------------------------------------------
 
   it("12 should return success with grouped data", async () => {
@@ -298,21 +320,24 @@ describe("TechnologicalExpertiesController", () => {
 
   //---------------------------------------------------------------------------------------------------------
 
-  //delete
-  // it("15 should return success if work data is soft deleted", async () => {
-  //   (AppDataSource.getRepository(TechnologicalExperties).softDelete as jest.Mock).mockResolvedValueOnce({ affected: 1 });
-
-  //   mockRequest.params = { id: "1" };
-
-  //   await technologicalExpertiesController.removeTechnologicalExperties(mockRequest as Request, mockResponse as Response);
-
-  //   expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
-  //   expect(jsonMock).toHaveBeenCalledWith({
-  //     success: false,
-  //     message: message.NO_DATA("This experties"),
-  //     data: undefined,
-  //   });
-  // });
+  // delete
+  it("15 should return success if work data is soft deleted", async () => {
+    // Mock the repository methods
+    (AppDataSource.getRepository(TechnologicalExperties).findOne as jest.Mock).mockResolvedValueOnce({ id: "1" });
+    (AppDataSource.getRepository(TechnologicalExperties).softDelete as jest.Mock).mockResolvedValueOnce({ affected: 1 });
+  
+    mockRequest.params = { id: "1" };
+  
+    await technologicalExpertiesController.removeTechnologicalExperties(mockRequest as Request, mockResponse as Response);
+  
+    expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: true,
+      message: message.DELETE_SUCCESS("Experties"),
+      data: undefined,
+    });
+  });
+  
   //---------------------------------------------------------------------------------------------------------
 
   // it("16 should return not found if work data does not exist", async () => {
