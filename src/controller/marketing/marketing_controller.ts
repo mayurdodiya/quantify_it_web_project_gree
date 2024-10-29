@@ -6,9 +6,7 @@ import { ResponseCodes } from "../../utils/response-codes";
 import { Marketing } from "../../entities/marketing.entity";
 import { AppDataSource } from "../../config/database.config";
 import { getPagination } from "../../services/paginate";
-import emailTmplateServices from "../../services/handlebars.services";
-import { EmailService } from "../../services/nodemailer";
-const emailService = new EmailService();
+import { MarketingUser } from '../../services/EmailCompile/marketing';
 
 export class MarketingController {
   private marketingRepo: Repository<Marketing>;
@@ -37,9 +35,7 @@ export class MarketingController {
         return RoutesHandler.sendError(req, res, false, message.CREATE_FAIL("form data"), ResponseCodes.saveError);
       }
 
-      // email services
-      const context = await emailTmplateServices.addMarketingFormHandleBar(email, full_name);
-      emailService.sendEmail(context.email, context.subject, context.text, context.htmlContent);
+      await MarketingUser(email, "Thank You! Your Form Has Been Submitted!", full_name)
 
       return RoutesHandler.sendSuccess(req, res, true, message.SUBMIT_FORM, ResponseCodes.success, undefined);
     } catch (error) {
