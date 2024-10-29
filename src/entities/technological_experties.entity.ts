@@ -9,6 +9,9 @@ export class TechnologicalExperties {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
+  @Column({ nullable: true })
+  index: number;
+
   @Column({ default: null })
   experties_type: string;
 

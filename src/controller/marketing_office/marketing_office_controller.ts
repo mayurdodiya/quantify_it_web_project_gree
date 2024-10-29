@@ -18,7 +18,7 @@ export class MarketingOfficeController {
   public addMarketingOffice = async (req: Request, res: Response) => {
     try {
       const { office_name, address, img_url } = req.body;
-      
+
       const isExist = await this.marketingOfficeRepo.findOne({ where: { office_name: office_name } });
       if (isExist) {
         return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This marketing office data"), ResponseCodes.notFound);

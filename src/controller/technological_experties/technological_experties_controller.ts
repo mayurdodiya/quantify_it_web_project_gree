@@ -17,8 +17,8 @@ export class TechnologicalExpertiesController {
   // add data
   public addTechnologicalExperties = async (req: Request, res: Response) => {
     try {
-      const { experties_name, img_url } = req.body;
-      const experties_type = req.body.experties_type?.toLocaleLowerCase();
+      const { experties_name, img_url, index } = req.body;
+      const experties_type = req.body.experties_type;
 
       const isNameExist = await this.technologicalExpertiesRepo.findOne({
         where: {
@@ -35,6 +35,7 @@ export class TechnologicalExpertiesController {
       technoExp.experties_type = experties_type;
       technoExp.experties_name = experties_name;
       technoExp.img_url = img_url;
+      technoExp.index = index;
 
       const data = await this.technologicalExpertiesRepo.save(technoExp);
       if (!data) {
@@ -49,8 +50,8 @@ export class TechnologicalExpertiesController {
   // edit data
   public async updateTechnologicalExperties(req: Request, res: Response) {
     try {
-      const { experties_name, img_url } = req.body;
-      const experties_type = req.body.experties_type.toLocaleLowerCase();
+      const { experties_name, img_url, index } = req.body;
+      const experties_type = req.body.experties_type;
 
       const dataId = req.params.id;
       const getData = await this.technologicalExpertiesRepo.findOne({
@@ -60,20 +61,24 @@ export class TechnologicalExpertiesController {
       if (!getData) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This experties"), ResponseCodes.notFound);
       }
-      const isExist = await this.technologicalExpertiesRepo.findOne({
-        where: {
-          experties_type: experties_type,
-          experties_name: experties_name,
-          id: Not(dataId),
-        },
-      });
-      if (isExist) {
-        return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This experties"), ResponseCodes.alreadyExist);
+
+      if (experties_type) {
+        const isExist = await this.technologicalExpertiesRepo.findOne({
+          where: {
+            experties_type: experties_type,
+            experties_name: experties_name,
+            id: Not(dataId),
+          },
+        });
+        if (isExist) {
+          return RoutesHandler.sendError(req, res, false, message.DATA_EXIST("This experties"), ResponseCodes.alreadyExist);
+        }
       }
 
       getData.experties_type = experties_type || getData.experties_type;
       getData.experties_name = experties_name || getData.experties_name;
       getData.img_url = img_url || getData.img_url;
+      getData.index = index || getData.index;
 
       const data = await this.technologicalExpertiesRepo.save(getData);
       if (!data) {
@@ -91,7 +96,7 @@ export class TechnologicalExpertiesController {
       const dataId = req.params.id;
       const data = await this.technologicalExpertiesRepo.findOne({
         where: { id: dataId, status: Status.ACTIVE },
-        select: ["id", "experties_type", "experties_name", "img_url", "createdAt"],
+        select: ["id", "experties_type", "experties_name", "img_url", "index", "createdAt"],
       });
       if (!data) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This experties"), ResponseCodes.notFound);
@@ -105,17 +110,33 @@ export class TechnologicalExpertiesController {
   // get all data
   public async getAllTechnologicalExperties(req: Request, res: Response) {
     try {
+      //       const groupedData = await AppDataSource?.query(`
+      //     SELECT
+      //         experties_type AS experties_type,
+      //         ARRAY_AGG(json_build_object('id', id, 'experties_name', experties_name, 'img_url', img_url, 'index', index)) AS data
+      //     FROM
+      //         technological_experties
+      //     WHERE
+      //         "deletedAt" IS NULL AND status = ${Status.ACTIVE}
+      //     GROUP BY
+      //         experties_type;
+      // `);
+
       const groupedData = await AppDataSource?.query(`
-    SELECT
-        experties_type AS experties_type,
-        ARRAY_AGG(json_build_object('id', id, 'experties_name', experties_name, 'img_url', img_url)) AS data
-    FROM
-        technological_experties
-    WHERE
-        "deletedAt" IS NULL AND status = ${Status.ACTIVE}
-    GROUP BY
-        experties_type;
-`);
+          SELECT
+              experties_type AS experties_type,
+              ARRAY_AGG(
+                  json_build_object('id', id, 'experties_name', experties_name, 'img_url', img_url, 'index', index) ORDER BY index ASC
+              ) AS data
+          FROM
+              technological_experties
+          WHERE
+              "deletedAt" IS NULL AND status = ${Status.ACTIVE}
+          GROUP BY
+              experties_type
+          ORDER BY
+              experties_type DESC;  -- Optional: sort by experties_type as well
+        `);
 
       if (!groupedData) {
         return RoutesHandler.sendError(req, res, false, message.NO_DATA("This experties"), ResponseCodes.notFound);
