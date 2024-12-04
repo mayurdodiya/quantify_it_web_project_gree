@@ -47,6 +47,7 @@ export const getPagination = (page: number, size: number) => {
   const offset = page ? (page - 1) * limit : 0;
   return { limit, offset };
 };
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getPagingData = (alldata: { count: number; rows: any[] }, page: number, limit: number) => {
   const { count: totalItems, rows: data } = alldata;

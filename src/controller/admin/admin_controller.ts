@@ -424,7 +424,6 @@ export class AdminController {
   }
 }
 
-//getSubAdmin
 //getAllSubAdmin
 //removeSubAdmin
 //changeSubAdminPermission

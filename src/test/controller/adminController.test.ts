@@ -8,6 +8,8 @@ import { FileService } from "../../services/file_upload";
 import { ResponseCodes } from "../../utils/response-codes";
 import { AppDataSource } from "../../config/database.config";
 import { AdminController } from "../../controller/admin/admin_controller";
+import { getPagination, getPagingData } from "../../services/paginate";
+import { ILike } from "typeorm";
 
 const fileService = new FileService();
 
@@ -19,6 +21,7 @@ jest.mock("../../config/database.config", () => ({
       save: jest.fn(),
       find: jest.fn(),
       softDelete: jest.fn(),
+      findAndCount: jest.fn(),
     }),
   },
 }));
@@ -26,6 +29,11 @@ jest.mock("../../config/database.config", () => ({
 jest.mock("../../utils/bcrypt");
 jest.mock("../../utils/auth.token");
 jest.mock("../../services/file_upload");
+
+jest.mock("../../services/paginate", () => ({
+  getPagination: jest.fn(),
+  getPagingData: jest.fn(),
+}));
 
 describe("AdminController", () => {
   let adminController: AdminController;
@@ -42,8 +50,9 @@ describe("AdminController", () => {
     mockRequest = {
       params: {},
       body: {},
-      file: null,
       get: jest.fn(),
+      file: null,
+      query: {},
     };
 
     mockResponse = {
@@ -226,42 +235,6 @@ describe("AdminController", () => {
         data: undefined,
       });
     });
-
-    // it("should send reset password email successfully", async () => {
-    //   const mockAdmin = { id: 1, email: "admin@example.com", role: Role.ADMIN, status: Status.ACTIVE };
-    //   (AppDataSource.getRepository(User).findOne as jest.Mock).mockResolvedValueOnce(mockAdmin);
-    //   (generateForgetPasswordToken as jest.Mock).mockReturnValueOnce("generatedToken");
-    //   (emailService.sendEmail as jest.Mock).mockResolvedValueOnce({}); // Mock successful email send
-
-    //   mockRequest.body = { email: "admin@example.com", baseurl: "http://example.com" };
-
-    //   await adminController.forgotPassword(mockRequest as Request, mockResponse as Response);
-
-    //   expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
-    //   expect(jsonMock).toHaveBeenCalledWith({
-    //     success: true,
-    //     message: message.FORGOT_PASSWORD_LINK,
-    //     data: {},
-    //   });
-    // });
-
-    // it("should return error if email sending fails", async () => {
-    //   const mockAdmin = { id: 1, email: "admin@example.com", role: Role.ADMIN, status: Status.ACTIVE };
-    //   (AppDataSource.getRepository(User).findOne as jest.Mock).mockResolvedValueOnce(mockAdmin);
-    //   (generateForgetPasswordToken as jest.Mock).mockReturnValueOnce("generatedToken");
-    //   (emailService.sendEmail as jest.Mock).mockRejectedValueOnce(new Error("Email sending error"));
-
-    //   mockRequest.body = { email: "admin@example.com", baseurl: "http://example.com" };
-
-    //   await adminController.forgotPassword(mockRequest as Request, mockResponse as Response);
-
-    //   expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
-    //   expect(jsonMock).toHaveBeenCalledWith({
-    //     success: false,
-    //     message: "Email sending error",
-    //     data: undefined,
-    //   });
-    // });
   });
 
   describe("setPassword", () => {
@@ -286,53 +259,6 @@ describe("AdminController", () => {
         message: "Password and confirm password does not match",
       });
     });
-
-    // it("should return an error if user is not found", async () => {
-    //   const mockTokenResult = { userId: 1 };
-    //   (verifyPasswordToken as jest.Mock).mockReturnValueOnce(mockTokenResult);
-    //   (AppDataSource.getRepository(User).findOne as jest.Mock).mockResolvedValueOnce(null); // User not found
-
-    //   mockRequest.body = { token: "someToken", password: "newPassword", confirm_password: "newPassword" };
-
-    //   await adminController.setPassword(mockRequest as Request, mockResponse as Response);
-
-    //   expect(RoutesHandler.sendError).toHaveBeenCalledWith(mockRequest, mockResponse, false, expect.any(String), ResponseCodes.loginError);
-    // });
-
-    // it("should successfully set the password", async () => {
-    //   const mockAdmin = { id: 1, email: "admin@example.com", role: Role.ADMIN, status: Status.ACTIVE };
-    //   const mockTokenResult = { userId: 1 };
-
-    //   (verifyPasswordToken as jest.Mock).mockReturnValueOnce(mockTokenResult);
-    //   (AppDataSource.getRepository(User).findOne as jest.Mock).mockResolvedValueOnce(mockAdmin); // User found
-    //   (bcryptpassword as jest.Mock).mockResolvedValueOnce("hashedPassword"); // Mock password hashing
-
-    //   mockRequest.body = { token: "someToken", password: "newPassword", confirm_password: "newPassword" };
-
-    //   await adminController.setPassword(mockRequest as Request, mockResponse as Response);
-
-    //   expect(AppDataSource.getRepository(User).save).toHaveBeenCalledWith({
-    //     ...mockAdmin,
-    //     password: "hashedPassword",
-    //   });
-    //   expect(RoutesHandler.sendSuccess).toHaveBeenCalledWith(mockRequest, mockResponse, true, expect.any(String), ResponseCodes.success, {});
-    // });
-
-    // it("should handle errors during password saving", async () => {
-    //   const mockAdmin = { id: 1, email: "admin@example.com", role: Role.ADMIN, status: Status.ACTIVE };
-    //   const mockTokenResult = { userId: 1 };
-
-    //   (verifyPasswordToken as jest.Mock).mockReturnValueOnce(mockTokenResult);
-    //   (AppDataSource.getRepository(User).findOne as jest.Mock).mockResolvedValueOnce(mockAdmin); // User found
-    //   (bcryptpassword as jest.Mock).mockResolvedValueOnce("hashedPassword"); // Mock password hashing
-    //   (AppDataSource.getRepository(User).save as jest.Mock).mockRejectedValueOnce(new Error("Save failed")); // Simulate error
-
-    //   mockRequest.body = { token: "someToken", password: "newPassword", confirm_password: "newPassword" };
-
-    //   await adminController.setPassword(mockRequest as Request, mockResponse as Response);
-
-    //   expect(RoutesHandler.sendError).toHaveBeenCalledWith(mockRequest, mockResponse, false, "Save failed", ResponseCodes.serverError);
-    // });
   });
 
   describe("addSubAdmin", () => {
@@ -451,5 +377,187 @@ describe("AdminController", () => {
         data: undefined,
       });
     });
+  });
+
+  describe("getSubAdmin", () => {
+    it("1 should return error if subadmin not found", async () => {
+      // Mock the `findOne` method to return `null` (not found)
+      (AppDataSource.getRepository(User).findOne as jest.Mock).mockResolvedValueOnce(null);
+
+      // Set up request with the subadmin ID
+      mockRequest.params = { id: "1" };
+
+      // Call the controller method
+      await adminController.getSubAdmin(mockRequest as Request, mockResponse as Response);
+
+      // Assertions: check that the response is a not found error
+      expect(statusMock).toHaveBeenCalledWith(ResponseCodes.notFound);
+      expect(jsonMock).toHaveBeenCalledWith({
+        success: false,
+        message: message.NO_DATA("This sub admin"),
+        data: undefined,
+      });
+    });
+
+    it("2 should return success with subadmin data if found", async () => {
+      const subAdminData = {
+        id: "1",
+        first_name: "John",
+        last_name: "Doe",
+        email: "john.doe@example.com",
+        phone_no: "1234567890",
+        location: "City, Country",
+        status: "active",
+        role: Role.SUBADMIN,
+        createdAt: "2024-01-01T00:00:00Z",
+      };
+
+      // Mock the `findOne` method to return a subadmin user object
+      (AppDataSource.getRepository(User).findOne as jest.Mock).mockResolvedValueOnce(subAdminData);
+
+      // Set up request with the subadmin ID
+      mockRequest.params = { id: "1" };
+
+      // Call the controller method
+      await adminController.getSubAdmin(mockRequest as Request, mockResponse as Response);
+
+      // Assertions: check the response with success message and data
+      expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
+      expect(jsonMock).toHaveBeenCalledWith({
+        success: true,
+        message: message.GET_DATA("Sub admin"),
+        data: subAdminData,
+      });
+    });
+
+    it("3 should return error if there is a server issue", async () => {
+      // Mock `findOne` to throw an error
+      (AppDataSource.getRepository(User).findOne as jest.Mock).mockRejectedValueOnce(new Error("Unexpected error"));
+
+      // Set up request with the subadmin ID
+      mockRequest.params = { id: "1" };
+
+      // Call the controller method
+      await adminController.getSubAdmin(mockRequest as Request, mockResponse as Response);
+
+      // Assertions: check the response with server error
+      expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
+      expect(jsonMock).toHaveBeenCalledWith({
+        success: false,
+        message: "Unexpected error",
+        data: undefined,
+      });
+    });
+  });
+
+  describe("getAllSubAdmin", () => {
+    it("1 should return all subadmins with pagination", async () => {
+      const subAdmins = [
+        { id: 1, first_name: "John", last_name: "Doe", email: "john.doe@example.com", phone_no: "1234567890", location: "City, Country", status: "active", role: Role.SUBADMIN, createdAt: "2024-01-01T00:00:00Z" },
+        { id: 2, first_name: "Jane", last_name: "Smith", email: "jane.smith@example.com", phone_no: "0987654321", location: "Another City, Country", status: "inactive", role: Role.SUBADMIN, createdAt: "2024-02-01T00:00:00Z" },
+      ];
+      const totalSubAdmins = 2;
+
+      (getPagination as jest.Mock).mockReturnValue({ limit: 10, offset: 0 });
+      (getPagingData as jest.Mock).mockReturnValue({ totalItems: totalSubAdmins, data: subAdmins });
+
+      (AppDataSource.getRepository(User).findAndCount as jest.Mock).mockResolvedValue([subAdmins, totalSubAdmins]);
+
+      mockRequest.query = { page: "1", size: "10" };
+
+      await adminController.getAllSubAdmin(mockRequest as Request, mockResponse as Response);
+
+      expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
+
+      expect(jsonMock).toHaveBeenCalledWith({
+        success: true,
+        message: message.GET_DATA("Sub admin"),
+        data: {
+          totalItems: totalSubAdmins,
+          data: subAdmins,
+        },
+      });
+    });
+
+    it("2 should return subadmins with search filter applied", async () => {
+      const subAdmins = [{ id: 1, first_name: "John", last_name: "Doe", email: "john.doe@example.com", phone_no: "1234567890", location: "City, Country", status: "active", role: Role.SUBADMIN, createdAt: "2024-01-01T00:00:00Z" }];
+      const totalSubAdmins = 1;
+    
+      // Mock pagination utility functions
+      (getPagination as jest.Mock).mockReturnValue({ limit: 10, offset: 0 });
+      (getPagingData as jest.Mock).mockReturnValue({ totalItems: totalSubAdmins, data: subAdmins });
+    
+      // Mock the repository call
+      (AppDataSource.getRepository(User).findAndCount as jest.Mock).mockResolvedValue([subAdmins, totalSubAdmins]);
+    
+      mockRequest.query = { page: "1", size: "10", s: "John" };
+    
+      await adminController.getAllSubAdmin(mockRequest as Request, mockResponse as Response);
+    
+      // Assertions: check that the search filter is being used
+      expect(AppDataSource.getRepository(User).findAndCount).toHaveBeenCalledWith({
+        where: expect.arrayContaining([
+          { role: Role.SUBADMIN },
+          { first_name: ILike("%John%"), role: Role.SUBADMIN },
+          { last_name: ILike("%John%"), role: Role.SUBADMIN },
+          { email: ILike("%John%"), role: Role.SUBADMIN },
+          { phone_no: ILike("%John%"), role: Role.SUBADMIN }
+        ]),
+        select: ["id", "first_name", "last_name", "email", "phone_no", "location", "status", "role", "createdAt"],
+        skip: 0,
+        take: 10,
+      });
+    
+      // Check that the response status is success
+      expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
+    
+      // Adjusted test expectation to match the actual structure returned by the controller
+      expect(jsonMock).toHaveBeenCalledWith({
+        success: true,
+        message: message.GET_DATA("Sub admin"),
+        data: {  // Expect the 'data' object containing 'totalItems' and 'data'
+          totalItems: totalSubAdmins,
+          data: subAdmins,  // subAdmins array should be inside the 'data' object
+        },
+      });
+    });
+
+    it("3 should return no subadmins found if no data matches", async () => {
+      // Mock pagination utility functions
+      (getPagination as jest.Mock).mockReturnValue({ limit: 10, offset: 0 });
+
+      // Mock the repository call to return empty data
+      (AppDataSource.getRepository(User).findAndCount as jest.Mock).mockResolvedValue([[], 0]);
+
+      mockRequest.query = { page: "1", size: "10" };
+
+      await adminController.getAllSubAdmin(mockRequest as Request, mockResponse as Response);
+
+      expect(statusMock).toHaveBeenCalledWith(ResponseCodes.success);
+      expect(jsonMock).toHaveBeenCalledWith({
+        success: true,
+        message: message.GET_DATA("Sub admin"),
+        data: { totalItems: 0, rows: [] },
+      });
+    });
+
+    // it("4 should return server error on unexpected database failure", async () => {
+    //   // Mock pagination utility functions
+    //   (getPagination as jest.Mock).mockReturnValue({ limit: 10, offset: 0 });
+
+    //   // Mock the repository call to simulate an error
+    //   (AppDataSource.getRepository(User).findAndCount as jest.Mock).mockRejectedValueOnce(new Error("Database Error"));
+
+    //   mockRequest.query = { page: "1", size: "10" };
+
+    //   await adminController.getAllSubAdmin(mockRequest as Request, mockResponse as Response);
+
+    //   expect(statusMock).toHaveBeenCalledWith(ResponseCodes.serverError);
+    //   expect(jsonMock).toHaveBeenCalledWith({
+    //     success: false,
+    //     message: "Database Error",
+    //     data: undefined,
+    //   });
+    // });
   });
 });
